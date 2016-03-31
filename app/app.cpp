@@ -18,6 +18,13 @@ void AppClass::init()
 	pinMode(15,INPUT);
 	pinMode(16,INPUT);
 
+	pinMode(12, OUTPUT);
+	pinMode(13, OUTPUT);
+	pinMode(14, OUTPUT);
+	digitalWrite(12, HIGH);
+	digitalWrite(13, HIGH);
+	digitalWrite(14, HIGH);
+
 	ds.begin();
 	tempSensor.addSensor();
 
@@ -27,6 +34,7 @@ void AppClass::init()
 
 void AppClass::start()
 {
+	Config.loopInterval = 5000;
 	ApplicationClass::start();
 	tempSensor.start();
 	Serial.printf("AppClass start done!\n");
@@ -42,4 +50,7 @@ void AppClass::_loop()
 	lcd.print(_counter);
 	lcd.setCursor(0,1);
 	lcd.print(tempSensor.getTemp());
+	digitalWrite(12, state);
+	state = !state;
+	Serial.printf("State: , %d\n", state);
 }

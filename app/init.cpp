@@ -2,6 +2,7 @@
 #include <user_config.h>
 #include <dragonmaster.h>
 
+uint8_t state = HIGH;
 OneWire ds(onewire_pin);
 TempSensorsOW tempSensor(ds, 4000);
 

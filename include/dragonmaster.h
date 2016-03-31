@@ -18,6 +18,6 @@ extern OneWire ds;
 extern TempSensorsOW tempSensor;
 extern LiquidCrystal_I2C lcd;
 
-
+extern uint8_t state;
 
 #endif /* INCLUDE_DRAGONMASTER_H_ */
