@@ -31,7 +31,7 @@ void AppClass::init()
 	tempSensor.addSensor();
 
 	ApplicationClass::init();
-	Serial.printf("AppClass init done!\n");
+//	Serial.printf("AppClass init done!\n");
 }
 
 void AppClass::start()
@@ -40,14 +40,14 @@ void AppClass::start()
 	ApplicationClass::start();
 	inputGPIO.start();
 	tempSensor.start();
-	Serial.printf("AppClass start done!\n");
+//	Serial.printf("AppClass start done!\n");
 }
 
 void AppClass::_loop()
 {
 	lcd.clear();
 	ApplicationClass::_loop();
-	Serial.printf("AppClass loop\n");
+//	Serial.printf("AppClass loop\n");
 //	Serial.printf("GPIO 15: %d GPIO 16: %d\n", digitalRead(15), digitalRead(16));
 	Serial.printf("GPIO 15: %d GPIO 16: %d\n", inputGPIO.getState(0), inputGPIO.getState(1));
 	lcd.setCursor(0,0);
