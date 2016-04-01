@@ -10,6 +10,7 @@
 #include <Libraries/LiquidCrystal/LiquidCrystal_I2C.h>
 #include <Libraries/OneWire/OneWire.h>
 #include <tempsensors.h>
+#include <binaryinput.h>
 
 //OneWire stuff
 const uint8_t onewire_pin = 2;
@@ -17,6 +18,8 @@ extern OneWire ds;
 
 extern TempSensorsOW tempSensor;
 extern LiquidCrystal_I2C lcd;
+
+extern BinaryInputGPIOClass inputGPIO;
 
 extern uint8_t state;
 

@@ -27,5 +27,5 @@
 # COM_SPEED	= 115200
 
 SPIFF_SIZE     = 98304
-MODULES = app lib/application lib/tempsensor
-EXTRA_INCLUDES = lib/application lib/tempsensor
+MODULES = app lib/application lib/tempsensor lib/binaryinput
+EXTRA_INCLUDES = lib/application lib/tempsensor lib/binaryinput

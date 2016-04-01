@@ -15,8 +15,10 @@ void AppClass::init()
 	lcd.begin(16, 2);   // initialize the lcd for 16 chars 2 lines, turn on backlight
 	lcd.backlight();
 
-	pinMode(15,INPUT);
-	pinMode(16,INPUT);
+//	pinMode(15,INPUT);
+//	pinMode(16,INPUT);
+	inputGPIO.addInput(15,1);
+	inputGPIO.addInput(16,0);
 
 	pinMode(12, OUTPUT);
 	pinMode(13, OUTPUT);
@@ -34,8 +36,9 @@ void AppClass::init()
 
 void AppClass::start()
 {
-	Config.loopInterval = 5000;
+//	Config.loopInterval = 5000;
 	ApplicationClass::start();
+	inputGPIO.start();
 	tempSensor.start();
 	Serial.printf("AppClass start done!\n");
 }
@@ -45,7 +48,8 @@ void AppClass::_loop()
 	lcd.clear();
 	ApplicationClass::_loop();
 	Serial.printf("AppClass loop\n");
-	Serial.printf("GPIO 15: %d GPIO 16: %d\n", digitalRead(15), digitalRead(16));
+//	Serial.printf("GPIO 15: %d GPIO 16: %d\n", digitalRead(15), digitalRead(16));
+	Serial.printf("GPIO 15: %d GPIO 16: %d\n", inputGPIO.getState(0), inputGPIO.getState(1));
 	lcd.setCursor(0,0);
 	lcd.print(_counter);
 	lcd.setCursor(0,1);
