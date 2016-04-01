@@ -34,6 +34,26 @@ void BinaryInputClass::addInput(uint8_t unitNumber, uint8_t polarity)
 	setPolarity(lastElementId, polarity);
 }
 
+void BinaryInputClass::onStateChange(uint8_t inputId, onStateChangeDelegate delegateFunction)
+{
+	_data[inputId]->_onChangeState = delegateFunction;
+}
+
+void BinaryInputClass::_readState()
+{
+	uint8_t prevState;
+
+	for (uint8_t id=0; id < _data.count(); id++)
+	{
+		prevState = _data[id]->_state;
+		_data[id]->_state = _readUnit(_data[id]->_unitNumber) ? _data[id]->_polarity : !(_data[id]->_polarity);
+		if (prevState != _data[id]->_state && _data[id]->_onChangeState)
+		{
+			Serial.printf("onChangeState Delegate/CB called!\n");
+			_data[id]->_onChangeState(_data[id]->_state);
+		}
+	}
+}
 //BinaryInputGPIOClass
 
 void BinaryInputGPIOClass::setUnitNumber(uint8_t inputId, uint8_t unitNumber)
@@ -42,10 +62,7 @@ void BinaryInputGPIOClass::setUnitNumber(uint8_t inputId, uint8_t unitNumber)
 	pinMode(unitNumber, INPUT);
 }
 
-void BinaryInputGPIOClass::_readState()
+uint8_t BinaryInputGPIOClass::_readUnit(uint8_t unitId)
 {
-	for (uint8_t id=0; id < _data.count(); id++)
-	{
-		_data[id]->_state = digitalRead(_data[id]->_unitNumber) ? _data[id]->_polarity : !(_data[id]->_polarity);
-	}
+	return digitalRead(unitId);
 }
