@@ -5,27 +5,27 @@
  *      Author: shurik
  */
 
-#include <binaryinput.h>
+#include <binin.h>
 
 // BinaryInputClass
 
-void BinaryInputClass::start()
+void BinInClass::start()
 {
-	_refreshTimer.initializeMs(_refresh, TimerDelegate(&BinaryInputClass::_readState, this)).start(true);
+	_refreshTimer.initializeMs(_refresh, TimerDelegate(&BinInClass::_readState, this)).start(true);
 }
 
-void BinaryInputClass::stop()
+void BinInClass::stop()
 {
 	_refreshTimer.stop();
 }
 
-void BinaryInputClass::addInput()
+void BinInClass::addInput()
 {
 	auto newInputData = new inputData;
 	_data.add(newInputData);
 }
 
-void BinaryInputClass::addInput(uint8_t unitNumber, uint8_t polarity)
+void BinInClass::addInput(uint8_t unitNumber, uint8_t polarity)
 {
 	auto newInputData = new inputData;
 	_data.add(newInputData);
@@ -34,12 +34,12 @@ void BinaryInputClass::addInput(uint8_t unitNumber, uint8_t polarity)
 	setPolarity(lastElementId, polarity);
 }
 
-void BinaryInputClass::onStateChange(uint8_t inputId, onStateChangeDelegate delegateFunction)
+void BinInClass::onStateChange(uint8_t inputId, onStateChangeDelegate delegateFunction)
 {
 	_data[inputId]->_onChangeState = delegateFunction;
 }
 
-void BinaryInputClass::_readState()
+void BinInClass::_readState()
 {
 	uint8_t prevState;
 
@@ -56,13 +56,13 @@ void BinaryInputClass::_readState()
 }
 //BinaryInputGPIOClass
 
-void BinaryInputGPIOClass::setUnitNumber(uint8_t inputId, uint8_t unitNumber)
+void BinInGPIOClass::setUnitNumber(uint8_t inputId, uint8_t unitNumber)
 {
-	BinaryInputClass::setUnitNumber(inputId, unitNumber);
+	BinInClass::setUnitNumber(inputId, unitNumber);
 	pinMode(unitNumber, INPUT);
 }
 
-uint8_t BinaryInputGPIOClass::_readUnit(uint8_t unitId)
+uint8_t BinInGPIOClass::_readUnit(uint8_t unitId)
 {
 	return digitalRead(unitId);
 }

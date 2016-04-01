@@ -5,8 +5,8 @@
  *      Author: shurik
  */
 
-#ifndef LIB_BINARYINPUT_BINARYINPUT_H_
-#define LIB_BINARYINPUT_BINARYINPUT_H_
+#ifndef LIB_BINIO_BINARYINPUT_H_
+#define LIB_BINIO_BINARYINPUT_H_
 #include <SmingCore/SmingCore.h>
 
 typedef Delegate<void(uint8_t state)> onStateChangeDelegate;
@@ -19,11 +19,11 @@ struct inputData
 	onStateChangeDelegate _onChangeState = nullptr;
 };
 
-class BinaryInputClass
+class BinInClass
 {
 public:
-	BinaryInputClass(uint16_t refresh = 500) { _refresh = refresh; };
-	virtual ~BinaryInputClass() {};
+	BinInClass(uint16_t refresh = 500) { _refresh = refresh; };
+	virtual ~BinInClass() {};
 	void addInput(); // not recommended!!
 	void addInput(uint8_t unitNumber, uint8_t polarity);
 	virtual void setUnitNumber(uint8_t inputId, uint8_t unitNumber) { _data[inputId]->_unitNumber = unitNumber; };
@@ -44,14 +44,14 @@ protected:
 	virtual uint8_t _readUnit(uint8_t unitId) = 0;
 };
 
-class BinaryInputGPIOClass : public BinaryInputClass
+class BinInGPIOClass : public BinInClass
 {
 public:
-	BinaryInputGPIOClass(uint16_t refresh = 500) :BinaryInputClass(refresh) {};
-	virtual ~BinaryInputGPIOClass() {};
+	BinInGPIOClass(uint16_t refresh = 500) :BinInClass(refresh) {};
+	virtual ~BinInGPIOClass() {};
 	void setUnitNumber(uint8_t inputId, uint8_t unitNumber);
 protected:
 	virtual uint8_t _readUnit(uint8_t unitId);
 };
 
-#endif /* LIB_BINARYINPUT_BINARYINPUT_H_ */
+#endif /* LIB_BINIO_BINARYINPUT_H_ */
