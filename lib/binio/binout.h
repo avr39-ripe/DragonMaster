@@ -35,7 +35,4 @@ protected:
 	virtual void _setUnitState(uint8_t state);
 };
 
-
-
-
 #endif /* LIB_BINIO_BINOUT_H_ */

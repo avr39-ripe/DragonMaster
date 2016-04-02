@@ -16,18 +16,11 @@ void AppClass::init()
 	lcd.backlight();
 
 	input[0] = new BinInGPIOClass(15,1);
-//	input[0]->setUnitNumber(15);
-//	input[0]->setPolarity(1);
 	input[1] = new BinInGPIOClass(16,0);
-//	input[1]->setUnitNumber(16);
-//	input[1]->setPolarity(0);
 
 	binInPoller.add(input[0]);
 	binInPoller.add(input[1]);
 
-//	pinMode(12, OUTPUT);
-//	pinMode(13, OUTPUT);
-//	pinMode(14, OUTPUT);
 	output[0] = new BinOutGPIOClass(12,0);
 	output[1] = new BinOutGPIOClass(13,0);
 	output[2] = new BinOutGPIOClass(14,0);
@@ -55,13 +48,9 @@ void AppClass::_loop()
 	lcd.clear();
 	ApplicationClass::_loop();
 //	Serial.printf("AppClass loop\n");
-//	Serial.printf("GPIO 15: %d GPIO 16: %d\n", digitalRead(15), digitalRead(16));
 	Serial.printf("GPIO 15: %d GPIO 16: %d\n", input[0]->getState(), input[1]->getState());
 	lcd.setCursor(0,0);
 	lcd.print(_counter);
 	lcd.setCursor(0,1);
 	lcd.print(tempSensor.getTemp());
-//	digitalWrite(12, state);
-//	state = !state;
-//	Serial.printf("State: %d\n", state);
 }

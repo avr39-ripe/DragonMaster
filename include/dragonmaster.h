@@ -25,6 +25,4 @@ extern BinInPollerClass binInPoller;
 
 extern BinOutClass* output[3];
 
-extern uint8_t state;
-
 #endif /* INCLUDE_DRAGONMASTER_H_ */
