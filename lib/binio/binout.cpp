@@ -9,36 +9,32 @@
 
 // BinOutClass
 
-void BinOutClass::addOutput()
+BinOutClass::BinOutClass(uint8_t unitNumber, uint8_t polarity)
 {
-	auto newOutputData = new outputData;
-	_data.add(newOutputData);
+	_unitNumber = unitNumber;
+	_polarity = polarity;
 }
 
-void BinOutClass::addOutput(uint8_t unitNumber, uint8_t polarity)
+void BinOutClass::setState(uint8_t state)
 {
-	auto newOutputData = new outputData;
-	_data.add(newOutputData);
-	uint8_t lastElementId = _data.count() - 1;
-	setUnitNumber(lastElementId, unitNumber);
-	setPolarity(lastElementId, polarity);
-}
-
-void BinOutClass::setState(uint8_t outputId, uint8_t state)
-{
-	_data[outputId]->_state = state ? _data[outputId]->_polarity : !(_data[outputId]->_polarity);
-	_setUnitState(_data[outputId]->_unitNumber, _data[outputId]->_state);
+	_state = state ? _polarity : !(_polarity);
+	_setUnitState(_state);
 }
 
 // BinOutGPIOClass
-
-void BinOutGPIOClass::setUnitNumber(uint8_t outputId, uint8_t unitNumber)
+BinOutGPIOClass::BinOutGPIOClass(uint8_t unitNumber, uint8_t polarity)
+:BinOutClass(unitNumber, polarity)
 {
-	BinOutClass::setUnitNumber(outputId, unitNumber);
+	pinMode(_unitNumber, OUTPUT);
+}
+
+void BinOutGPIOClass::setUnitNumber(uint8_t unitNumber)
+{
+	BinOutClass::setUnitNumber(unitNumber);
 	pinMode(unitNumber, OUTPUT);
 }
 
-void BinOutGPIOClass::_setUnitState(uint8_t unitId, uint8_t state)
+void BinOutGPIOClass::_setUnitState(uint8_t state)
 {
-	digitalWrite(unitId, state);
+	digitalWrite(_unitNumber, state);
 }

@@ -22,6 +22,9 @@ extern LiquidCrystal_I2C lcd;
 
 extern BinInClass* input[2];
 extern BinInPollerClass binInPoller;
+
+extern BinOutClass* output[3];
+
 extern uint8_t state;
 
 #endif /* INCLUDE_DRAGONMASTER_H_ */
