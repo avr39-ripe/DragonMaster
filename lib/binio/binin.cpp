@@ -7,62 +7,70 @@
 
 #include <binin.h>
 
-// BinaryInputClass
+// BinInClass
 
-void BinInClass::start()
+BinInClass::BinInClass(uint8_t unitNumber, uint8_t polarity)
 {
-	_refreshTimer.initializeMs(_refresh, TimerDelegate(&BinInClass::_readState, this)).start(true);
+	_unitNumber = unitNumber;
+	_polarity = polarity;
 }
 
-void BinInClass::stop()
+void BinInClass::onStateChange(onStateChangeDelegate delegateFunction)
 {
-	_refreshTimer.stop();
-}
-
-void BinInClass::addInput()
-{
-	auto newInputData = new inputData;
-	_data.add(newInputData);
-}
-
-void BinInClass::addInput(uint8_t unitNumber, uint8_t polarity)
-{
-	auto newInputData = new inputData;
-	_data.add(newInputData);
-	uint8_t lastElementId = _data.count() - 1;
-	setUnitNumber(lastElementId, unitNumber);
-	setPolarity(lastElementId, polarity);
-}
-
-void BinInClass::onStateChange(uint8_t inputId, onStateChangeDelegate delegateFunction)
-{
-	_data[inputId]->_onChangeState = delegateFunction;
+	_onChangeState = delegateFunction;
 }
 
 void BinInClass::_readState()
 {
 	uint8_t prevState;
-
-	for (uint8_t id=0; id < _data.count(); id++)
+	prevState = _state;
+	_state = _readUnit() ? _polarity : !(_polarity);
+	if (prevState != _state && _onChangeState)
 	{
-		prevState = _data[id]->_state;
-		_data[id]->_state = _readUnit(_data[id]->_unitNumber) ? _data[id]->_polarity : !(_data[id]->_polarity);
-		if (prevState != _data[id]->_state && _data[id]->_onChangeState)
-		{
-			Serial.printf("onChangeState Delegate/CB called!\n");
-			_data[id]->_onChangeState(_data[id]->_state);
-		}
+		Serial.printf("onChangeState Delegate/CB called!\n");
+		_onChangeState(_state);
 	}
 }
-//BinaryInputGPIOClass
 
-void BinInGPIOClass::setUnitNumber(uint8_t inputId, uint8_t unitNumber)
+//BinInGPIOClass
+BinInGPIOClass::BinInGPIOClass(uint8_t unitNumber, uint8_t polarity)
+:BinInClass(unitNumber, polarity)
 {
-	BinInClass::setUnitNumber(inputId, unitNumber);
-	pinMode(unitNumber, INPUT);
+	pinMode(_unitNumber, INPUT);
 }
 
-uint8_t BinInGPIOClass::_readUnit(uint8_t unitId)
+void BinInGPIOClass::setUnitNumber(uint8_t unitNumber)
 {
-	return digitalRead(unitId);
+	BinInClass::setUnitNumber(unitNumber);
+	pinMode(_unitNumber, INPUT);
+}
+
+uint8_t BinInGPIOClass::_readUnit()
+{
+	return digitalRead(_unitNumber);
+}
+
+// BinInPollerClass
+
+void BinInPollerClass::start()
+{
+	_refreshTimer.initializeMs(_refresh, TimerDelegate(&BinInPollerClass::_pollState, this)).start(true);
+}
+
+void BinInPollerClass::stop()
+{
+	_refreshTimer.stop();
+}
+
+void BinInPollerClass::add(BinInClass * binIn)
+{
+	_binIn.add(binIn);
+}
+
+void BinInPollerClass::_pollState()
+{
+	for (uint8_t id=0; id < _binIn.count(); id++)
+	{
+		_binIn[id]->_readState();
+	}
 }

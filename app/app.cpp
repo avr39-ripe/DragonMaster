@@ -15,17 +15,19 @@ void AppClass::init()
 	lcd.begin(16, 2);   // initialize the lcd for 16 chars 2 lines, turn on backlight
 	lcd.backlight();
 
-//	pinMode(15,INPUT);
-//	pinMode(16,INPUT);
-	inputGPIO.addInput(15,1);
-	inputGPIO.addInput(16,0);
+	input[0] = new BinInGPIOClass(15,1);
+//	input[0]->setUnitNumber(15);
+//	input[0]->setPolarity(1);
+	input[1] = new BinInGPIOClass(16,0);
+//	input[1]->setUnitNumber(16);
+//	input[1]->setPolarity(0);
 
-	pinMode(12, OUTPUT);
-	pinMode(13, OUTPUT);
-	pinMode(14, OUTPUT);
-	digitalWrite(12, HIGH);
-	digitalWrite(13, HIGH);
-	digitalWrite(14, HIGH);
+	binInPoller.add(input[0]);
+	binInPoller.add(input[1]);
+
+//	pinMode(12, OUTPUT);
+//	pinMode(13, OUTPUT);
+//	pinMode(14, OUTPUT);
 
 	ds.begin();
 	tempSensor.addSensor();
@@ -36,10 +38,9 @@ void AppClass::init()
 
 void AppClass::start()
 {
-//	Config.loopInterval = 5000;
 	ApplicationClass::start();
-	inputGPIO.start();
 	tempSensor.start();
+	binInPoller.start();
 //	Serial.printf("AppClass start done!\n");
 }
 
@@ -49,7 +50,7 @@ void AppClass::_loop()
 	ApplicationClass::_loop();
 //	Serial.printf("AppClass loop\n");
 //	Serial.printf("GPIO 15: %d GPIO 16: %d\n", digitalRead(15), digitalRead(16));
-	Serial.printf("GPIO 15: %d GPIO 16: %d\n", inputGPIO.getState(0), inputGPIO.getState(1));
+	Serial.printf("GPIO 15: %d GPIO 16: %d\n", input[0]->getState(), input[1]->getState());
 	lcd.setCursor(0,0);
 	lcd.print(_counter);
 	lcd.setCursor(0,1);
