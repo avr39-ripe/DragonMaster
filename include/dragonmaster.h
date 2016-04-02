@@ -12,17 +12,20 @@
 #include <tempsensors.h>
 #include <binin.h>
 #include <binout.h>
+#include <thermostat.h>
 
 //OneWire stuff
 const uint8_t onewire_pin = 2;
 extern OneWire ds;
 
-extern TempSensorsOW tempSensor;
+extern TempSensorsOW* tempSensor;
 extern LiquidCrystal_I2C lcd;
 
 extern BinInClass* input[2];
 extern BinInPollerClass binInPoller;
 
 extern BinOutClass* output[3];
+
+extern ThermostatClass* thermostats[2];
 
 #endif /* INCLUDE_DRAGONMASTER_H_ */
