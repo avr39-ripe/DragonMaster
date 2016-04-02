@@ -28,6 +28,12 @@ void AppClass::init()
 //	pinMode(12, OUTPUT);
 //	pinMode(13, OUTPUT);
 //	pinMode(14, OUTPUT);
+	output[0] = new BinOutGPIOClass(12,0);
+	output[1] = new BinOutGPIOClass(13,0);
+	output[2] = new BinOutGPIOClass(14,0);
+
+	input[0]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[0]));
+	input[1]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[1]));
 
 	ds.begin();
 	tempSensor.addSensor();
@@ -55,7 +61,7 @@ void AppClass::_loop()
 	lcd.print(_counter);
 	lcd.setCursor(0,1);
 	lcd.print(tempSensor.getTemp());
-	digitalWrite(12, state);
-	state = !state;
-	Serial.printf("State: , %d\n", state);
+//	digitalWrite(12, state);
+//	state = !state;
+//	Serial.printf("State: %d\n", state);
 }
