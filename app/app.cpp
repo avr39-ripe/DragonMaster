@@ -31,11 +31,16 @@ void AppClass::init()
 	output[1]->setState(false);
 	output[2]->setState(false);
 
-	input[0]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[0]));
-	input[1]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[1]));
+//	input[0]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[0]));
+//	input[1]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[1]));
 
 	thermostats[0] = new ThermostatClass(*tempSensor);
-	thermostats[0]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[2]));
+//	thermostats[0]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[2]));
+
+//	thermostats[1] = new ThermostatClass(*tempSensor);
+//	thermostats[1]->onStateChange(onStateChangeDelegate(&BinOutClass::setState, output[2]));
+
+	fan = new FanClass(*tempSensor, *thermostats[0], *input[0], *input[1], *output[0]);
 
 	ds.begin();
 	tempSensor->addSensor();
@@ -48,7 +53,7 @@ void AppClass::start()
 {
 	ApplicationClass::start();
 	tempSensor->start();
-	thermostats[0]->start();
+//	thermostats[1]->start();
 	binInPoller.start();
 //	Serial.printf("AppClass start done!\n");
 }

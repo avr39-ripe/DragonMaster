@@ -13,6 +13,7 @@
 #include <binin.h>
 #include <binout.h>
 #include <thermostat.h>
+#include <fan.h>
 
 //OneWire stuff
 const uint8_t onewire_pin = 2;
@@ -27,5 +28,6 @@ extern BinInPollerClass binInPoller;
 extern BinOutClass* output[3];
 
 extern ThermostatClass* thermostats[2];
+extern FanClass* fan;
 
 #endif /* INCLUDE_DRAGONMASTER_H_ */
