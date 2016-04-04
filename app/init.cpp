@@ -3,7 +3,7 @@
 #include <dragonmaster.h>
 
 OneWire ds(onewire_pin);
-TempSensorsOW* tempSensor;
+TempSensors* tempSensor;
 BinInClass* input[2];
 BinInPollerClass binInPoller;
 BinOutClass* output[3];

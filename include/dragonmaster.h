@@ -7,6 +7,7 @@
 
 #ifndef INCLUDE_DRAGONMASTER_H_
 #define INCLUDE_DRAGONMASTER_H_
+#include <SmingCore/SmingCore.h>
 #include <Libraries/LiquidCrystal/LiquidCrystal_I2C.h>
 #include <Libraries/OneWire/OneWire.h>
 #include <tempsensors.h>
@@ -19,7 +20,7 @@
 const uint8_t onewire_pin = 2;
 extern OneWire ds;
 
-extern TempSensorsOW* tempSensor;
+extern TempSensors* tempSensor;
 extern LiquidCrystal_I2C lcd;
 
 extern BinInClass* input[2];
