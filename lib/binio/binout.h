@@ -17,7 +17,7 @@ public:
 	void setUnitNumber(uint8_t unitNumber) { _unitNumber = unitNumber; };
 	void setPolarity(uint8_t polarity) { _polarity = polarity; };
 	void setState(uint8_t state);
-	uint8_t getState() { return _state; };
+	uint8_t getState() { return _state ? _polarity : (!_polarity); };
 protected:
 	uint8_t _unitNumber = 0;
 	uint8_t _state = 0;
