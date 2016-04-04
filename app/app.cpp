@@ -35,6 +35,7 @@ void AppClass::init()
 //	input[1]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[1]));
 
 	thermostats[0] = new ThermostatClass(*tempSensor);
+
 //	thermostats[0]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[2]));
 
 //	thermostats[1] = new ThermostatClass(*tempSensor);
@@ -46,7 +47,10 @@ void AppClass::init()
 	tempSensor->addSensor();
 
 	ApplicationClass::init();
+	thermostats[0]->_loadBinConfig();
+
 	webServer.addPath("/temperature.json",HttpPathDelegate(&TempSensors::onHttpGet,tempSensor));
+	webServer.addPath("/thermostat.fan",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[0]));
 //	Serial.printf("AppClass init done!\n");
 }
 

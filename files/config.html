@@ -78,6 +78,27 @@
 				</div>
 			</div>
 			
+			<!-- Fan Thermostat config -->
+			<div>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Fan thermostat settings</h3>
+					</div>
+					<div class="panel-body">
+						<form id="form_thermostat_fan" method="POST">
+							<div class="form-group">
+								<label for="targetTemp_fan">Target temp, &deg;C</label>
+								<input type="number" required class="form-control" min="15" max="95" step="0.5" id="targetTemp_fan" class="form-control" value="{targetTempFan}">
+								<label for="targetTempDelta_fan">Target temp delta, &deg;C</label>
+								<input type="number" required class="form-control" min="0.5" max="10" step="0.5" id="targetTempDelta_fan" class="form-control" value="{targetTempDeltaFan}">
+							</div>
+							<button type="submit" class="btn btn-success">Save settings</button>
+					  		<button type="button" id="thermostat_fan_cancel" class="btn btn-link">Cancel</button>
+						</form>
+					</div>
+				</div>
+			</div>
+			
 		</div> <!-- /col -->
 	</div> <!-- /row -->
 
