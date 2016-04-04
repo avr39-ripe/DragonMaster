@@ -46,6 +46,7 @@ void AppClass::init()
 	tempSensor->addSensor();
 
 	ApplicationClass::init();
+	webServer.addPath("/temperature.json",HttpPathDelegate(&TempSensors::onHttpGet,tempSensor));
 //	Serial.printf("AppClass init done!\n");
 }
 
