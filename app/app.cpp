@@ -23,9 +23,9 @@ void AppClass::init()
 	binInPoller.add(input[0]);
 	binInPoller.add(input[1]);
 
-	output[0] = new BinOutGPIOClass(12,0); // Fan
-	output[1] = new BinOutGPIOClass(13,0); // Pumup
-	output[2] = new BinOutGPIOClass(14,0); // O3
+	output[0] = new BinOutGPIOClass(12,1); // Fan
+	output[1] = new BinOutGPIOClass(13,1); // Pumup
+	output[2] = new BinOutGPIOClass(14,1); // O3
 
 	output[0]->setState(false);
 	output[1]->setState(false);
@@ -84,6 +84,9 @@ void AppClass::_loop()
 		break;
 	case FanMode::RUN:
 		lcd.print("RUN  ");
+		break;
+	case FanMode::PERIODIC:
+		lcd.print("PERID");
 		break;
 	case FanMode::STOP:
 		lcd.print("STOP ");
