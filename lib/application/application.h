@@ -2,6 +2,10 @@
 #define INCLUDE_APPLICATION_H_
 #include <SmingCore/SmingCore.h>
 
+// download urls, set appropriately
+#define ROM_0_URL  "http://192.168.31.181:80/rom0.bin"
+#define ROM_1_URL  "http://192.168.31.181:80/rom1.bin"
+#define SPIFFS_URL "http://192.168.31.181:80/spiff_rom.bin"
 // If you want, you can define settings globally in Operation System ENV
 // or better in Eclipse Environment Variables
 
@@ -42,6 +46,10 @@ public:
 	ApplicationConfig Config; // Instance of Configuration for application
 	HttpServer webServer; // instance of web server for application
 	void startWebServer(); // Start Application WebServer
+	rBootHttpUpdate* otaUpdater = 0;
+	void OtaUpdate_CallBack(bool result);
+	void OtaUpdate();
+	void Switch();
 protected:
 	virtual void _loop(); // Application main loop function goes here
 	void _initialWifiConfig(); // Doing initial configuration of both Station and AccessPoint
@@ -53,6 +61,7 @@ protected:
 	void _httpOnStateJson(HttpRequest &request, HttpResponse &response);
 	void _httpOnConfiguration(HttpRequest &request, HttpResponse &response);
 	void _httpOnConfigurationJson(HttpRequest &request, HttpResponse &response);
+	void _httpOnUpdate(HttpRequest &request, HttpResponse &response);
 	void _handleWifiConfig(JsonObject& root);
 	uint32_t _counter = 0; // Kind of heartbeat counter
 //	uint16_t _loopInterval;

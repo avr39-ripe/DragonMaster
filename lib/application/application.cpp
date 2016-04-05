@@ -11,10 +11,33 @@
 
 void ApplicationClass::init()
 {
-	spiffs_mount(); // Mount file system, in order to work with files
 	Serial.begin(SERIAL_BAUD_RATE); // 115200 by default
 	Serial.systemDebugOutput(false);
 	Serial.commandProcessing(true);
+
+	int slot = rboot_get_current_rom();
+#ifndef DISABLE_SPIFFS
+	if (slot == 0) {
+#ifdef RBOOT_SPIFFS_0
+		debugf("trying to mount spiffs at %x, length %d", RBOOT_SPIFFS_0 + 0x40200000, SPIFF_SIZE);
+		spiffs_mount_manual(RBOOT_SPIFFS_0 + 0x40200000, 65536);
+#else
+		debugf("trying to mount spiffs at %x, length %d", 0x40300000, 65536);
+		spiffs_mount_manual(0x40300000, SPIFF_SIZE);
+#endif
+	} else {
+#ifdef RBOOT_SPIFFS_1
+		debugf("trying to mount spiffs at %x, length %d", RBOOT_SPIFFS_1 + 0x40200000, SPIFF_SIZE);
+		spiffs_mount_manual(RBOOT_SPIFFS_1 + 0x40200000, SPIFF_SIZE);
+#else
+		debugf("trying to mount spiffs at %x, length %d", 0x40500000, SPIFF_SIZE);
+		spiffs_mount_manual(0x40500000, SPIFF_SIZE);
+#endif
+	}
+#else
+	debugf("spiffs disabled");
+#endif
+//	spiffs_mount(); // Mount file system, in order to work with files
 
 	_initialWifiConfig();
 
@@ -125,6 +148,7 @@ void ApplicationClass::startWebServer()
 	webServer.addPath("/config",HttpPathDelegate(&ApplicationClass::_httpOnConfiguration,this));
 	webServer.addPath("/config.json",HttpPathDelegate(&ApplicationClass::_httpOnConfigurationJson,this));
 	webServer.addPath("/state.json",HttpPathDelegate(&ApplicationClass::_httpOnStateJson,this));
+	webServer.addPath("/update",HttpPathDelegate(&ApplicationClass::_httpOnUpdate,this));
 	webServer.setDefaultHandler(HttpPathDelegate(&ApplicationClass::_httpOnFile,this));
 	_webServerStarted = true;
 
@@ -288,4 +312,113 @@ void ApplicationConfig::save()
 	String buf;
 	root.printTo(buf);
 	fileSetContent(_fileName, buf);
+}
+
+void ApplicationClass::OtaUpdate_CallBack(bool result) {
+
+	Serial.println("In callback...");
+	if(result == true) {
+		// success
+		uint8 slot;
+		slot = rboot_get_current_rom();
+		if (slot == 0) slot = 1; else slot = 0;
+		// set to boot new rom and then reboot
+		Serial.printf("Firmware updated, rebooting to rom %d...\r\n", slot);
+		rboot_set_current_rom(slot);
+		System.restart();
+	} else {
+		// fail
+		Serial.println("Firmware update failed!");
+	}
+}
+
+void ApplicationClass::OtaUpdate() {
+
+	uint8 slot;
+	rboot_config bootconf;
+
+	Serial.println("Updating...");
+
+	// need a clean object, otherwise if run before and failed will not run again
+	if (otaUpdater) delete otaUpdater;
+	otaUpdater = new rBootHttpUpdate();
+
+	// select rom slot to flash
+	bootconf = rboot_get_config();
+	slot = bootconf.current_rom;
+	if (slot == 0) slot = 1; else slot = 0;
+
+#ifndef RBOOT_TWO_ROMS
+	// flash rom to position indicated in the rBoot config rom table
+	otaUpdater->addItem(bootconf.roms[slot], ROM_0_URL);
+#else
+	// flash appropriate rom
+	if (slot == 0) {
+		otaUpdater->addItem(bootconf.roms[slot], ROM_0_URL);
+	} else {
+		otaUpdater->addItem(bootconf.roms[slot], ROM_1_URL);
+	}
+#endif
+
+#ifndef DISABLE_SPIFFS
+	// use user supplied values (defaults for 4mb flash in makefile)
+	if (slot == 0) {
+		otaUpdater->addItem(RBOOT_SPIFFS_0, SPIFFS_URL);
+	} else {
+		otaUpdater->addItem(RBOOT_SPIFFS_1, SPIFFS_URL);
+	}
+#endif
+
+	// request switch and reboot on success
+	//otaUpdater->switchToRom(slot);
+	// and/or set a callback (called on failure or success without switching requested)
+	otaUpdater->setCallback(otaUpdateDelegate(&ApplicationClass::OtaUpdate_CallBack,this));
+
+	// start update
+	otaUpdater->start();
+}
+
+void ApplicationClass::Switch() {
+	uint8 before, after;
+	before = rboot_get_current_rom();
+	if (before == 0) after = 1; else after = 0;
+	Serial.printf("Swapping from rom %d to rom %d.\r\n", before, after);
+	rboot_set_current_rom(after);
+	Serial.println("Restarting...\r\n");
+	System.restart();
+}
+
+void ApplicationClass::_httpOnUpdate(HttpRequest &request, HttpResponse &response)
+{
+	if (request.getRequestMethod() == RequestMethod::POST)
+		{
+			debugf("Update POST request\n");
+
+			if (request.getBody() == NULL)
+			{
+				debugf("Empty Request Body!\n");
+				return;
+			}
+			else // Request Body Not Empty
+			{
+	//Uncomment next line for extra debuginfo
+	//			Serial.printf(request.getBody());
+				DynamicJsonBuffer jsonBuffer;
+				JsonObject& root = jsonBuffer.parseObject(request.getBody());
+	//Uncomment next line for extra debuginfo
+				root.prettyPrintTo(Serial);
+
+
+				//Application config processing
+
+				if (root["update"].success()) // There is loopInterval parameter in json
+				{
+					OtaUpdate();
+				}
+				if (root["switch"].success()) // There is loopInterval parameter in json
+				{
+					Switch();
+				}
+			} // Request Body Not Empty
+		} // Request method is POST
 }
