@@ -72,7 +72,7 @@ void AppClass::_loop()
 	lcd.clear();
 	ApplicationClass::_loop();
 //	Serial.printf("AppClass loop\n");
-	Serial.printf("GPIO 15: %d GPIO 16: %d\n", input[0]->getState(), input[1]->getState());
+//	Serial.printf("GPIO 15: %d GPIO 16: %d\n", input[0]->getState(), input[1]->getState());
 	lcd.setCursor(0,0);
 	switch (fan->getMode())
 	{
