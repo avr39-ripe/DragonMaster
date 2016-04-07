@@ -73,6 +73,7 @@ void AppClass::_loop()
 	ApplicationClass::_loop();
 //	Serial.printf("AppClass loop\n");
 //	Serial.printf("GPIO 15: %d GPIO 16: %d\n", input[0]->getState(), input[1]->getState());
+	Serial.printf("Free Heap: %d\r\n", system_get_free_heap_size());
 	lcd.setCursor(0,0);
 	switch (fan->getMode())
 	{
