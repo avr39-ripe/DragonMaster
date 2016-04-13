@@ -34,11 +34,11 @@ void AppClass::init()
 //	input[0]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[0]));
 //	input[1]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[1]));
 
-	thermostats[0] = new ThermostatClass(*tempSensor, ThermostatMode::HEATING, false, "Fan"); // Fan thermostat
+	thermostats[0] = new ThermostatClass(*tempSensor, ThermostatMode::HEATING, false, false, "Fan"); // Fan thermostat
 
 //	thermostats[0]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[2]));
 
-	thermostats[1] = new ThermostatClass(*tempSensor, ThermostatMode::COOLING, true, "Pump"); // Pump thermostat
+	thermostats[1] = new ThermostatClass(*tempSensor, ThermostatMode::COOLING, true, false, "Pump"); // Pump thermostat
 	thermostats[1]->onStateChange(onStateChangeDelegate(&BinOutClass::setState, output[1]));
 
 	fan = new FanClass(*tempSensor, *thermostats[0], *input[0], *input[1], *output[0]); // Fan controller
