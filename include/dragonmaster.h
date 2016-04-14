@@ -15,6 +15,7 @@
 #include <binout.h>
 #include <thermostat.h>
 #include <fan.h>
+#include <weekthermostat.h>
 
 //OneWire stuff
 const uint8_t onewire_pin = 2;
