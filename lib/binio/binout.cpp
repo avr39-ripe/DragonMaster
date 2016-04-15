@@ -38,3 +38,22 @@ void BinOutGPIOClass::_setUnitState(uint8_t state)
 {
 	digitalWrite(_unitNumber, state);
 }
+
+// BinOutMCP23S17Class
+BinOutMCP23S17Class::BinOutMCP23S17Class(MCP &mcp, uint8_t unitNumber, uint8_t polarity)
+:BinOutClass(unitNumber, polarity)
+{
+	_mcp = &mcp;
+//	_mcp->pinMode(_unitNumber, OUTPUT);
+}
+
+void BinOutMCP23S17Class::setUnitNumber(uint8_t unitNumber)
+{
+	BinOutClass::setUnitNumber(unitNumber);
+//	_mcp->pinMode(_unitNumber, OUTPUT);
+}
+
+void BinOutMCP23S17Class::_setUnitState(uint8_t state)
+{
+	_mcp->digitalWrite(_unitNumber, state);
+}

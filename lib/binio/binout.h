@@ -8,6 +8,7 @@
 #ifndef LIB_BINIO_BINOUT_H_
 #define LIB_BINIO_BINOUT_H_
 #include <SmingCore/SmingCore.h>
+#include <Libraries/MCP23S17/MCP23S17.h>
 
 class BinOutClass
 {
@@ -33,6 +34,17 @@ public:
 	void setUnitNumber(uint8_t unitNumber);
 protected:
 	virtual void _setUnitState(uint8_t state);
+};
+
+class BinOutMCP23S17Class : public BinOutClass
+{
+public:
+	BinOutMCP23S17Class(MCP &mcp, uint8_t unitNumber, uint8_t polarity);
+	virtual ~BinOutMCP23S17Class() {};
+	void setUnitNumber(uint8_t unitNumber);
+protected:
+	virtual void _setUnitState(uint8_t state);
+	MCP *_mcp;
 };
 
 #endif /* LIB_BINIO_BINOUT_H_ */

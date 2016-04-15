@@ -16,6 +16,7 @@ void AppClass::init()
 	lcd.backlight();
 
 	tempSensor = new TempSensorsOW(ds, 4000);
+	mcp001 = new MCP(0x001, mcp23s17_cs);
 
 	input[0] = new BinInGPIOClass(15,1); // Start button
 	input[1] = new BinInGPIOClass(16,0); // Stop button
@@ -23,14 +24,18 @@ void AppClass::init()
 	binInPoller.add(input[0]);
 	binInPoller.add(input[1]);
 
+#ifndef MCP23S17 //use GPIO
 	output[0] = new BinOutGPIOClass(12,1); // Fan
 	output[1] = new BinOutGPIOClass(13,1); // Pumup
 	output[2] = new BinOutGPIOClass(14,1); // O3
-
+#else
+	output[0] = new BinOutMCP23S17Class(*mcp001,1,0); // Fan
+	output[1] = new BinOutMCP23S17Class(*mcp001,2,0); // Pumup
+	output[2] = new BinOutMCP23S17Class(*mcp001,3,0); // O3
+#endif
 	output[0]->setState(false);
 	output[1]->setState(false);
 	output[2]->setState(false);
-
 //	input[0]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[0]));
 //	input[1]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[1]));
 
@@ -64,6 +69,9 @@ void AppClass::start()
 	tempSensor->start();
 	thermostats[1]->start();
 	binInPoller.start();
+	mcp001->begin();
+	mcp001->pinMode(0xFF00); // Set PORTA to output
+	mcp001->digitalWrite(0x00FF); //Set all PORTA to 0xFF for simple relay which is active LOW
 //	Serial.printf("AppClass start done!\n");
 }
 

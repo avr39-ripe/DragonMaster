@@ -10,6 +10,7 @@
 #include <SmingCore/SmingCore.h>
 #include <Libraries/LiquidCrystal/LiquidCrystal_I2C.h>
 #include <Libraries/OneWire/OneWire.h>
+#include <Libraries/MCP23S17/MCP23S17.h>
 #include <tempsensors.h>
 #include <binin.h>
 #include <binout.h>
@@ -17,9 +18,15 @@
 #include <fan.h>
 #include <weekthermostat.h>
 
+//output mode selector: GPIO or MCP23S17
+#define MCP23S17
+
 //OneWire stuff
 const uint8_t onewire_pin = 2;
 extern OneWire ds;
+
+const uint8_t mcp23s17_cs = 15;
+extern MCP* mcp001;
 
 extern TempSensors* tempSensor;
 extern LiquidCrystal_I2C lcd;
