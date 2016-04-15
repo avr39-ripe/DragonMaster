@@ -22,8 +22,8 @@ void AppClass::init()
 	input[0] = new BinInGPIOClass(15,1); // Start button
 	input[1] = new BinInGPIOClass(16,0); // Stop button
 #else
-	input[0] = new BinInMCP23S17Class(*mcp001,1,1); // Start button
-	input[1] = new BinInMCP23S17Class(*mcp001,2,1); // Stop button
+	input[0] = new BinInMCP23S17Class(*mcp001,1,0); // Start button
+	input[1] = new BinInMCP23S17Class(*mcp001,2,0); // Stop button
 #endif
 	binInPoller.add(input[0]);
 	binInPoller.add(input[1]);
