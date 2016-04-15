@@ -50,6 +50,25 @@ uint8_t BinInGPIOClass::_readUnit()
 	return digitalRead(_unitNumber);
 }
 
+//BinInMCP23S17Class
+BinInMCP23S17Class::BinInMCP23S17Class(MCP &mcp, uint8_t unitNumber, uint8_t polarity)
+:BinInClass(unitNumber, polarity)
+{
+	_mcp = &mcp;
+//	_mcp->pinMode(_unitNumber, INPUT);
+}
+
+void BinInMCP23S17Class::setUnitNumber(uint8_t unitNumber)
+{
+	BinInClass::setUnitNumber(unitNumber);
+//	pinMode(_unitNumber, INPUT);
+}
+
+uint8_t BinInMCP23S17Class::_readUnit()
+{
+	return _mcp->digitalRead(_unitNumber);
+}
+
 // BinInPollerClass
 
 void BinInPollerClass::start()
