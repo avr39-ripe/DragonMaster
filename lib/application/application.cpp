@@ -20,18 +20,18 @@ void ApplicationClass::init()
 	if (slot == 0) {
 #ifdef RBOOT_SPIFFS_0
 		debugf("trying to mount spiffs at %x, length %d", RBOOT_SPIFFS_0 + 0x40200000, SPIFF_SIZE);
-		spiffs_mount_manual(RBOOT_SPIFFS_0 + 0x40200000, 65536);
+		spiffs_mount_manual(RBOOT_SPIFFS_0 + 0x40200000, SPIFF_SIZE);
 #else
-		debugf("trying to mount spiffs at %x, length %d", 0x40300000, 1000000);
-		spiffs_mount_manual(0x40300000, 1000000);
+		debugf("trying to mount spiffs at %x, length %d", 0x40300000, SPIFF_SIZE);
+		spiffs_mount_manual(0x40300000, SPIFF_SIZE);
 #endif
 	} else {
 #ifdef RBOOT_SPIFFS_1
 		debugf("trying to mount spiffs at %x, length %d", RBOOT_SPIFFS_1 + 0x40200000, SPIFF_SIZE);
 		spiffs_mount_manual(RBOOT_SPIFFS_1 + 0x40200000, SPIFF_SIZE);
 #else
-		debugf("trying to mount spiffs at %x, length %d", 0x40500000, 1000000);
-		spiffs_mount_manual(0x40500000, 1000000);
+		debugf("trying to mount spiffs at %x, length %d", 0x40500000, SPIFF_SIZE);
+		spiffs_mount_manual(0x40500000, SPIFF_SIZE);
 #endif
 	}
 #else

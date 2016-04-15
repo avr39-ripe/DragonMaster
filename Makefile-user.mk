@@ -65,7 +65,7 @@ SPI_SIZE        ?= 4M
 #ESPTOOL2        ?= esptool2
 
 RBOOT_RTC_ENABLED = 1
-SPIFF_SIZE      ?= 1000000
+SPIFF_SIZE      ?= 262144
 #RBOOT_SPIFFS_0  ?= 0x300000
 
 MODULES = app lib/application lib/tempsensor lib/binio lib/thermostat lib/fan
