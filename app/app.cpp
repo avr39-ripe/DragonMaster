@@ -48,7 +48,7 @@ void AppClass::init()
 //	thermostats[0]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[2]));
 
 	thermostats[1] = new ThermostatClass(*tempSensor, ThermostatMode::COOLING, true, false, "Pump"); // Pump thermostat
-	thermostats[1]->onStateChange(onStateChangeDelegate(&BinOutClass::setState, output[1]));
+	thermostats[1]->state.onChange(onStateChangeDelegate(&BinOutClass::setState, output[1]));
 
 	fan = new FanClass(*tempSensor, *thermostats[0], *input[0], *input[1], *output[0]); // Fan controller
 
