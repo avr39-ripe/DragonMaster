@@ -18,15 +18,15 @@ class BinStateClass
 {
 public:
 	BinStateClass(){};
-	uint8_t getState() { return _state; };
-	void setState(uint8_t state, uint8_t forceDelegatesCall = false);
-	void onStateChange(onStateChangeDelegate delegateFunction, uint8_t directState = true);
+	uint8_t get() { return _state; };
+	void set(uint8_t state, uint8_t forceDelegatesCall = false);
+	void onChange(onStateChangeDelegate delegateFunction, uint8_t directState = true);
 protected:
 private:
 	uint8_t _state = false;
-	void _callOnStateChangeDelegates();
-	Vector<onStateChangeDelegate> _onChangeState; // call them with _state as argument
-	Vector<onStateChangeDelegate> _onChangeStateInverse; // call them with !_state as argument
+	void _callOnChangeDelegates();
+	Vector<onStateChangeDelegate> _onChange; // call them with _state as argument
+	Vector<onStateChangeDelegate> _onChangeInverse; // call them with !_state as argument
 };
 
 

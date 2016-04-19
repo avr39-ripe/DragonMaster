@@ -7,39 +7,39 @@
 #include <binstate.h>
 
 
-void BinStateClass::setState(uint8_t state, uint8_t forceDelegatesCall)
+void BinStateClass::set(uint8_t state, uint8_t forceDelegatesCall)
 {
 	uint8_t prevState = _state;
 	_state = state;
 //	Serial.printf("Thermostat %s: %s\n", _name.c_str(), _state ? "true" : "false");
 	if (_state != prevState || forceDelegatesCall)
 	{
-		_callOnStateChangeDelegates();
+		_callOnChangeDelegates();
 	}
 }
 
-void BinStateClass::onStateChange(onStateChangeDelegate delegateFunction, uint8_t directState)
+void BinStateClass::onChange(onStateChangeDelegate delegateFunction, uint8_t directState)
 {
 	if (directState)
 	{
-		_onChangeState.add(delegateFunction);
+		_onChange.add(delegateFunction);
 	}
 	else
 	{
-		_onChangeStateInverse.add(delegateFunction);
+		_onChangeInverse.add(delegateFunction);
 	}
 
 }
 
-void BinStateClass::_callOnStateChangeDelegates()
+void BinStateClass::_callOnChangeDelegates()
 {
-	for (uint8_t i = 0; i < _onChangeState.count(); i++)
+	for (uint8_t i = 0; i < _onChange.count(); i++)
 	{
-		_onChangeState[i](_state);
+		_onChange[i](_state);
 	}
 
-	for (uint8_t i = 0; i < _onChangeStateInverse.count(); i++)
+	for (uint8_t i = 0; i < _onChangeInverse.count(); i++)
 	{
-		_onChangeStateInverse[i](!_state);
+		_onChangeInverse[i](!_state);
 	}
 }
