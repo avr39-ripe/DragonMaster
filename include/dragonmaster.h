@@ -26,8 +26,10 @@ extern NtpClient* ntpClient;
 const uint8_t onewire_pin = 2;
 extern OneWire ds;
 
+#ifdef MCP23S17 //use MCP23S17
 const uint8_t mcp23s17_cs = 15;
 extern MCP* mcp001;
+#endif
 
 extern TempSensors* tempSensor;
 extern LiquidCrystal_I2C lcd;

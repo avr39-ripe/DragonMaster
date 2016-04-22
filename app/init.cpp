@@ -4,7 +4,9 @@
 
 NtpClient* ntpClient;
 OneWire ds(onewire_pin);
+#ifdef MCP23S17 //use MCP23S17
 MCP* mcp001;
+#endif
 TempSensors* tempSensor;
 BinInClass* input[2];
 BinInPollerClass binInPoller;

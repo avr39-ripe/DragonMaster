@@ -21,7 +21,9 @@ void AppClass::init()
 	lcd.backlight();
 
 	tempSensor = new TempSensorsOW(ds, 4000);
+#ifdef MCP23S17 //use MCP23S17
 	mcp001 = new MCP(0x001, mcp23s17_cs);
+#endif
 
 #ifndef MCP23S17 //use GPIO
 	input[0] = new BinInGPIOClass(15,1); // Start button
@@ -79,10 +81,12 @@ void AppClass::start()
 	tempSensor->start();
 	thermostats[1]->start();
 	binInPoller.start();
+#ifdef MCP23S17 //use MCP23S17
 	mcp001->begin();
 	mcp001->pinMode(0xFF00); // Set PORTA to OUTPUT 0x00, PORTB to INPUT 0xFF
 	mcp001->pullupMode(0xFF00); // turn on internal pull-up for PORTB 0xFF
 	mcp001->digitalWrite(0x00FF); //Set all PORTA to 0xFF for simple relay which is active LOW
+#endif
 //	Serial.printf("AppClass start done!\n");
 }
 
