@@ -8,6 +8,7 @@
 #include <dragonmaster.h>
 
 //AppClass
+void monitor(HttpRequest &request, HttpResponse &response); // Monitor via json some important params
 
 void AppClass::init()
 {
@@ -68,6 +69,7 @@ void AppClass::init()
 	webServer.addPath("/thermostat.fan",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[0]));
 	webServer.addPath("/thermostat.pump",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[1]));
 	webServer.addPath("/fan",HttpPathDelegate(&FanClass::onHttpConfig,fan));
+	webServer.addPath("/monitor",monitor);
 //	Serial.printf("AppClass init done!\n");
 }
 
@@ -120,4 +122,18 @@ void AppClass::_loop()
 	lcd.setCursor(7,1);
 //	lcd.print(_counter);
 	lcd.print(nowTime.toShortTimeString(true).c_str());
+}
+
+void monitor(HttpRequest &request, HttpResponse &response)
+{
+	JsonObjectStream* stream = new JsonObjectStream();
+	JsonObject& json = stream->getRoot();
+
+	json["fan"] = output[0]->getState();
+	json["pump"] = output[1]->getState();
+	json["mode"] = fan->getMode();
+
+
+	response.setHeader("Access-Control-Allow-Origin", "*");
+	response.sendJsonObject(stream);
 }
