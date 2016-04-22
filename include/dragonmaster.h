@@ -21,6 +21,7 @@
 //output mode selector: GPIO or MCP23S17
 #define MCP23S17
 
+extern NtpClient* ntpClient;
 //OneWire stuff
 const uint8_t onewire_pin = 2;
 extern OneWire ds;

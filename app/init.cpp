@@ -2,6 +2,7 @@
 #include <user_config.h>
 #include <dragonmaster.h>
 
+NtpClient* ntpClient;
 OneWire ds(onewire_pin);
 MCP* mcp001;
 TempSensors* tempSensor;

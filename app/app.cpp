@@ -11,6 +11,10 @@
 
 void AppClass::init()
 {
+	ntpClient = new NtpClient("pool.ntp.org", 300);
+	//TODO: add config param for TZ!
+	SystemClock.setTimeZone(3);
+
 	Wire.pins(5,4);
 	lcd.begin(16, 2);   // initialize the lcd for 16 chars 2 lines, turn on backlight
 	lcd.backlight();
@@ -82,10 +86,13 @@ void AppClass::start()
 
 void AppClass::_loop()
 {
+	DateTime nowTime = SystemClock.now();
+
 	lcd.clear();
 	ApplicationClass::_loop();
 //	Serial.printf("AppClass loop\n");
 //	Serial.printf("GPIO 15: %d GPIO 16: %d\n", input[0]->getState(), input[1]->getState());
+	Serial.printf("%s - Fan: %d Pump: %d\n", nowTime.toShortTimeString(true).c_str(), thermostats[0]->state.get(), thermostats[1]->state.get());
 	Serial.printf("Free Heap: %d\r\n", system_get_free_heap_size());
 	lcd.setCursor(0,0);
 	switch (fan->getMode())
@@ -111,5 +118,6 @@ void AppClass::_loop()
 	lcd.setCursor(0,1);
 	lcd.print(tempSensor->getTemp());
 	lcd.setCursor(7,1);
-	lcd.print(_counter);
+//	lcd.print(_counter);
+	lcd.print(nowTime.toShortTimeString(true).c_str());
 }
