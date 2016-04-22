@@ -19,7 +19,7 @@
 #include <weekthermostat.h>
 
 //output mode selector: GPIO or MCP23S17
-#define MCP23S17
+//#define MCP23S17
 
 extern NtpClient* ntpClient;
 //OneWire stuff
