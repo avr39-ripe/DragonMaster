@@ -20,7 +20,7 @@ function postFanConfig(event) {
             'periodicInterval'		:	document.getElementById('periodicInterval').value,
             'periodicDuration'		:	document.getElementById('periodicDuration').value,
             'periodicTempDelta'		:	document.getElementById('periodicTempDelta').value * 100,
-            'maxLowTempCount'		:	document.getElementById('maxLowTempCount').value
+            'checkerInterval'		:	document.getElementById('checkerInterval').value
             };
    	fetch('/fan', {
 		method: 'post',
