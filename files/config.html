@@ -70,6 +70,11 @@
 							<div class="form-group">
 								<label for="loopInterval">Main loop interval, ms</label>
 								<input type="number" required class="form-control" min="100" max="60000" step="1" id="loopInterval" name="loopInterval" class="form-control" value="{loopInterval}">
+								<label for="updateURL">Firmware update URL</label>
+								<input type="url" required class="form-control" id="updateURL" name="updateURL" value="{updateURL}">
+								<br>
+								<button type="button" id="settings_update_fw" class="btn btn-danger">Update Firmware</button>
+								<button type="button" id="settings_switch_fw" class="btn btn-primary">Switch Firmware</button>							
 							</div>
 							<button type="submit" class="btn btn-success">Save settings</button>
 					  		<button type="button" id="settings_cancel" class="btn btn-link">Cancel</button>

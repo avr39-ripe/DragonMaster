@@ -45,6 +45,7 @@ void ApplicationClass::init()
 
 	// Attach Wifi events handlers
 	WifiEvents.onStationDisconnect(onStationDisconnectDelegate(&ApplicationClass::_STADisconnect, this));
+	WifiEvents.onStationConnect(onStationConnectDelegate(&ApplicationClass::_STAConnect, this));
 	WifiEvents.onStationAuthModeChange(onStationAuthModeChangeDelegate(&ApplicationClass::_STAAuthModeChange, this));
 	WifiEvents.onStationGotIP(onStationGotIPDelegate(&ApplicationClass::_STAGotIP, this));
 
@@ -103,6 +104,7 @@ void ApplicationClass::_STADisconnect(String ssid, uint8_t ssid_len, uint8_t bss
 {
 	debugf("DISCONNECT - SSID: %s, REASON: %d\n", ssid.c_str(), reason);
 
+	_reconnectTimer.stop();
 	if (!WifiAccessPoint.isEnabled())
 	{
 		debugf("Starting OWN AP");
@@ -130,13 +132,28 @@ void ApplicationClass::_STAGotIP(IPAddress ip, IPAddress mask, IPAddress gateway
 	debugf("GOTIP - IP: %s, MASK: %s, GW: %s\n", ip.toString().c_str(),
 																mask.toString().c_str(),
 																gateway.toString().c_str());
-
+	_reconnectTimer.stop();
 	if (WifiAccessPoint.isEnabled())
 	{
 		debugf("Shutdown OWN AP");
 		WifiAccessPoint.enable(false);
 	}
 	// Add commands to be executed after successfully connecting to AP and got IP from it
+}
+
+void ApplicationClass::_STAConnect(String ssid, uint8_t ssid_len, uint8_t bssid[6], uint8_t channel)
+{
+	debugf("DELEGATE CONNECT - SSID: %s, CHANNEL: %d\n", ssid.c_str(), channel);
+
+	wifi_station_dhcpc_set_maxtry(128);
+	_reconnectTimer.initializeMs(35000, TimerDelegate(&ApplicationClass::_STAReconnect,this)).start();
+	// Add commands to be executed after successfully connecting to AP
+}
+
+void ApplicationClass::_STAReconnect()
+{
+	WifiStation.disconnect();
+	WifiStation.connect();
 }
 
 void ApplicationClass::startWebServer()
@@ -205,6 +222,7 @@ void ApplicationClass::_httpOnConfiguration(HttpRequest &request, HttpResponse &
 		{
 //Uncomment next line for extra debuginfo
 //			Serial.printf(request.getBody());
+			uint8_t needSave = false;
 			DynamicJsonBuffer jsonBuffer;
 			JsonObject& root = jsonBuffer.parseObject(request.getBody());
 //Uncomment next line for extra debuginfo
@@ -219,8 +237,20 @@ void ApplicationClass::_httpOnConfiguration(HttpRequest &request, HttpResponse &
 			{
 				Config.loopInterval = root["loopInterval"];
 				start(); // restart main application loop with new loopInterval setting
+				needSave = true;
 			}
-			Config.save();
+
+
+			if (root["updateURL"].success()) // There is loopInterval parameter in json
+			{
+				Config.updateURL = String((const char *)root["updateURL"]);
+				needSave = true;
+			}
+
+			if (needSave)
+			{
+				Config.save();
+			}
 		} // Request Body Not Empty
 	} // Request method is POST
 	else
@@ -275,6 +305,7 @@ void ApplicationClass::_httpOnConfigurationJson(HttpRequest &request, HttpRespon
 
 	//Application configuration parameters
 	json["loopInterval"] = Config.loopInterval;
+	json["updateURL"] = Config.updateURL;
 
 	response.sendJsonObject(stream);
 }
@@ -292,6 +323,7 @@ void ApplicationConfig::load()
 		JsonObject& root = jsonBuffer.parseObject(jsonString);
 
 		loopInterval = root["loopInterval"];
+		updateURL = String((const char *)root["updateURL"]);
 
 		delete[] jsonString;
 	}
@@ -299,6 +331,7 @@ void ApplicationConfig::load()
 	{
 		//Factory defaults if no config file present
 		loopInterval = 1000; // 1 second
+		updateURL = "http://192.168.31.181/";
 	}
 }
 
@@ -308,6 +341,7 @@ void ApplicationConfig::save()
 	JsonObject& root = jsonBuffer.createObject();
 
 	root["loopInterval"] = loopInterval;
+	root["updateURL"] = updateURL;
 
 	String buf;
 	root.printTo(buf);
@@ -350,7 +384,7 @@ void ApplicationClass::OtaUpdate() {
 
 #ifndef RBOOT_TWO_ROMS
 	// flash rom to position indicated in the rBoot config rom table
-	otaUpdater->addItem(bootconf.roms[slot], ROM_0_URL);
+	otaUpdater->addItem(bootconf.roms[slot], Config.updateURL + "rom0.bin");
 #else
 	// flash appropriate rom
 	if (slot == 0) {
@@ -363,9 +397,9 @@ void ApplicationClass::OtaUpdate() {
 #ifndef DISABLE_SPIFFS
 	// use user supplied values (defaults for 4mb flash in makefile)
 	if (slot == 0) {
-		otaUpdater->addItem(RBOOT_SPIFFS_0, SPIFFS_URL);
+		otaUpdater->addItem(RBOOT_SPIFFS_0, Config.updateURL + "spiff_rom.bin");
 	} else {
-		otaUpdater->addItem(RBOOT_SPIFFS_1, SPIFFS_URL);
+		otaUpdater->addItem(RBOOT_SPIFFS_1, Config.updateURL + "spiff_rom.bin");
 	}
 #endif
 

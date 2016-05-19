@@ -122,11 +122,26 @@ function post_netcfg(event) {
 function post_config(event) {
 	event.preventDefault();
 	var formData = {
-			'loopInterval'			:	document.getElementById('loopInterval').value
+			'loopInterval'			:	document.getElementById('loopInterval').value,
+			'updateURL'				:	document.getElementById('updateURL').value
 			};
 	post_cfg(formData);
 }
 
+function post_fw(action) {
+// action should be either "update" or "switch"
+	var json = {};
+	json[action] = 1;
+	
+	fetch('/update', {
+		method: 'post',
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json; charset=utf-8'
+			},
+		body: JSON.stringify(json)
+	});
+}
 //Here we put some initial code which starts after DOM loaded
 function onDocumentRedy() {
     //Init
@@ -139,6 +154,8 @@ function onDocumentRedy() {
     document.getElementById('netcfg_cancel').addEventListener('click', get_config);
     document.getElementById('form_settings').addEventListener('submit', post_config);
 	document.getElementById('settings_cancel').addEventListener('click', get_config);
+	document.getElementById('settings_update_fw').addEventListener('click', function() { post_fw("update"); });
+	document.getElementById('settings_switch_fw').addEventListener('click', function() { post_fw("switch"); });
 	document.getElementById('form_thermostat_fan').addEventListener('submit', post_fan_config);
 	document.getElementById('thermostat_fan_cancel').addEventListener('click', get_fan_config);
 	document.getElementById('form_thermostat_pump').addEventListener('submit', post_pump_config);

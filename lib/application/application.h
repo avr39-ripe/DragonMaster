@@ -2,10 +2,6 @@
 #define INCLUDE_APPLICATION_H_
 #include <SmingCore/SmingCore.h>
 
-// download urls, set appropriately
-#define ROM_0_URL  "http://192.168.31.181:80/rom0.bin"
-#define ROM_1_URL  "http://192.168.31.181:80/rom1.bin"
-#define SPIFFS_URL "http://192.168.31.181:80/spiff_rom.bin"
 // If you want, you can define settings globally in Operation System ENV
 // or better in Eclipse Environment Variables
 
@@ -31,6 +27,7 @@ public:
 	void save();
 	// Configuration parameters goes next
 	uint32_t loopInterval = 0; // loop interval in ms
+	String updateURL; // Firmware update URL
 private:
 	String _fileName = APP_CONFIG_FILE;
 };
@@ -54,8 +51,10 @@ protected:
 	virtual void _loop(); // Application main loop function goes here
 	void _initialWifiConfig(); // Doing initial configuration of both Station and AccessPoint
 	void _STADisconnect(String ssid, uint8_t ssid_len, uint8_t bssid[6], uint8_t reason); // Runs when Station disconnects
+	void _STAConnect(String ssid, uint8_t ssid_len, uint8_t bssid[6], uint8_t channel); // Runs when Station connects
 	void _STAAuthModeChange(uint8_t oldMode, uint8_t newMode); // Runs when Station auth mode changes
 	void _STAGotIP(IPAddress ip, IPAddress mask, IPAddress gateway); // Runs when Station got ip from access-point
+	void _STAReconnect();
 	void _httpOnFile(HttpRequest &request, HttpResponse &response);
 	void _httpOnIndex(HttpRequest &request, HttpResponse &response);
 	void _httpOnStateJson(HttpRequest &request, HttpResponse &response);
@@ -66,6 +65,7 @@ protected:
 	uint32_t _counter = 0; // Kind of heartbeat counter
 //	uint16_t _loopInterval;
 	Timer _loopTimer; // Timer for serving loop
+	Timer _reconnectTimer; // Timer for STA reconnect routine
 	uint8_t _webServerStarted = false;
 
 };
