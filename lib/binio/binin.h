@@ -7,8 +7,8 @@
 
 #ifndef LIB_BINIO_BINARYINPUT_H_
 #define LIB_BINIO_BINARYINPUT_H_
-#include <SmingCore/SmingCore.h>
-#include <Libraries/MCP23S17/MCP23S17.h>
+#include <include/SmingCore.h>
+#include <libraries/MCP23S17/MCP23S17.h>
 
 typedef Delegate<void(uint8_t state)> onStateChangeDelegate;
 

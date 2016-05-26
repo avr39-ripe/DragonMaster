@@ -1,6 +1,6 @@
 #ifndef INCLUDE_APPLICATION_H_
 #define INCLUDE_APPLICATION_H_
-#include <SmingCore/SmingCore.h>
+#include <SmingCore.h>
 
 // If you want, you can define settings globally in Operation System ENV
 // or better in Eclipse Environment Variables

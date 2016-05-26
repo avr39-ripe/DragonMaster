@@ -43,7 +43,7 @@ RBOOT_ENABLED ?= 1
 ## enable big flash support (for multiple roms, each in separate 1mb block of flash)
 RBOOT_BIG_FLASH ?= 1
 ## two rom mode (where two roms sit in the same 1mb block of flash)
-RBOOT_TWO_ROMS  ?= 0
+#RBOOT_TWO_ROMS  ?= 1
 ## size of the flash chip
 SPI_SIZE        ?= 4M
 ## output file for first rom (.bin will be appended)
@@ -64,10 +64,8 @@ SPI_SIZE        ?= 4M
 ## esptool2 path
 #ESPTOOL2        ?= esptool2
 
-RBOOT_RTC_ENABLED = 1
-SPIFF_SIZE      ?= 262144
+SPIFF_SIZE      = 262144
 #RBOOT_SPIFFS_0  ?= 0x300000
 
 MODULES = app lib/application lib/tempsensor lib/binio lib/thermostat lib/fan
 EXTRA_INCLUDES = lib/application lib/tempsensor lib/binio lib/thermostat lib/fan
-

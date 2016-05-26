@@ -7,7 +7,7 @@
 
 #ifndef INCLUDE_THERMO_H_
 #define INCLUDE_THERMO_H_
-#include <SmingCore/SmingCore.h>
+#include <include/SmingCore.h>
 #include <tempsensors.h>
 #include <binstate.h>
 

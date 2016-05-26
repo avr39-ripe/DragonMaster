@@ -7,10 +7,10 @@
 
 #ifndef INCLUDE_DRAGONMASTER_H_
 #define INCLUDE_DRAGONMASTER_H_
-#include <SmingCore/SmingCore.h>
-#include <Libraries/LiquidCrystal/LiquidCrystal_I2C.h>
-#include <Libraries/OneWire/OneWire.h>
-#include <Libraries/MCP23S17/MCP23S17.h>
+#include <SmingCore.h>
+#include <libraries/LiquidCrystal/LiquidCrystal_I2C.h>
+#include <libraries/OneWire/OneWire.h>
+#include <libraries/MCP23S17/MCP23S17.h>
 #include <tempsensors.h>
 #include <binin.h>
 #include <binout.h>

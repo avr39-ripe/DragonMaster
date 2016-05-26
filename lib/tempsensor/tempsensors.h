@@ -7,8 +7,8 @@
 
 #ifndef LIB_TEMPSENSOR_TEMPSENSORS_H_
 #define LIB_TEMPSENSOR_TEMPSENSORS_H_
-#include <SmingCore/SmingCore.h>
-#include <Libraries/OneWire/OneWire.h>
+#include <include/SmingCore.h>
+#include <libraries/OneWire/OneWire.h>
 
 namespace TempSensorStatus
 {

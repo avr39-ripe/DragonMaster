@@ -84,7 +84,7 @@ void TempSensorsOW::addSensor(uint8_t* address)
 	if (address == nullptr)
 	{ return; }
 	else
-	{ os_memcpy(sensorAddr, address, 8); }
+	{ memcpy(sensorAddr, address, 8); }
 	_addresses.add(sensorAddr);
 }
 
@@ -92,7 +92,7 @@ void TempSensorsOW::addSensor(String address)
 {
 	TempSensors::addSensor();
 	uint8_t* sensorAddr = new uint8_t[8]; //Reserve memory for class-copy of addres
-	os_memset(sensorAddr, 0, 8);
+	memset(sensorAddr, 0, 8);
 	_hexStrToAddress(address, sensorAddr);
 
 	_addresses.add(sensorAddr);
@@ -100,10 +100,10 @@ void TempSensorsOW::addSensor(String address)
 void TempSensorsOW::modifySensor(uint8_t sensorId, String address)
 {
 	uint8_t* sensorAddr = new uint8_t[8]; //Reserve memory for class-copy of addres
-	os_memset(sensorAddr, 0, 8);
+	memset(sensorAddr, 0, 8);
 	_hexStrToAddress(address, sensorAddr);
 
-	os_memcpy(_addresses[sensorId],sensorAddr, 8);
+	memcpy(_addresses[sensorId],sensorAddr, 8);
 	delete[] sensorAddr;
 }
 

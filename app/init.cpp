@@ -1,5 +1,4 @@
 #include <app.h>
-#include <user_config.h>
 #include <dragonmaster.h>
 
 NtpClient* ntpClient;

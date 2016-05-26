@@ -7,7 +7,7 @@
 
 #ifndef LIB_FAN_FAN_H_
 #define LIB_FAN_FAN_H_
-#include <SmingCore/SmingCore.h>
+#include <include/SmingCore.h>
 #include <tempsensors.h>
 #include <binin.h>
 #include <binout.h>

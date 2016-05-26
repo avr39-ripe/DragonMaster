@@ -7,7 +7,7 @@
 
 #ifndef LIB_BINIO_BINSTATE_H_
 #define LIB_BINIO_BINSTATE_H_
-#include <SmingCore/SmingCore.h>
+#include <include/SmingCore.h>
 
 #ifndef ONSTATECHANGEDELEGATE_TYPE_DEFINED
 #define ONSTATECHANGEDELEGATE

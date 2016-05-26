@@ -19,19 +19,19 @@ void ApplicationClass::init()
 #ifndef DISABLE_SPIFFS
 	if (slot == 0) {
 #ifdef RBOOT_SPIFFS_0
-		debugf("trying to mount spiffs at %x, length %d", RBOOT_SPIFFS_0 + 0x40200000, SPIFF_SIZE);
-		spiffs_mount_manual(RBOOT_SPIFFS_0 + 0x40200000, SPIFF_SIZE);
+		debugf("trying to mount spiffs at %x, length %d", RBOOT_SPIFFS_0 , SPIFF_SIZE);
+		spiffs_mount_manual(RBOOT_SPIFFS_0, SPIFF_SIZE);
 #else
-		debugf("trying to mount spiffs at %x, length %d", 0x40300000, SPIFF_SIZE);
-		spiffs_mount_manual(0x40300000, SPIFF_SIZE);
+		debugf("trying to mount spiffs at %x, length %d", 0x100000, SPIFF_SIZE);
+		spiffs_mount_manual(0x100000, SPIFF_SIZE);
 #endif
 	} else {
 #ifdef RBOOT_SPIFFS_1
-		debugf("trying to mount spiffs at %x, length %d", RBOOT_SPIFFS_1 + 0x40200000, SPIFF_SIZE);
-		spiffs_mount_manual(RBOOT_SPIFFS_1 + 0x40200000, SPIFF_SIZE);
+		debugf("trying to mount spiffs at %x, length %d", RBOOT_SPIFFS_1 , SPIFF_SIZE);
+		spiffs_mount_manual(RBOOT_SPIFFS_1, SPIFF_SIZE);
 #else
-		debugf("trying to mount spiffs at %x, length %d", 0x40500000, SPIFF_SIZE);
-		spiffs_mount_manual(0x40500000, SPIFF_SIZE);
+		debugf("trying to mount spiffs at %x, length %d", SPIFF_SIZE);
+		spiffs_mount_manual(0x300000, SPIFF_SIZE);
 #endif
 	}
 #else
@@ -90,14 +90,14 @@ void ApplicationClass::_initialWifiConfig()
 // pre-configured SSID and PASSWORD found in configuration area. Later you can change
 // Station SSID and PASSWORD from Web UI and they will NOT overwrite by this part of code
 
-	if (WifiStation.getSSID().length() == 0)
-	{
+//	if (WifiStation.getSSID().length() == 0)
+//	{
 		WifiStation.config(WIFI_SSID, WIFI_PWD);
 		WifiStation.enable(true, true);
 		WifiAccessPoint.enable(false, true);
-	}
-	else
-		Serial.printf("Station already configured.\n");
+//	}
+//	else
+//		Serial.printf("Station already configured.\n");
 }
 
 void ApplicationClass::_STADisconnect(String ssid, uint8_t ssid_len, uint8_t bssid[6], uint8_t reason)
@@ -108,9 +108,10 @@ void ApplicationClass::_STADisconnect(String ssid, uint8_t ssid_len, uint8_t bss
 	if (!WifiAccessPoint.isEnabled())
 	{
 		debugf("Starting OWN AP");
-		WifiStation.disconnect();
-		WifiAccessPoint.enable(true);
-		WifiStation.connect();
+//		WifiStation.disconnect();
+//		WifiAccessPoint.enable(true);
+		wifi_set_opmode_current((WIFI_MODE)3);
+//		WifiStation.connect();
 	}
 }
 
@@ -145,7 +146,7 @@ void ApplicationClass::_STAConnect(String ssid, uint8_t ssid_len, uint8_t bssid[
 {
 	debugf("DELEGATE CONNECT - SSID: %s, CHANNEL: %d\n", ssid.c_str(), channel);
 
-	wifi_station_dhcpc_set_maxtry(128);
+//	wifi_station_dhcpc_set_maxtry(128);
 	_reconnectTimer.initializeMs(35000, TimerDelegate(&ApplicationClass::_STAReconnect,this)).start();
 	// Add commands to be executed after successfully connecting to AP
 }
