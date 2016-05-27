@@ -16,7 +16,7 @@ void AppClass::init()
 	//TODO: add config param for TZ!
 	SystemClock.setTimeZone(3);
 
-	Wire.pins(5,4);
+	Wire.pins(4,5);
 	lcd.begin(16, 2);   // initialize the lcd for 16 chars 2 lines, turn on backlight
 	lcd.backlight();
 
