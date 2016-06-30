@@ -67,6 +67,7 @@ protected:
 	Timer _loopTimer; // Timer for serving loop
 	Timer _reconnectTimer; // Timer for STA reconnect routine
 	uint8_t _webServerStarted = false;
+	uint8_t _startAP = false;
 
 };
 #endif /* INCLUDE_HEATCONTROL_H_ */

@@ -43,6 +43,7 @@ void ApplicationClass::init()
 
 	Config.load();
 
+//	WifiAccessPoint.enable(true);
 	// Attach Wifi events handlers
 	WifiEvents.onStationDisconnect(onStationDisconnectDelegate(&ApplicationClass::_STADisconnect, this));
 	WifiEvents.onStationConnect(onStationConnectDelegate(&ApplicationClass::_STAConnect, this));
@@ -65,6 +66,12 @@ void ApplicationClass::stop()
 
 void ApplicationClass::_loop()
 {
+	if (_startAP)
+	{
+				WifiAccessPoint.enable(true);
+				WifiStation.connect();
+				_startAP = false;
+	}
 	_counter++;
 }
 
@@ -90,14 +97,14 @@ void ApplicationClass::_initialWifiConfig()
 // pre-configured SSID and PASSWORD found in configuration area. Later you can change
 // Station SSID and PASSWORD from Web UI and they will NOT overwrite by this part of code
 
-//	if (WifiStation.getSSID().length() == 0)
-//	{
+	if (WifiStation.getSSID().length() == 0)
+	{
 		WifiStation.config(WIFI_SSID, WIFI_PWD);
 		WifiStation.enable(true, true);
 		WifiAccessPoint.enable(false, true);
-//	}
-//	else
-//		Serial.printf("Station already configured.\n");
+	}
+	else
+		Serial.printf("Station already configured.\n");
 }
 
 void ApplicationClass::_STADisconnect(String ssid, uint8_t ssid_len, uint8_t bssid[6], uint8_t reason)
@@ -108,9 +115,10 @@ void ApplicationClass::_STADisconnect(String ssid, uint8_t ssid_len, uint8_t bss
 	if (!WifiAccessPoint.isEnabled())
 	{
 		debugf("Starting OWN AP");
-//		WifiStation.disconnect();
+		WifiStation.disconnect();
+		_startAP = true;
 //		WifiAccessPoint.enable(true);
-		wifi_set_opmode_current((WIFI_MODE)3);
+//////		wifi_set_opmode_current((WIFI_MODE)3);
 //		WifiStation.connect();
 	}
 }

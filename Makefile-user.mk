@@ -67,5 +67,5 @@ SPI_SIZE        ?= 4M
 SPIFF_SIZE      = 262144
 #RBOOT_SPIFFS_0  ?= 0x300000
 
-MODULES = app lib/application lib/tempsensor lib/binio lib/thermostat lib/fan
-EXTRA_INCLUDES = lib/application lib/tempsensor lib/binio lib/thermostat lib/fan
+MODULES = app lib/application
+EXTRA_INCLUDES = lib/application
