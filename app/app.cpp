@@ -36,9 +36,9 @@ void AppClass::init()
 	binInPoller.add(input[1]);
 
 #ifndef MCP23S17 //use GPIO
-	output[0] = new BinOutGPIOClass(12,1); // Fan
-	output[1] = new BinOutGPIOClass(13,1); // Pumup
-	output[2] = new BinOutGPIOClass(14,1); // O3
+	output[0] = new BinOutGPIOClass(12,0); // Fan
+	output[1] = new BinOutGPIOClass(14,0); // Pumup
+	output[2] = new BinOutGPIOClass(13,0); // O3
 #else
 	output[0] = new BinOutMCP23S17Class(*mcp001,1,0); // Fan
 	output[1] = new BinOutMCP23S17Class(*mcp001,2,0); // Pumup
