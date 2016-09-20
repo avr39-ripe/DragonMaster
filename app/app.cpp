@@ -44,9 +44,9 @@ void AppClass::init()
 	output[1] = new BinOutMCP23S17Class(*mcp001,2,0); // Pumup
 	output[2] = new BinOutMCP23S17Class(*mcp001,3,0); // O3
 #endif
-	output[0]->setState(false);
-	output[1]->setState(false);
-	output[2]->setState(false);
+	output[0]->state.set(false);
+	output[1]->state.set(false);
+	output[2]->state.set(false);
 //	input[0]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[0]));
 //	input[1]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[1]));
 
@@ -55,7 +55,7 @@ void AppClass::init()
 //	thermostats[0]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[2]));
 
 	thermostats[1] = new ThermostatClass(*tempSensor, ThermostatMode::COOLING, true, false, "Pump"); // Pump thermostat
-	thermostats[1]->state.onChange(onStateChangeDelegate(&BinOutClass::setState, output[1]));
+	thermostats[1]->state.onChange(onStateChangeDelegate(&BinStateClass::set, &output[1]->state));
 
 	fan = new FanClass(*tempSensor, *thermostats[0], *input[0], *input[1], *output[0]); // Fan controller
 
@@ -119,8 +119,8 @@ void AppClass::_loop()
 		lcd.print("STOP ");
 		break;
 	};
-	lcd.printf(" F:%d", output[0]->getState());
-	lcd.printf(" P:%d", output[1]->getState());
+	lcd.printf(" F:%d", output[0]->state.get());
+	lcd.printf(" P:%d", output[1]->state.get());
 	lcd.setCursor(0,1);
 	lcd.print(tempSensor->getTemp());
 	lcd.setCursor(7,1);
@@ -133,8 +133,8 @@ void monitor(HttpRequest &request, HttpResponse &response)
 	JsonObjectStream* stream = new JsonObjectStream();
 	JsonObject& json = stream->getRoot();
 
-	json["fan"] = output[0]->getState();
-	json["pump"] = output[1]->getState();
+	json["fan"] = output[0]->state.get();
+	json["pump"] = output[1]->state.get();
 	json["mode"] = fan->getMode();
 
 
