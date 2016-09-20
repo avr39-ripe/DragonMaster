@@ -12,23 +12,17 @@
 BinInClass::BinInClass(uint8_t unitNumber, uint8_t polarity)
 {
 	_unitNumber = unitNumber;
-	_polarity = polarity;
-}
-
-void BinInClass::onStateChange(onStateChangeDelegate delegateFunction)
-{
-	_onChangeState = delegateFunction;
+	state.setPolarity(polarity);
+	state.set(false);
 }
 
 void BinInClass::_readState()
 {
-	uint8_t prevState;
-	prevState = _state;
-	_state = _readUnit() ? _polarity : !(_polarity);
-	if (prevState != _state && _onChangeState)
+	uint8_t readUnit = _readUnit() ? state.getPolarity() : !(state.getPolarity());
+//	Serial.printf("readUnit: %d, get: %d\n", readUnit, (uint8_t)state.get());
+	if ( readUnit != (uint8_t)state.get())
 	{
-		Serial.printf("onChangeState Delegate/CB called!\n");
-		_onChangeState(_state);
+		state.set(readUnit);
 	}
 }
 

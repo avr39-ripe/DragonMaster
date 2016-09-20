@@ -28,6 +28,7 @@ public:
 	// Configuration parameters goes next
 	uint32_t loopInterval = 0; // loop interval in ms
 	String updateURL; // Firmware update URL
+	uint8_t timeZone = 2;
 private:
 	String _fileName = APP_CONFIG_FILE;
 };
@@ -57,7 +58,7 @@ protected:
 	void _STAReconnect();
 	void _httpOnFile(HttpRequest &request, HttpResponse &response);
 	void _httpOnIndex(HttpRequest &request, HttpResponse &response);
-	void _httpOnStateJson(HttpRequest &request, HttpResponse &response);
+//	void _httpOnStateJson(HttpRequest &request, HttpResponse &response);
 	void _httpOnConfiguration(HttpRequest &request, HttpResponse &response);
 	void _httpOnConfigurationJson(HttpRequest &request, HttpResponse &response);
 	void _httpOnUpdate(HttpRequest &request, HttpResponse &response);

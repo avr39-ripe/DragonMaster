@@ -12,20 +12,18 @@
 BinOutClass::BinOutClass(uint8_t unitNumber, uint8_t polarity)
 {
 	_unitNumber = unitNumber;
-	_polarity = polarity;
+	state.setPolarity(polarity);
+	state.onSet(onStateChangeDelegate(&BinOutClass::_setUnitState, this));
+
 }
 
-void BinOutClass::setState(uint8_t state)
-{
-	_state = state ? _polarity : !(_polarity);
-	_setUnitState(_state);
-}
 
 // BinOutGPIOClass
 BinOutGPIOClass::BinOutGPIOClass(uint8_t unitNumber, uint8_t polarity)
 :BinOutClass(unitNumber, polarity)
 {
 	pinMode(_unitNumber, OUTPUT);
+	state.set(false);
 }
 
 void BinOutGPIOClass::setUnitNumber(uint8_t unitNumber)
@@ -36,7 +34,7 @@ void BinOutGPIOClass::setUnitNumber(uint8_t unitNumber)
 
 void BinOutGPIOClass::_setUnitState(uint8_t state)
 {
-	digitalWrite(_unitNumber, state);
+	digitalWrite(_unitNumber, this->state.getRawState());
 }
 
 // BinOutMCP23S17Class
@@ -44,6 +42,7 @@ BinOutMCP23S17Class::BinOutMCP23S17Class(MCP &mcp, uint8_t unitNumber, uint8_t p
 :BinOutClass(unitNumber, polarity)
 {
 	_mcp = &mcp;
+	state.set(false);
 //	_mcp->pinMode(_unitNumber, OUTPUT);
 }
 
@@ -55,5 +54,6 @@ void BinOutMCP23S17Class::setUnitNumber(uint8_t unitNumber)
 
 void BinOutMCP23S17Class::_setUnitState(uint8_t state)
 {
-	_mcp->digitalWrite(_unitNumber, state);
+//	Serial.printf("SetUnit: %d to %s\n", _unitNumber, this->state.getRawState() ? "true" : "false");
+	_mcp->digitalWrite(_unitNumber, this->state.getRawState());
 }
