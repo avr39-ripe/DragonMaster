@@ -14,6 +14,7 @@
 #include <tempsensors.h>
 #include <binin.h>
 #include <binout.h>
+#include <binhttpbutton.h>
 #include <thermostat.h>
 #include <fan.h>
 #include <weekthermostat.h>

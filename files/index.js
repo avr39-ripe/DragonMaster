@@ -1,36 +1,68 @@
 'use strict';
 
-// function updateState() {
-	// fetch('/state.json')
-  	// .then(function(response) {
-      // if (response.status == 200) return response.json();
-   // })
-  // .then(function(json) {
-    // document.getElementById('counter').textContent = json.counter;
-  // });
-// }
+var appStatus;
+var binStates;
+//Websockets
+var websocket;
 
+function onOpen(evt) {
+//	console.log.bind(console)("CONNECTED");
+	
+	appStatus = new AppStatusClass();
+	appStatus.enable(true);
+	
+	binStates = new BinStatesClass();
+	// setTimeout(function() { binStates.wsGetAllButtons(); }, 500);
+	// setTimeout(function() { binStates.wsGetAllStates(); }, 850);
+	setTimeout(function() { binStates.enableButtons(true); }, 500);
+	setTimeout(function() { binStates.enableStates(true); }, 850);
+}
+
+function onMessage(evt) {
+//	console.log.bind(console)("Message recv: " + evt.data);
+	if(evt.data instanceof ArrayBuffer) {
+    	var bin = new DataView(evt.data);
+    	
+    	var cmd = bin.getUint8(wsBinConst.wsCmd);
+    	var sysId = bin.getUint8(wsBinConst.wsSysId);
+    	var subCmd = bin.getUint8(wsBinConst.wsSubCmd);
+//    	console.log.bind(console)(`cmd = ${cmd}, sysId = ${sysId}, subCmd = ${subCmd}`);
+    	
+    	if ( cmd == wsBinConst.getResponse && sysId == 1 ) {
+    		appStatus.wsBinProcess(bin);
+    	}
+    	
+    	if ( cmd == wsBinConst.getResponse && ( sysId == 2 || sysId == 3) ) {
+    		binStates.wsBinProcess(bin);
+    	}
+    		
+  	} 
+}
+
+function onClose(evt) {
+//	console.log.bind(console)("DISCONNECTED");
+}
+
+function onError(evt) {
+//	console.log.bind(console)("ERROR: " + evt.data);
+}
+
+function initWS() {
+	var wsUri = "ws://" + location.host + "/";
+	websocket = new WebSocket(wsUri);
+	websocket.onopen = function(evt) { onOpen(evt) };
+	websocket.onclose = function(evt) { onClose(evt) };
+	websocket.onmessage = function(evt) { onMessage(evt) };
+	websocket.onerror = function(evt) { onError(evt) };
+	websocket.binaryType = 'arraybuffer';
+}
+
+//DIRTY! FIXME
 const statusFlags = { INVALID: 1, DISCONNECTED: 2};
 
 function updateState() {
     var xhr = new XMLHttpRequest();
-    var xhr1 = new XMLHttpRequest();
-    
-    xhr1.open('GET', '/state.json', true);
-
-    xhr1.send();
-
-    xhr1.onreadystatechange = function() {
-        
-        if (this.readyState != 4) return;
-        if (this.status == 200) {
-            if (this.responseText.length > 0) {
-                var stateJson = JSON.parse(this.responseText);
-                document.getElementById('counter').textContent = stateJson.counter;
-            }
-        }
-    };
-    
+   
     xhr.open('GET', '/temperature.json', true);
 
     xhr.send();
@@ -94,7 +126,7 @@ function initTemperature() {
                     headerDiv.insertAdjacentHTML('afterBegin', '<h3 class="panel-title">Temperature #' + key + '</h3></div>');
                     var bodyDiv = document.createElement('div');
                     bodyDiv.classList.add("panel-body");
-                    bodyDiv.insertAdjacentHTML('afterBegin', '<h1 id="body-temperature' + key + '" class="text-center main">' + tempJson[key].temperature + ' &deg;C</h1></div>');
+                    bodyDiv.insertAdjacentHTML('afterBegin', '<h1 id="body-temperature' + key + '" class="text-center h1">' + tempJson[key].temperature + ' &deg;C</h1></div>');
                     var container = document.getElementById("panel-container");
                     panelDiv.appendChild(headerDiv);
                     panelDiv.appendChild(bodyDiv);
@@ -106,13 +138,16 @@ function initTemperature() {
     }; 
 
 }
+//DIRTY FIXME
+
 //Here we put some initial code which starts after DOM loaded
 function onDocumentRedy() {
-	//Init
+//DIRTY FIXME
 	initTemperature();
 	updateState();
 	setInterval(updateState, 5000);
-
+//DIRTY FIXME	
+	initWS();
 }
 
 document.addEventListener('DOMContentLoaded', onDocumentRedy);

@@ -12,9 +12,12 @@ void monitor(HttpRequest &request, HttpResponse &response); // Monitor via json 
 
 void AppClass::init()
 {
+	ApplicationClass::init();
 	ntpClient = new NtpClient("pool.ntp.org", 300);
-	//TODO: add config param for TZ!
-	SystemClock.setTimeZone(3);
+
+	BinStatesHttpClass* binStatesHttp = new BinStatesHttpClass();
+	wsAddBinGetter(binStatesHttp->sysId, WebSocketBinaryDelegate(&BinStatesHttpClass::wsBinGetter,binStatesHttp));
+	wsAddBinSetter(binStatesHttp->sysId, WebSocketBinaryDelegate(&BinStatesHttpClass::wsBinSetter,binStatesHttp));
 
 	Wire.pins(5,4);
 	lcd.begin(16, 2);   // initialize the lcd for 16 chars 2 lines, turn on backlight
@@ -36,9 +39,12 @@ void AppClass::init()
 	binInPoller.add(input[1]);
 
 #ifndef MCP23S17 //use GPIO
-	output[0] = new BinOutGPIOClass(12,1); // Fan
-	output[1] = new BinOutGPIOClass(13,1); // Pumup
-	output[2] = new BinOutGPIOClass(14,1); // O3
+//	output[0] = new BinOutGPIOClass(12,1); // Fan
+//	output[1] = new BinOutGPIOClass(13,1); // Pumup
+//	output[2] = new BinOutGPIOClass(14,1); // O3
+	output[0] = new BinOutGPIOClass(12,0); // Fan
+	output[1] = new BinOutGPIOClass(14,0); // Pumup
+	output[2] = new BinOutGPIOClass(13,0); // O3
 #else
 	output[0] = new BinOutMCP23S17Class(*mcp001,1,0); // Fan
 	output[1] = new BinOutMCP23S17Class(*mcp001,2,0); // Pumup
@@ -47,6 +53,14 @@ void AppClass::init()
 	output[0]->state.set(false);
 	output[1]->state.set(false);
 	output[2]->state.set(false);
+
+	BinStateHttpClass* fanState = new BinStateHttpClass(webServer, &output[0]->state, "Вентилятор", 0);
+	binStatesHttp->add(fanState);
+
+	BinStateHttpClass* pumpState = new BinStateHttpClass(webServer, &output[1]->state, "Насос", 1);
+	binStatesHttp->add(pumpState);
+
+
 //	input[0]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[0]));
 //	input[1]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[1]));
 
@@ -57,12 +71,19 @@ void AppClass::init()
 	thermostats[1] = new ThermostatClass(*tempSensor, ThermostatMode::COOLING, true, false, "Pump"); // Pump thermostat
 	thermostats[1]->state.onChange(onStateChangeDelegate(&BinStateClass::set, &output[1]->state));
 
-	fan = new FanClass(*tempSensor, *thermostats[0], *input[0], *input[1], *output[0]); // Fan controller
+	fan = new FanClass(*tempSensor, *thermostats[0], *output[0]); // Fan controller
+	input[0]->state.onChange(onStateChangeDelegate(&FanClass::_modeStart, fan));
+	input[1]->state.onChange(onStateChangeDelegate(&FanClass::_modeStop, fan));
+
+	BinHttpButtonClass* webStart = new BinHttpButtonClass(webServer, *binStatesHttp, 0, "Старт");
+	webStart->state.onChange(onStateChangeDelegate(&FanClass::_modeStart, fan));
+
+	BinHttpButtonClass* webStop = new BinHttpButtonClass(webServer, *binStatesHttp, 1, "Стоп");
+	webStop->state.onChange(onStateChangeDelegate(&FanClass::_modeStop, fan));
 
 	ds.begin();
 	tempSensor->addSensor();
 
-	ApplicationClass::init();
 	thermostats[0]->_loadBinConfig();
 	thermostats[1]->_loadBinConfig();
 	fan->_loadBinConfig();

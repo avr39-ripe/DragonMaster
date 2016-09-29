@@ -14,7 +14,8 @@ BinOutClass* output[3];
 ThermostatClass* thermostats[2];
 FanClass* fan;
 
-#define I2C_LCD_ADDR 0x27
+//#define I2C_LCD_ADDR 0x27
+#define I2C_LCD_ADDR 0x3f
 LiquidCrystal_I2C lcd(I2C_LCD_ADDR, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 
 AppClass App;
