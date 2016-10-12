@@ -14,6 +14,7 @@ class AppClass : public ApplicationClass
 public:
 	virtual void init(); // Application initialization
 	virtual void start(); // Application main-loop start/restart
+	virtual void userSTAGotIP(IPAddress ip, IPAddress mask, IPAddress gateway); // Runs when Station got ip from access-point
 protected:
 	virtual void _loop(); // Application main loop function goes here
 };
