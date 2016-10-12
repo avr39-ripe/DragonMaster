@@ -146,6 +146,7 @@ void ApplicationClass::_STAGotIP(IPAddress ip, IPAddress mask, IPAddress gateway
 		WifiAccessPoint.enable(false);
 	}
 	// Add commands to be executed after successfully connecting to AP and got IP from it
+	userSTAGotIP(ip, mask, gateway);
 }
 
 void ApplicationClass::_STAConnect(String ssid, uint8_t ssid_len, uint8_t bssid[6], uint8_t channel)

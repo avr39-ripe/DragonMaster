@@ -49,7 +49,7 @@ public:
 	static const uint8_t sysId = 1;
 	void wsAddBinSetter(uint8_t sysId, WebSocketBinaryDelegate wsBinSetterDelegate);
 	void wsAddBinGetter(uint8_t sysId, WebSocketBinaryDelegate wsBinGetterDelegate);
-
+	virtual void userSTAGotIP(IPAddress ip, IPAddress mask, IPAddress gateway) {}; // Runs when Station got ip from access-point
 	void OtaUpdate_CallBack(bool result);
 	void OtaUpdate();
 	void Switch();
