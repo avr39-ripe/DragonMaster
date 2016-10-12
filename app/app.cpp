@@ -9,6 +9,9 @@
 
 //AppClass
 void monitor(HttpRequest &request, HttpResponse &response); // Monitor via json some important params
+void onStateJson(HttpRequest &request, HttpResponse &response);
+void onScheduleJson(HttpRequest &request, HttpResponse &response);
+void onThermostatsJson(HttpRequest &request, HttpResponse &response);
 
 void AppClass::init()
 {
@@ -88,11 +91,48 @@ void AppClass::init()
 	thermostats[1]->_loadBinConfig();
 	fan->_loadBinConfig();
 
+// http tempsensors + Week Thermostat
+	tempSensorsHttp = new TempSensorsHttp(4000);
+	tempSensorsHttp->addSensor("http://10.2.113.121/temperature.json?sensor=0"); // House tempsensor
+
+	weekThermostats[0] = new WeekThermostatClass(*tempSensorsHttp,0,"House", 4000);
+
+	BinStateHttpClass* weekThermostatState = new BinStateHttpClass(webServer, &weekThermostats[0]->state, "Термостат Дом", 2);
+	binStatesHttp->add(weekThermostatState);
+	weekThermostats[0]->state.onChange(onStateChangeDelegate(&FanClass::setThermostatControlState, fan));
+	weekThermostats[0]->state.onChange(onStateChangeDelegate(&ThermostatClass::enable, thermostats[1]));
+//	weekThermostats[0]->onStateChange(onStateChangeDelegate(&SwitchHttp::setState, httpSwitch[0]));
+
+
+	for(uint8_t i = 0; i< 7; i++)
+	{
+		for (auto _thermostat: weekThermostats)
+		{
+			_thermostat->_schedule[i][0].start = 0;
+			_thermostat->_schedule[i][0].targetTemp = 800;
+			_thermostat->_schedule[i][1].start = 360;
+			_thermostat->_schedule[i][1].targetTemp = 1800;
+			_thermostat->_schedule[i][2].start = 540;
+			_thermostat->_schedule[i][2].targetTemp = 1200;
+			_thermostat->_schedule[i][3].start = 720;
+			_thermostat->_schedule[i][3].targetTemp = 1500;
+			_thermostat->_schedule[i][4].start = 1020;
+			_thermostat->_schedule[i][4].targetTemp = 1800;
+			_thermostat->_schedule[i][5].start = 1320;
+			_thermostat->_schedule[i][5].targetTemp = 800;
+
+			_thermostat->loadStateCfg();
+			_thermostat->loadScheduleBinCfg();
+		}
+	}
 	webServer.addPath("/temperature.json",HttpPathDelegate(&TempSensors::onHttpGet,tempSensor));
 	webServer.addPath("/thermostat.fan",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[0]));
 	webServer.addPath("/thermostat.pump",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[1]));
 	webServer.addPath("/fan",HttpPathDelegate(&FanClass::onHttpConfig,fan));
 	webServer.addPath("/monitor",monitor);
+	webServer.addPath("/state.json", onStateJson);
+	webServer.addPath("/schedule.json", onScheduleJson);
+	webServer.addPath("/thermostats.json", onThermostatsJson);
 //	Serial.printf("AppClass init done!\n");
 }
 
@@ -149,6 +189,12 @@ void AppClass::_loop()
 	lcd.print(nowTime.toShortTimeString(true).c_str());
 }
 
+void AppClass::userSTAGotIP(IPAddress ip, IPAddress mask, IPAddress gateway)
+{
+	tempSensorsHttp->start();
+	for (auto _thermostat: weekThermostats)
+		_thermostat->start();
+}
 void monitor(HttpRequest &request, HttpResponse &response)
 {
 	JsonObjectStream* stream = new JsonObjectStream();
@@ -161,4 +207,33 @@ void monitor(HttpRequest &request, HttpResponse &response)
 
 	response.setHeader("Access-Control-Allow-Origin", "*");
 	response.sendJsonObject(stream);
+}
+
+void onStateJson(HttpRequest &request, HttpResponse &response)
+{
+	uint8_t currThermostat = request.getQueryParameter("thermostat").toInt();
+	weekThermostats[currThermostat]->onStateCfg(request,response);
+}
+
+void onScheduleJson(HttpRequest &request, HttpResponse &response)
+{
+	uint8_t currThermostat = request.getQueryParameter("thermostat").toInt();
+	weekThermostats[currThermostat]->onScheduleCfg(request,response);
+}
+
+void onThermostatsJson(HttpRequest &request, HttpResponse &response)
+{
+	DynamicJsonBuffer jsonBuffer;
+	JsonObject& root = jsonBuffer.createObject();
+	for (uint t=0; t < maxWeekThermostats; t++)
+	{
+		root[(String)t] = weekThermostats[t]->getName();
+
+	}
+	char buf[scheduleFileBufSize];
+	root.printTo(buf, sizeof(buf));
+
+	response.setHeader("Access-Control-Allow-Origin", "*");
+	response.setContentType(ContentType::JSON);
+	response.sendString(buf);
 }

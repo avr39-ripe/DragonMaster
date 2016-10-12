@@ -33,6 +33,7 @@ extern MCP* mcp001;
 #endif
 
 extern TempSensors* tempSensor;
+extern TempSensorsHttp *tempSensorsHttp;
 extern LiquidCrystal_I2C lcd;
 
 extern BinInClass* input[2];
@@ -43,4 +44,6 @@ extern BinOutClass* output[3];
 extern ThermostatClass* thermostats[2];
 extern FanClass* fan;
 
+const uint8_t maxWeekThermostats = 1;
+extern WeekThermostatClass *weekThermostats[maxWeekThermostats];
 #endif /* INCLUDE_DRAGONMASTER_H_ */
