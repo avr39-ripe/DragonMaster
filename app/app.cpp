@@ -74,6 +74,9 @@ void AppClass::init()
 	thermostats[1] = new ThermostatClass(*tempSensor, ThermostatMode::COOLING, true, false, "Pump"); // Pump thermostat
 	thermostats[1]->state.onChange(onStateChangeDelegate(&BinStateClass::set, &output[1]->state));
 
+	thermostats[2] = new ThermostatClass(*tempSensor, ThermostatMode::COOLING, true, false, "Pump_safety"); // Pump thermostat
+	thermostats[2]->state.onChange(onStateChangeDelegate(&BinStateClass::set, &output[1]->state));
+
 	fan = new FanClass(*tempSensor, *thermostats[0], *output[0]); // Fan controller
 	input[0]->state.onChange(onStateChangeDelegate(&FanClass::_modeStart, fan));
 	input[1]->state.onChange(onStateChangeDelegate(&FanClass::_modeStop, fan));
@@ -89,6 +92,7 @@ void AppClass::init()
 
 	thermostats[0]->_loadBinConfig();
 	thermostats[1]->_loadBinConfig();
+	thermostats[2]->_loadBinConfig();
 	fan->_loadBinConfig();
 
 // http tempsensors + Week Thermostat
@@ -101,6 +105,7 @@ void AppClass::init()
 	binStatesHttp->add(weekThermostatState);
 	weekThermostats[0]->state.onChange(onStateChangeDelegate(&FanClass::setThermostatControlState, fan));
 	weekThermostats[0]->state.onChange(onStateChangeDelegate(&ThermostatClass::enable, thermostats[1]));
+	weekThermostats[0]->state.onChange(onStateChangeDelegate(&ThermostatClass::disable, thermostats[2]));
 //	weekThermostats[0]->onStateChange(onStateChangeDelegate(&SwitchHttp::setState, httpSwitch[0]));
 
 
@@ -128,6 +133,7 @@ void AppClass::init()
 	webServer.addPath("/temperature.json",HttpPathDelegate(&TempSensors::onHttpGet,tempSensor));
 	webServer.addPath("/thermostat.fan",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[0]));
 	webServer.addPath("/thermostat.pump",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[1]));
+	webServer.addPath("/thermostat.pump_safety",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[2]));
 	webServer.addPath("/fan",HttpPathDelegate(&FanClass::onHttpConfig,fan));
 	webServer.addPath("/monitor",monitor);
 	webServer.addPath("/state.json", onStateJson);

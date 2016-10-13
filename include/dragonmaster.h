@@ -41,7 +41,7 @@ extern BinInPollerClass binInPoller;
 
 extern BinOutClass* output[3];
 
-extern ThermostatClass* thermostats[2];
+extern ThermostatClass* thermostats[3];
 extern FanClass* fan;
 
 const uint8_t maxWeekThermostats = 1;

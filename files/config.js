@@ -52,6 +52,10 @@ function get_pump_config() {
 	getThermostatConfig('pump');
 }
 
+function get_pump_safety_config() {
+	getThermostatConfig('pump_safety');
+}
+
 function postThermostatConfg(name,jsonData) {
 	fetch('/thermostat.'+name, {
 		method: 'post',
@@ -79,6 +83,15 @@ function post_pump_config(event) {
             'targetTempDelta'	:	document.getElementById('targetTempDelta_pump').value * 100
             };
     postThermostatConfg('pump', formData);
+}
+
+function post_pump_safety_config(event) {
+	event.preventDefault();
+    var formData = {
+            'targetTemp'		:	document.getElementById('targetTemp_pump_safety').value * 100,
+            'targetTempDelta'	:	document.getElementById('targetTempDelta_pump_safety').value * 100
+            };
+    postThermostatConfg('pump_safety', formData);
 }
 
 function get_config() {
@@ -220,6 +233,7 @@ function onDocumentRedy() {
 	get_config();
     get_fan_config();
     get_pump_config();
+    get_pump_safety_config();
     getFanConfig();
     
     document.getElementById('form_netcfg').addEventListener('submit', post_netcfg);
@@ -232,6 +246,8 @@ function onDocumentRedy() {
 	document.getElementById('thermostat_fan_cancel').addEventListener('click', get_fan_config);
 	document.getElementById('form_thermostat_pump').addEventListener('submit', post_pump_config);
 	document.getElementById('thermostat_pump_cancel').addEventListener('click', get_pump_config);
+	document.getElementById('form_thermostat_pump_safety').addEventListener('submit', post_pump_safety_config);
+	document.getElementById('thermostat_pump_safety_cancel').addEventListener('click', get_pump_safety_config);
 	document.getElementById('form_fan').addEventListener('submit', postFanConfig);
 	document.getElementById('fan_cancel').addEventListener('click', getFanConfig);
 	
