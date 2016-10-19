@@ -97,13 +97,14 @@ void AppClass::init()
 
 // http tempsensors + Week Thermostat
 	tempSensorsHttp = new TempSensorsHttp(4000);
-	tempSensorsHttp->addSensor("http://10.2.113.121/temperature.json?sensor=0"); // House tempsensor
+	tempSensorsHttp->addSensor("http://10.2.113.116/temperature.json?sensor=0"); // House tempsensor
 
 	weekThermostats[0] = new WeekThermostatClass(*tempSensorsHttp,0,"House", 4000);
 
 	BinStateHttpClass* weekThermostatState = new BinStateHttpClass(webServer, &weekThermostats[0]->state, "Термостат Дом", 2);
 	binStatesHttp->add(weekThermostatState);
 	weekThermostats[0]->state.onChange(onStateChangeDelegate(&FanClass::setThermostatControlState, fan));
+	weekThermostats[0]->state.onChange(onStateChangeDelegate(&FanClass::periodicDisable, fan));
 	weekThermostats[0]->state.onChange(onStateChangeDelegate(&ThermostatClass::enable, thermostats[1]));
 	weekThermostats[0]->state.onChange(onStateChangeDelegate(&ThermostatClass::disable, thermostats[2]));
 //	weekThermostats[0]->onStateChange(onStateChangeDelegate(&SwitchHttp::setState, httpSwitch[0]));
