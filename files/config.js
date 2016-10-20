@@ -246,8 +246,8 @@ function onDocumentRedy() {
 	document.getElementById('thermostat_fan_cancel').addEventListener('click', get_fan_config);
 	document.getElementById('form_thermostat_pump').addEventListener('submit', post_pump_config);
 	document.getElementById('thermostat_pump_cancel').addEventListener('click', get_pump_config);
-	document.getElementById('form_thermostat_pump_safety').addEventListener('submit', post_pump_safety_config);
-	document.getElementById('thermostat_pump_safety_cancel').addEventListener('click', get_pump_safety_config);
+//	document.getElementById('form_thermostat_pump_safety').addEventListener('submit', post_pump_safety_config);
+//	document.getElementById('thermostat_pump_safety_cancel').addEventListener('click', get_pump_safety_config);
 	document.getElementById('form_fan').addEventListener('submit', postFanConfig);
 	document.getElementById('fan_cancel').addEventListener('click', getFanConfig);
 	
