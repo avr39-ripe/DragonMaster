@@ -42,12 +42,12 @@ void AppClass::init()
 	binInPoller.add(input[1]);
 
 #ifndef MCP23S17 //use GPIO
-//	output[0] = new BinOutGPIOClass(12,1); // Fan
-//	output[1] = new BinOutGPIOClass(13,1); // Pumup
-//	output[2] = new BinOutGPIOClass(14,1); // O3
-	output[0] = new BinOutGPIOClass(12,0); // Fan
-	output[1] = new BinOutGPIOClass(14,0); // Pumup
-	output[2] = new BinOutGPIOClass(13,0); // O3
+	output[0] = new BinOutGPIOClass(12,1); // Fan
+	output[1] = new BinOutGPIOClass(13,1); // Pumup
+	output[2] = new BinOutGPIOClass(14,1); // O3
+//	output[0] = new BinOutGPIOClass(12,0); // Fan
+//	output[1] = new BinOutGPIOClass(14,0); // Pumup
+//	output[2] = new BinOutGPIOClass(13,0); // O3
 #else
 	output[0] = new BinOutMCP23S17Class(*mcp001,1,0); // Fan
 	output[1] = new BinOutMCP23S17Class(*mcp001,2,0); // Pumup
@@ -97,7 +97,7 @@ void AppClass::init()
 
 // http tempsensors + Week Thermostat
 	tempSensorsHttp = new TempSensorsHttp(4000);
-	tempSensorsHttp->addSensor("http://10.2.113.116/temperature.json?sensor=0"); // House tempsensor
+	tempSensorsHttp->addSensor("http://192.168.31.217/temperature.json?sensor=0"); // House tempsensor
 
 	weekThermostats[0] = new WeekThermostatClass(*tempSensorsHttp,0,"House", 4000);
 
@@ -132,6 +132,7 @@ void AppClass::init()
 		}
 	}
 	webServer.addPath("/temperature.json",HttpPathDelegate(&TempSensors::onHttpGet,tempSensor));
+	webServer.addPath("/temperatureHome.json",HttpPathDelegate(&TempSensorsHttp::onHttpGet,(TempSensors*)tempSensorsHttp));
 	webServer.addPath("/thermostat.fan",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[0]));
 	webServer.addPath("/thermostat.pump",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[1]));
 	webServer.addPath("/thermostat.pump_safety",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[2]));
