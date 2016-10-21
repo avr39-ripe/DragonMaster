@@ -468,6 +468,8 @@ function TempsensorClass (uid, id) {
 	this.render();
 }
 
+TempsensorClass.statusFlags = { INVALID: 1, DISCONNECTED: 2};
+
 TempsensorClass.prototype.wsGotName = function (uid) {
 	this._name = uid;
     this.renderName();
@@ -504,11 +506,11 @@ TempsensorClass.prototype.renderTemperature = function () {
 		panel.classList.remove("panel-danger");
 		panel.classList.remove("panel-warning");
 		panel.classList.add("panel-default");	
-	} else if (this._statusFlag & statusFlags.DISCONNECTED ) {
+	} else if (this._statusFlag & TempsensorClass.statusFlags.DISCONNECTED ) {
 		panel.classList.remove("panel-default");
 		panel.classList.remove("panel-warning");
 		panel.classList.add("panel-danger");
-	} else if (this._statusFlag & statusFlags.INVALID ) {
+	} else if (this._statusFlag & TempsensorClass.statusFlags.INVALID ) {
 		panel.classList.remove("panel-default");
 		panel.classList.remove("panel-danger");
 		panel.classList.add("panel-warning");
