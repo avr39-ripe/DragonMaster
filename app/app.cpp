@@ -44,14 +44,14 @@ void AppClass::init()
 #ifndef MCP23S17 //use GPIO
 	output[0] = new BinOutGPIOClass(12,1); // Fan
 	output[1] = new BinOutGPIOClass(13,1); // Pumup
-	output[2] = new BinOutGPIOClass(14,0); // O3
+	output[2] = new BinOutGPIOClass(14,0); // Gas Caldron
 //	output[0] = new BinOutGPIOClass(12,0); // Fan
 //	output[1] = new BinOutGPIOClass(14,0); // Pumup
 //	output[2] = new BinOutGPIOClass(13,0); // Gas Caldron
 #else
 	output[0] = new BinOutMCP23S17Class(*mcp001,1,0); // Fan
 	output[1] = new BinOutMCP23S17Class(*mcp001,2,0); // Pumup
-	output[2] = new BinOutMCP23S17Class(*mcp001,3,0); // O3
+	output[2] = new BinOutMCP23S17Class(*mcp001,3,0); // Gas Caldron
 #endif
 	output[0]->state.set(false);
 	output[1]->state.set(false);
@@ -145,6 +145,7 @@ void AppClass::init()
 		}
 	}
 	webServer.addPath("/temperature.json",HttpPathDelegate(&TempSensors::onHttpGet,tempSensor));
+	webServer.addPath("/temperatureHome.json",HttpPathDelegate(&TempSensorsHttp::onHttpGet,(TempSensors*)tempSensorsHttp));
 	webServer.addPath("/thermostat.fan",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[0]));
 	webServer.addPath("/thermostat.pump",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[1]));
 	webServer.addPath("/thermostat.pump_safety",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[2]));
