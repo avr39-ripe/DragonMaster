@@ -306,3 +306,21 @@ void BinStateSharedDeferredClass::_deferredSet()
 	BinStateClass::set(_getDefferedState(), false);
 	_delayTimer.stop();
 }
+
+//BinStateAndClass
+
+void BinStateAndClass::addState(BinStateClass* binState)
+{
+	_states.add(binState);
+	binState->onChange(onStateChangeDelegate(&BinStateAndClass::onChangeProcessor, this));
+}
+
+void BinStateAndClass::onChangeProcessor(uint8_t state)
+{
+	uint8_t result = true;
+	for (uint8_t i = 0; i < _states.count(); i++)
+	{
+		result &= _states[i]->get();
+	}
+	BinStateClass::set(result, false);
+}

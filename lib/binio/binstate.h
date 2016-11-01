@@ -121,4 +121,13 @@ private:
 	uint8_t _nodelay = false;
 	Timer _delayTimer;
 };
+
+class BinStateAndClass : public BinStateClass
+{
+public:
+	void addState(BinStateClass* binState);
+	void onChangeProcessor(uint8_t state);
+private:
+	Vector<BinStateClass*> _states = Vector<BinStateClass*>(0,1);
+};
 #endif /* LIB_BINIO_BINSTATE_H_ */
