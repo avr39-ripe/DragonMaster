@@ -11,6 +11,7 @@ BinStateClass::BinStateClass(uint8_t polarity, uint8_t toggleActive)
 {
 	polarity ? _state |= BinState::polarityBit : _state &= ~(BinState::polarityBit);
 	toggleActive ? _state |= BinState::toggleActiveBit : _state &= ~(BinState::toggleActiveBit);
+	setOnChangeDelegateEnable(true);
 }
 
 void BinStateClass::set(uint8_t state, uint8_t forceDelegatesCall)
@@ -22,16 +23,19 @@ void BinStateClass::set(uint8_t state, uint8_t forceDelegatesCall)
 //	_state = state;
 	state ? _setState(getPolarity()) : _setState(!getPolarity());
 
-	Serial.printf("State set to: %s\n", get() ? "true" : "false");
-	Serial.printf("prevState set to: %s\n", getPrev() ? "true" : "false");
+//	Serial.printf("State set to: %s\n", get() ? "true" : "false");
+//	Serial.printf("prevState set to: %s\n", getPrev() ? "true" : "false");
 	if (_onSet)
 	{
 		_onSet(get()); //Call some external delegate on setting ANY state
 	}
 
-	if (get() != getPrev() || forceDelegatesCall)
+	if ( get() != getPrev() || forceDelegatesCall )
 	{
-		_callOnChangeDelegates(); //Call external delegates on state CHANGE
+		if ( (_state & BinState::onChangeDelegateEnableBit) != 0)
+		{
+			_callOnChangeDelegates(); //Call external delegates on state CHANGE
+		}
 
 		if ( (_state & BinState::persistentBit) != 0 )
 		{
@@ -42,11 +46,11 @@ void BinStateClass::set(uint8_t state, uint8_t forceDelegatesCall)
 
 void BinStateClass::toggle(uint8_t state)
 {
-	Serial.println("Toggle called\n");
+//	Serial.println("Toggle called\n");
 	if (state == getToggleActive())
 	{
 		set(!get());
-		Serial.println("Toggle TOGGLED!\n");
+//		Serial.println("Toggle TOGGLED!\n");
 	}
 }
 
@@ -98,6 +102,19 @@ void BinStateClass::persistent(uint8_t uid)
 	_uid = uid;
 	_loadBinConfig();
 	_state |= BinState::persistentBit;
+}
+
+void BinStateClass::setOnChangeDelegateEnable(uint8_t OnChangeDelegateEnable)
+{
+	if ( OnChangeDelegateEnable && !getOnChangeDelegateEnable() )
+	{
+		_state |= BinState::onChangeDelegateEnableBit;
+		_callOnChangeDelegates();
+	}
+	else
+	{
+		_state &= ~(BinState::onChangeDelegateEnableBit);
+	}
 }
 
 // BinStateHttpClass

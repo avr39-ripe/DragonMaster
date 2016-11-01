@@ -24,6 +24,7 @@ namespace BinState
 	const uint8_t toggleActiveBit = 8u;
 	const uint8_t persistentBit = 16u;
 	const uint8_t deferredSetBit = 32u;
+	const uint8_t onChangeDelegateEnableBit = 64u;
 }
 
 struct OnStateChange
@@ -42,6 +43,7 @@ public:
 	uint8_t getPrev() { return (_state & BinState::prevStateBit) != 0; };
 	uint8_t getPolarity() { return (_state & BinState::polarityBit) != 0; }
 	uint8_t getToggleActive() { return (_state & BinState::toggleActiveBit) != 0; };
+	uint8_t getOnChangeDelegateEnable() { return (_state & BinState::onChangeDelegateEnableBit) != 0; };
 	void persistent(uint8_t uid); //Call this after constructor to save state in file, uid = UNIC on device id
 	virtual void set(uint8_t state, uint8_t forceDelegatesCall);
 	virtual void set(uint8_t state) { set(state, false); };
@@ -51,6 +53,7 @@ public:
 	virtual void setFalse() { set(false); };
 	void setPolarity(uint8_t polarity) { polarity ? _state |= BinState::polarityBit : _state &= ~(BinState::polarityBit); };
 	void setToggleActive(uint8_t toggleActive) { toggleActive ? _state |= BinState::toggleActiveBit : _state &= ~(BinState::toggleActiveBit); };
+	void setOnChangeDelegateEnable(uint8_t OnChangeDelegateEnable);
 	void toggle(uint8_t state = true); //there is argument for use this method in tru/false delegates, can use it without arguments too
 	void onSet(onStateChangeDelegate delegateFunction);
 	void onChange(onStateChangeDelegate delegateFunction, uint8_t polarity = true);
