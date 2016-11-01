@@ -42,12 +42,12 @@ void AppClass::init()
 	binInPoller.add(input[1]);
 
 #ifndef MCP23S17 //use GPIO
-//	output[0] = new BinOutGPIOClass(12,1); // Fan
-//	output[1] = new BinOutGPIOClass(13,1); // Pumup
-//	output[2] = new BinOutGPIOClass(14,1); // O3
-	output[0] = new BinOutGPIOClass(12,0); // Fan
-	output[1] = new BinOutGPIOClass(14,0); // Pumup
-	output[2] = new BinOutGPIOClass(13,0); // O3
+	output[0] = new BinOutGPIOClass(12,1); // Fan
+	output[1] = new BinOutGPIOClass(13,1); // Pumup
+	output[2] = new BinOutGPIOClass(14,0); // O3
+//	output[0] = new BinOutGPIOClass(12,0); // Fan
+//	output[1] = new BinOutGPIOClass(14,0); // Pumup
+//	output[2] = new BinOutGPIOClass(13,0); // Gas Caldron
 #else
 	output[0] = new BinOutMCP23S17Class(*mcp001,1,0); // Fan
 	output[1] = new BinOutMCP23S17Class(*mcp001,2,0); // Pumup
@@ -97,7 +97,7 @@ void AppClass::init()
 
 // http tempsensors + Week Thermostat
 	tempSensorsHttp = new TempSensorsHttp(4000);
-	tempSensorsHttp->addSensor("http://10.2.113.116/temperature.json?sensor=0"); // House tempsensor
+	tempSensorsHttp->addSensor("http://192.168.31.217/temperature.json?sensor=0"); // House tempsensor
 
 	weekThermostats[0] = new WeekThermostatClass(*tempSensorsHttp,0,"House", 4000);
 
@@ -109,7 +109,20 @@ void AppClass::init()
 	weekThermostats[0]->state.onChange(onStateChangeDelegate(&ThermostatClass::disable, thermostats[2]));
 //	weekThermostats[0]->onStateChange(onStateChangeDelegate(&SwitchHttp::setState, httpSwitch[0]));
 
+	//GasHeating
+	BinStateClass* gasEnable = new BinStateClass();
 
+	BinHttpButtonClass* webGasEnable = new BinHttpButtonClass(webServer, *binStatesHttp, 2, "Газовое отопление", gasEnable);
+	webGasEnable->state.onChange(onStateChangeDelegate(&BinStateClass::toggle, gasEnable));
+
+	BinStateAndClass* gasCaldron = new BinStateAndClass();
+	gasCaldron->addState(gasEnable);
+	gasCaldron->addState(&weekThermostats[0]->state);
+	gasCaldron->onChange(onStateChangeDelegate(&BinStateClass::set, &output[2]->state));
+
+	BinStateHttpClass* gasCaldronState = new BinStateHttpClass(webServer, gasCaldron, "Газовый котел", 3);
+	binStatesHttp->add(gasCaldronState);
+	//GasHeating
 	for(uint8_t i = 0; i< 7; i++)
 	{
 		for (auto _thermostat: weekThermostats)
