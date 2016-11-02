@@ -42,7 +42,7 @@ struct SchedUnit
 class WeekThermostatClass
 {
 public:
-	WeekThermostatClass(TempSensors &tempSensors, uint8_t sensorId, String name = "Thermostat", uint16_t refresh = 4000);
+	WeekThermostatClass(HttpServer& webServer, TempSensors &tempSensors, uint8_t sensorId, uint8_t uid, String name = "Thermostat", uint16_t refresh = 4000);
 	void start();
 	void stop();
 	void check();
@@ -54,14 +54,23 @@ public:
 	uint8_t loadScheduleCfg();
 	void saveScheduleBinCfg();
 	void loadScheduleBinCfg();
+	void wsSendStatus(WebSocket& socket, uint8_t sendAll = false);
+	void wsBinSetter(WebSocket& socket, uint8_t* data, size_t size);
 //	void setManual(bool); // setter for _manual
 //	void setSched(uint8_t wDay, uint8_t progNum, uint16_t minutes, float tergetTemp);
 //	SchedUnit getSched(uint8_t wDay, uint8_t progNum);
 	SchedUnit _schedule[7][WeekThermostatConst::maxProg]; // 7 day X maxProg programs in schedule
 //	uint8_t getState() { return _state; };
+	uint8_t getUid() { return _uid; };
 	String getName() { return _name; };
 //	void onStateChange(onStateChangeDelegate delegateFunction);
 	BinStateClass state;
+	//for binary websocket protocol
+	static const uint8_t sysId = 4;
+	static const uint8_t scWTGetStatus = 1;
+	static const uint8_t scWTSetStatus = 2;
+	static const uint8_t scWTGetSchedule = 3;
+	static const uint8_t scWTSetDaySchedule = 4;
 private:
 	String _name; // some text description of thermostat
 	uint8_t _active; //thermostat active (true), ON,  works, updates, changes its _state or turned OFF
@@ -77,8 +86,21 @@ private:
 	uint8_t _manualProg = 0; // program that was when manual mode turned on, when program change, manual mode will turn off
 	onStateChangeDelegate onChangeState = nullptr;
 	uint8_t _tempSensorValid = WeekThermostatConst::maxInvalidGetTemp; // if more than zero we STILL trust tempSensor temperature if less zero NOT trust
+	void _fillStatusBuffer(uint8_t* buffer);
+	uint8_t _uid = 0;
+	HttpServer& _webServer;
 };
 
-
+class WeekThermostatsClass
+{
+public:
+	void wsBinGetter(WebSocket& socket, uint8_t* data, size_t size);
+	void wsBinSetter(WebSocket& socket, uint8_t* data, size_t size);
+	void add(WeekThermostatClass* weekThermostat) { _weekThermostats[weekThermostat->getUid()] = weekThermostat; };
+	static const uint8_t sysId = 4;
+	static const uint8_t scWTSGetAll = 10;
+private:
+	HashMap<uint8_t,WeekThermostatClass*> _weekThermostats;
+};
 
 #endif /* INCLUDE_THERMO_H_ */

@@ -7,12 +7,15 @@
 
 #include <weekthermostat.h>
 
-WeekThermostatClass::WeekThermostatClass( TempSensors &tempSensors, uint8_t sensorId, String name, uint16_t refresh)
+WeekThermostatClass::WeekThermostatClass(HttpServer& webServer, TempSensors &tempSensors, uint8_t sensorId, uint8_t uid, String name, uint16_t refresh)
+: _webServer(webServer), _tempSensors(&tempSensors), _sensorId(sensorId), _uid(uid), _name(name), _refresh(refresh)
 {
-	_tempSensors = &tempSensors;
-	_sensorId = sensorId;
-	_name = name;
-	_refresh = refresh;
+//	_tempSensors = &tempSensors;
+//	_sensorId = sensorId;
+//	_name = name;
+//	_refresh = refresh;
+//	_uid = uid;
+//	_webServer = webServer;
 	state.set(false);
 	_manual = false;
 	_active = true;
@@ -355,3 +358,94 @@ void WeekThermostatClass::loadScheduleBinCfg()
 //{
 //	onChangeState = delegateFunction;
 //}
+void WeekThermostatClass::_fillStatusBuffer(uint8_t* buffer)
+{
+	buffer[wsBinConst::wsCmd] = wsBinConst::getResponse;
+	buffer[wsBinConst::wsSysId] = sysId;
+	buffer[wsBinConst::wsSubCmd] = scWTGetStatus;
+
+	uint8_t tmpState = state.get();
+	uint16_t tmpTemp= (uint16_t) _tempSensors->getTemp(_sensorId) * 100;
+
+	os_memcpy(&buffer[wsBinConst::wsPayLoadStart], &_uid, sizeof(_uid));
+	os_memcpy(&buffer[wsBinConst::wsPayLoadStart + 1], &_active, sizeof(_active));
+	os_memcpy(&buffer[wsBinConst::wsPayLoadStart + 1 + 1 ], &tmpState, sizeof(tmpState));
+	os_memcpy(&buffer[wsBinConst::wsPayLoadStart + 1 + 1 + 1], &tmpTemp, sizeof(tmpTemp));
+	os_memcpy(&buffer[wsBinConst::wsPayLoadStart + 1 + 1 + 1 + 2 ], &_manual, sizeof(_manual));
+	os_memcpy(&buffer[wsBinConst::wsPayLoadStart + 1 + 1 + 1 + 2 + 1 ], &_manualTargetTemp, sizeof(_manualTargetTemp));
+	os_memcpy(&buffer[wsBinConst::wsPayLoadStart + 1 + 1 + 1 + 2 + 1 + 2], &_targetTempDelta, sizeof(_targetTempDelta));
+}
+
+void WeekThermostatClass::wsSendStatus(WebSocket& socket, uint8_t sendAll)
+{
+	uint8_t* buffer = new uint8_t[wsBinConst::wsPayLoadStart + 1 + 1 + 1 + 2 + 1 + 2 + 2];
+
+	_fillStatusBuffer(buffer);
+
+	if ( sendAll )
+	{
+		WebSocketsList &clients = _webServer.getActiveWebSockets();
+		for (uint8_t i = 0; i < clients.count(); i++)
+		{
+			clients[i].sendBinary(buffer, wsBinConst::wsPayLoadStart + 1 + 1 + 1 + 2 + 1 + 2 + 2);
+		}
+	}
+	else
+	{
+		socket.sendBinary(buffer, wsBinConst::wsPayLoadStart + 1 + 1 + 1 + 2 + 1 + 2 + 2);
+	}
+
+	delete buffer;
+}
+
+void WeekThermostatClass::wsBinSetter(WebSocket& socket, uint8_t* data, size_t size)
+{
+	switch (data[wsBinConst::wsSubCmd])
+	{
+	case scWTSetStatus:
+	{
+		os_memcpy(&_active, &data[wsBinConst::wsPayLoadStartGetSetArg], sizeof(_active));
+		os_memcpy(&_manual, &data[wsBinConst::wsPayLoadStartGetSetArg + 1], sizeof(_manual));
+		os_memcpy(&_manualTargetTemp, &data[wsBinConst::wsPayLoadStartGetSetArg + 1 + 1], sizeof(_manualTargetTemp));
+		os_memcpy(&_targetTempDelta, &data[wsBinConst::wsPayLoadStartGetSetArg + 1 + 1 + 2], sizeof(_targetTempDelta));
+
+		saveStateCfg();
+		break;
+	}
+	}
+}
+
+//WeekThermostatsClass
+void WeekThermostatsClass::wsBinGetter(WebSocket& socket, uint8_t* data, size_t size)
+{
+	switch (data[wsBinConst::wsSubCmd])
+	{
+	case WeekThermostatsClass::scWTSGetAll:
+		for (uint8_t i = 0; i < _weekThermostats.count(); i++)
+		{
+			_weekThermostats.valueAt(i)->wsSendStatus(socket);
+		}
+		break;
+	case WeekThermostatClass::scWTGetStatus:
+		if (_weekThermostats.contains(data[wsBinConst::wsGetSetArg]))
+		{
+			_weekThermostats[data[wsBinConst::wsGetSetArg]]->wsSendStatus(socket);
+		}
+		break;
+	}
+}
+
+void WeekThermostatsClass::wsBinSetter(WebSocket& socket, uint8_t* data, size_t size)
+{
+//	Serial.printf("BinStatesHttp -> wsBinSetter -> wsGetSetArg = %d\n", data[wsBinConst::wsGetSetArg]);
+	switch (data[wsBinConst::wsSubCmd])
+	{
+	case WeekThermostatClass::scWTSetStatus:
+		if (_weekThermostats.contains(data[wsBinConst::wsGetSetArg]))
+		{
+//			Serial.printf("BinStatesHttp -> wsBinSetter -> wsGetSetArg -> ELEMENT FOUND!\n");
+			_weekThermostats[data[wsBinConst::wsGetSetArg]]->wsBinSetter(socket, data, size);
+		}
+		break;
+	}
+}

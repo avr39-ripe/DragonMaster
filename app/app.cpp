@@ -99,7 +99,7 @@ void AppClass::init()
 	tempSensorsHttp = new TempSensorsHttp(4000);
 	tempSensorsHttp->addSensor("http://192.168.31.217/temperature.json?sensor=0"); // House tempsensor
 
-	weekThermostats[0] = new WeekThermostatClass(*tempSensorsHttp,0,"House", 4000);
+	weekThermostats[0] = new WeekThermostatClass(webServer, *tempSensorsHttp, 0, 0, "House", 4000);
 
 	BinStateHttpClass* weekThermostatState = new BinStateHttpClass(webServer, &weekThermostats[0]->state, "Термостат Дом", 2);
 	binStatesHttp->add(weekThermostatState);
@@ -107,6 +107,13 @@ void AppClass::init()
 	weekThermostats[0]->state.onChange(onStateChangeDelegate(&FanClass::periodicDisable, fan));
 	weekThermostats[0]->state.onChange(onStateChangeDelegate(&ThermostatClass::enable, thermostats[1]));
 	weekThermostats[0]->state.onChange(onStateChangeDelegate(&ThermostatClass::disable, thermostats[2]));
+
+	WeekThermostatsClass* weekThermostatsContainer = new WeekThermostatsClass();
+	wsAddBinGetter(weekThermostatsContainer->sysId, WebSocketBinaryDelegate(&WeekThermostatsClass::wsBinGetter,weekThermostatsContainer));
+	wsAddBinSetter(weekThermostatsContainer->sysId, WebSocketBinaryDelegate(&WeekThermostatsClass::wsBinSetter,weekThermostatsContainer));
+
+	weekThermostatsContainer->add(weekThermostats[0]);
+
 //	weekThermostats[0]->onStateChange(onStateChangeDelegate(&SwitchHttp::setState, httpSwitch[0]));
 
 	//GasHeating
