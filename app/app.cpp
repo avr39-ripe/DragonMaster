@@ -145,6 +145,7 @@ void AppClass::init()
 		}
 	}
 	webServer.addPath("/temperature.json",HttpPathDelegate(&TempSensors::onHttpGet,tempSensor));
+	webServer.addPath("/temperatureHome.json",HttpPathDelegate(&TempSensorsHttp::onHttpGet,(TempSensors*)tempSensorsHttp));
 	webServer.addPath("/thermostat.fan",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[0]));
 	webServer.addPath("/thermostat.pump",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[1]));
 	webServer.addPath("/thermostat.pump_safety",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[2]));
