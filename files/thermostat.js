@@ -146,33 +146,56 @@ function setStatus(msg,dur,pri){	 // show msg on status bar
 
 function update() {
 
-//	$(".zone-title").html(thermostat.name);
-	$(".zone-temperature").html((Number(thermostat.temperature)).toFixed(1) + "&deg;C");
+////	$(".zone-title").html(thermostat.name);
+//	$(".zone-temperature").html((Number(thermostat.temperature)).toFixed(1) + "&deg;C");
+	document.querySelector('.zone-temperature').textContent = `${thermostat.temperature} \xB0C`;
+	
+	var zoneSetpoint = document.querySelector('#zone-setpoint');
 	
 	if(thermostat.state) {
-		$("#zone-setpoint").css("color", "#f00000");
+//		$("#zone-setpoint").css("color", "#f00000");
+		zoneSetpoint.style["color"] = "#f00000"
 	} else {
-		$("#zone-setpoint").css("color", "#000000");
+//		$("#zone-setpoint").css("color", "#000000");
+		zoneSetpoint.style["color"] = "#000000"
 	}
 	
+	var thermostatState = document.querySelector('#thermostatState');
 	if (thermostat.active) {
-		$("#thermostatState").html("ON");
-		$("#thermostatState").css("background-color", "#ff9600");
+//		$("#thermostatState").html("ON");
+//		$("#thermostatState").css("background-color", "#ff9600");
+		thermostatState.textContent = 'ON';
+		thermostatState.style["background-color"] = "#ff9600"
 	} else {
-		$("#thermostatState").html("OFF");
-		$("#thermostatState").css("background-color", "#555");
+//		$("#thermostatState").html("OFF");
+//		$("#thermostatState").css("background-color", "#555");
+//		setpoint = antiFrozen;
+//		$("#zone-setpoint").html(setpoint.toFixed(1) + unit);
+		thermostatState.textContent = 'OFF';
+		thermostatState.style["background-color"] = "#555";
 		setpoint = antiFrozen;
-		$("#zone-setpoint").html(setpoint.toFixed(1) + unit);
+		zoneSetpoint.textContent = `${setpoint} \xB0C`;
+		
 	}
+	
+	var thermostatMode = document.querySelector('.thermostatmode');
+	var manualThermostat = document.querySelector('#manual_thermostat');
+	var scheduledThermostat = document.querySelector('#scheduled_thermostat');
 	
 	if (thermostat.manual) {
-		$(".thermostatmode").css("background-color", "#555");
-		$("#manual_thermostat").css("background-color", "#ff9600");
-		$("#scheduled_thermostat").css("background-color", "#555");
+//		$(".thermostatmode").css("background-color", "#555");
+//		$("#manual_thermostat").css("background-color", "#ff9600");
+//		$("#scheduled_thermostat").css("background-color", "#555");
+		thermostatMode.style["background-color"] = "#555";
+		manualThermostat.style["background-color"] = "#ff9600";
+		scheduledThermostat.style["background-color"] = "#555";
 	} else {
-		$(".thermostatmode").css("background-color", "#555");
-		$("#manual_thermostat").css("background-color", "#555");
-		$("#scheduled_thermostat").css("background-color", "#ff9600");
+//		$(".thermostatmode").css("background-color", "#555");
+//		$("#manual_thermostat").css("background-color", "#555");
+//		$("#scheduled_thermostat").css("background-color", "#ff9600");
+		thermostatMode.style["background-color"] = "#555";
+		manualThermostat.style["background-color"] = "#555";
+		scheduledThermostat.style["background-color"] = "#ff9600";
 	}
 }
 
@@ -821,6 +844,9 @@ var websocket;
 function onOpen(evt) {
 	console.log.bind(console)("CONNECTED");
 	
+	wsGetThermostatStatus();
+	
+	setInterval(wsGetThermostatStatus, 5000);
 }
 
 function onMessage(evt) {
@@ -833,16 +859,10 @@ function onMessage(evt) {
     	var subCmd = bin.getUint8(wsBinConst.wsSubCmd);
     	console.log.bind(console)(`cmd = ${cmd}, sysId = ${sysId}, subCmd = ${subCmd}`);
     	
-    	var _uid = bin.getUint8(wsBinConst.wsPayLoadStart);
-    	var _active = bin.getUint8(wsBinConst.wsPayLoadStart + 1);
-    	var _state = bin.getUint8(wsBinConst.wsPayLoadStart + 1 + 1);
-    	var _temp = bin.getUint16(wsBinConst.wsPayLoadStart + 1 + 1 + 1, true);
-    	var _manual = bin.getUint8(wsBinConst.wsPayLoadStart +  1 + 1 + 1 + 2);
-    	var _manualTargetTemp = bin.getUint16(wsBinConst.wsPayLoadStart + 1 + 1 + 1 + 2 + 1, true);
-    	var _targetTempDelta = bin.getUint16(wsBinConst.wsPayLoadStart + 1 + 1 + 1 + 2 + 1 + 2, true);
-    	
-    	console.log.bind(console)(`_uid = ${_uid}, _active = ${_active}, _state = ${_state}, _temp = ${_temp}, _manual = ${_manual}, _manualTargetTemp = ${_manualTargetTemp}, _targetTempDelta = ${_targetTempDelta}`);
-//    	os_memcpy(&buffer[wsBinConst::wsPayLoadStart], &_uid, sizeof(_uid));
+    	if ( cmd == wsBinConst.getResponse && sysId == 4 ) {
+    		wsBinProcess(bin);
+    	}
+    	//    	os_memcpy(&buffer[wsBinConst::wsPayLoadStart], &_uid, sizeof(_uid));
 //    	os_memcpy(&buffer[wsBinConst::wsPayLoadStart + 1], &_active, sizeof(_active));
 //    	os_memcpy(&buffer[wsBinConst::wsPayLoadStart + 1 + 1 ], &tmpState, sizeof(tmpState));
 //    	os_memcpy(&buffer[wsBinConst::wsPayLoadStart + 1 + 1 + 1], &tmpTemp, sizeof(tmpTemp));
@@ -877,6 +897,33 @@ function initWS() {
 	websocket.onerror = function(evt) { onError(evt) };
 	websocket.binaryType = 'arraybuffer';
 }
+
+wsBinConst.scWTGetStatus = 1;
+wsBinConst.scWTSetStatus = 2;
+wsBinConst.scWTGetSchedule = 3;
+wsBinConst.scWTSetDaySchedule = 4;
+
+wsBinProcess = function (bin) {
+	var subCmd = bin.getUint8(wsBinConst.wsSubCmd);
+	if (subCmd == wsBinConst.scWTGetStatus) {
+		
+//		var _uid = bin.getUint8(wsBinConst.wsPayLoadStart);
+		thermostat.active = bin.getUint8(wsBinConst.wsPayLoadStart + 1);
+		thermostat.state = bin.getUint8(wsBinConst.wsPayLoadStart + 1 + 1);
+		thermostat.temperature = bin.getUint16(wsBinConst.wsPayLoadStart + 1 + 1 + 1, true) / 100.0;
+		thermostat.manual = bin.getUint8(wsBinConst.wsPayLoadStart +  1 + 1 + 1 + 2);
+		thermostat.manualTargetTemp = bin.getUint16(wsBinConst.wsPayLoadStart + 1 + 1 + 1 + 2 + 1, true) / 100.0;
+		thermostat.targetTempDelta = bin.getUint16(wsBinConst.wsPayLoadStart + 1 + 1 + 1 + 2 + 1 + 2, true) / 100.0;
+    	
+		update();
+//    	console.log.bind(console)(`_uid = ${_uid}, _active = ${_active}, _state = ${_state}, _temp = ${_temp}, _manual = ${_manual}, _manualTargetTemp = ${_manualTargetTemp}, _targetTempDelta = ${_targetTempDelta}`);
+	}
+}
+
+wsGetThermostatStatus = function() {
+	wsBinCmd.GetArg(websocket, 4, 1, currThermostat);
+}
+
 //Here we put some initial code which starts after DOM loaded
 function onDocumentRedy() {
 	//Attach eventListeners
@@ -893,11 +940,11 @@ function onDocumentRedy() {
 	ajaxGetThermostats();
 	
 	ajaxGetSchedule();
-	// scheduleToFloat();
-	
-	ajaxGetAllState();
-	
-	setInterval(ajaxGetState, 5000);
+//	// scheduleToFloat();
+//	
+//	ajaxGetAllState();
+
+//	setInterval(ajaxGetState, 5000);
 	setInterval(updateclock, 1000);
 
 }

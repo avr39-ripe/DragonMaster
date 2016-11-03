@@ -61,6 +61,18 @@ var wsBinCmd = {
 	
 		socket.send(bin.buffer);
 //		console.log.bind(console)(`wsGet sysId = ${sysId}, subCmd = ${subCmd}`);
+	},
+	GetArg: function (socket, sysId, subCmd, setArg) {
+		var ab = new ArrayBuffer(4);
+		var bin = new DataView(ab);
+		
+		bin.setUint8(wsBinConst.wsCmd, wsBinConst.getCmd);
+		bin.setUint8(wsBinConst.wsSysId, sysId);
+		bin.setUint8(wsBinConst.wsSubCmd, subCmd);
+		bin.setUint8(wsBinConst.wsGetSetArg, setArg);
+		
+		socket.send(bin.buffer);
+//		console.log.bind(console)(`wsGet sysId = ${sysId}, subCmd = ${subCmd}`);
 	}
 }
 
