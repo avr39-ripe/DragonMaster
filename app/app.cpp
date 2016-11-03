@@ -44,7 +44,7 @@ void AppClass::init()
 #ifndef MCP23S17 //use GPIO
 	output[0] = new BinOutGPIOClass(12,1); // Fan
 	output[1] = new BinOutGPIOClass(13,1); // Pumup
-	output[2] = new BinOutGPIOClass(14,0); // Gas Caldron
+	output[2] = new BinOutGPIOClass(3,1); // Gas Caldron
 //	output[0] = new BinOutGPIOClass(12,0); // Fan
 //	output[1] = new BinOutGPIOClass(14,0); // Pumup
 //	output[2] = new BinOutGPIOClass(13,0); // Gas Caldron
