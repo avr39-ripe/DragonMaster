@@ -107,7 +107,10 @@ void AppClass::init()
 //	weekThermostats[0]->state.onChange(onStateChangeDelegate(&FanClass::periodicDisable, fan));
 //	weekThermostats[0]->state.onChange(onStateChangeDelegate(&ThermostatClass::enable, thermostats[1]));
 //	weekThermostats[0]->state.onChange(onStateChangeDelegate(&ThermostatClass::disable, thermostats[2]));
-
+	fan->setThermostatControlState(true);
+	fan->periodicDisable(true);
+	thermostats[1]->enable(true);
+	thermostats[2]->disable(true);
 
 	//GasHeating
 	BinStateClass* gasEnable = new BinStateClass();
