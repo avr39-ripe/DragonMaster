@@ -103,11 +103,11 @@ void AppClass::init()
 
 	BinStateHttpClass* weekThermostatState = new BinStateHttpClass(webServer, &weekThermostats[0]->state, "Термостат Дом", 2);
 	binStatesHttp->add(weekThermostatState);
-	weekThermostats[0]->state.onChange(onStateChangeDelegate(&FanClass::setThermostatControlState, fan));
-	weekThermostats[0]->state.onChange(onStateChangeDelegate(&FanClass::periodicDisable, fan));
-	weekThermostats[0]->state.onChange(onStateChangeDelegate(&ThermostatClass::enable, thermostats[1]));
-	weekThermostats[0]->state.onChange(onStateChangeDelegate(&ThermostatClass::disable, thermostats[2]));
-//	weekThermostats[0]->onStateChange(onStateChangeDelegate(&SwitchHttp::setState, httpSwitch[0]));
+//	weekThermostats[0]->state.onChange(onStateChangeDelegate(&FanClass::setThermostatControlState, fan));
+//	weekThermostats[0]->state.onChange(onStateChangeDelegate(&FanClass::periodicDisable, fan));
+//	weekThermostats[0]->state.onChange(onStateChangeDelegate(&ThermostatClass::enable, thermostats[1]));
+//	weekThermostats[0]->state.onChange(onStateChangeDelegate(&ThermostatClass::disable, thermostats[2]));
+
 
 	//GasHeating
 	BinStateClass* gasEnable = new BinStateClass();
@@ -123,9 +123,11 @@ void AppClass::init()
 	BinStateHttpClass* gasCaldronState = new BinStateHttpClass(webServer, gasCaldron, "Газовый котел", 3);
 	binStatesHttp->add(gasCaldronState);
 	//GasHeating
-	for(uint8_t i = 0; i< 7; i++)
+
+	for (auto _thermostat: weekThermostats)
 	{
-		for (auto _thermostat: weekThermostats)
+		_thermostat->loadStateCfg();
+		for(uint8_t i = 0; i< 7; i++)
 		{
 			_thermostat->_schedule[i][0].start = 0;
 			_thermostat->_schedule[i][0].targetTemp = 800;
@@ -140,7 +142,6 @@ void AppClass::init()
 			_thermostat->_schedule[i][5].start = 1320;
 			_thermostat->_schedule[i][5].targetTemp = 800;
 
-			_thermostat->loadStateCfg();
 			_thermostat->loadScheduleBinCfg();
 		}
 	}
