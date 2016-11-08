@@ -114,6 +114,7 @@ void AppClass::init()
 
 	//GasHeating
 	BinStateClass* gasEnable = new BinStateClass();
+	gasEnable->persistent(0);
 
 	BinHttpButtonClass* webGasEnable = new BinHttpButtonClass(webServer, *binStatesHttp, 2, "Газовое отопление", gasEnable);
 	webGasEnable->state.onChange(onStateChangeDelegate(&BinStateClass::toggle, gasEnable));
