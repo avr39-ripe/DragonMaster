@@ -9,6 +9,7 @@ const minc = 5;
 var now = new Date();
 var timenow = now.getHours() + (now.getMinutes() / 60);
 var thermostats = {};
+var thermostatNames = {};
 var days = {
     0: 'sun',
     1: 'mon',
@@ -844,9 +845,12 @@ var websocket;
 function onOpen(evt) {
 	console.log.bind(console)("CONNECTED");
 	
-	wsGetThermostatStatus();
+	getThermostatNames();
+//	wsGetAllThermostats();
 	
-	setInterval(wsGetThermostatStatus, 5000);
+//	wsGetThermostatStatus();
+	
+	
 }
 
 function onMessage(evt) {
@@ -907,7 +911,15 @@ wsBinProcess = function (bin) {
 	var subCmd = bin.getUint8(wsBinConst.wsSubCmd);
 	if (subCmd == wsBinConst.scWTGetStatus) {
 		
-//		var _uid = bin.getUint8(wsBinConst.wsPayLoadStart);
+		var _uid = bin.getUint8(wsBinConst.wsPayLoadStart);
+		
+		if ( !thermostats.hasOwnProperty(_uid) ) {
+			thermostats[_uid] = thermostatNames[_uid];
+			var select = document.getElementById("thermostats");
+			var newOption = new Option(thermostats[_uid], _uid);
+			select.appendChild(newOption);
+		}
+				
 		thermostat.active = bin.getUint8(wsBinConst.wsPayLoadStart + 1);
 		thermostat.state = bin.getUint8(wsBinConst.wsPayLoadStart + 1 + 1);
 		thermostat.temperature = bin.getUint16(wsBinConst.wsPayLoadStart + 1 + 1 + 1, true) / 100.0;
@@ -924,6 +936,26 @@ wsGetThermostatStatus = function() {
 	wsBinCmd.GetArg(websocket, 4, 1, currThermostat);
 }
 
+wsGetAllThermostats = function() {
+	wsBinCmd.Get(websocket, 4, 10);
+}
+
+getThermostatNames = function() {
+	getJson('/thermostatNames.json')
+	.then( function(names) {
+		Object.keys(names).forEach(function(uid) {
+			if ( !thermostatNames.hasOwnProperty(uid) ) {
+				thermostatNames[uid] = names[uid];
+			}
+		});
+		
+		wsGetAllThermostats();
+		
+		setInterval(wsGetThermostatStatus, 5000);
+		
+		ajaxGetSchedule();
+	});
+}
 //Here we put some initial code which starts after DOM loaded
 function onDocumentRedy() {
 	//Attach eventListeners
@@ -937,9 +969,8 @@ function onDocumentRedy() {
 	//Init
 	initWS();
 	//schedule = server_get2("thermostat_schedule"); //all data * 100 to avoid floating point on the ESP8266 side
-	ajaxGetThermostats();
+//	ajaxGetThermostats();
 	
-	ajaxGetSchedule();
 //	// scheduleToFloat();
 //	
 //	ajaxGetAllState();
