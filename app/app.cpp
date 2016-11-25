@@ -47,7 +47,7 @@ void AppClass::init()
 //	output[2] = new BinOutGPIOClass(14,1); // O3
 	output[0] = new BinOutGPIOClass(12,0); // Fan
 	output[1] = new BinOutGPIOClass(14,0); // Pumup
-	output[2] = new BinOutGPIOClass(13,0); // O3
+	output[2] = new BinOutGPIOClass(13,0); // Long end pumps
 #else
 	output[0] = new BinOutMCP23S17Class(*mcp001,1,0); // Fan
 	output[1] = new BinOutMCP23S17Class(*mcp001,2,0); // Pumup
@@ -60,9 +60,11 @@ void AppClass::init()
 	BinStateHttpClass* fanState = new BinStateHttpClass(webServer, &output[0]->state, "Вентилятор", 0);
 	binStatesHttp->add(fanState);
 
-	BinStateHttpClass* pumpState = new BinStateHttpClass(webServer, &output[1]->state, "Насос", 1);
+	BinStateHttpClass* pumpState = new BinStateHttpClass(webServer, &output[1]->state, "Насосы в.дуйки", 1);
 	binStatesHttp->add(pumpState);
 
+	BinStateHttpClass* pumpLongEndState = new BinStateHttpClass(webServer, &output[2]->state, "Дальние насосы", 2);
+	binStatesHttp->add(pumpLongEndState);
 
 //	input[0]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[0]));
 //	input[1]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[1]));
@@ -74,8 +76,8 @@ void AppClass::init()
 	thermostats[1] = new ThermostatClass(*tempSensor, ThermostatMode::COOLING, true, false, "Pump"); // Pump thermostat
 	thermostats[1]->state.onChange(onStateChangeDelegate(&BinStateClass::set, &output[1]->state));
 
-	thermostats[2] = new ThermostatClass(*tempSensor, ThermostatMode::COOLING, true, false, "Pump_safety"); // Pump thermostat
-	thermostats[2]->state.onChange(onStateChangeDelegate(&BinStateClass::set, &output[1]->state));
+	thermostats[2] = new ThermostatClass(*tempSensor, ThermostatMode::COOLING, true, false, "Pump_safety"); // Long end Pump thermostat
+	thermostats[2]->state.onChange(onStateChangeDelegate(&BinStateClass::set, &output[2]->state));
 
 	fan = new FanClass(*tempSensor, *thermostats[0], *output[0]); // Fan controller
 	input[0]->state.onChange(onStateChangeDelegate(&FanClass::_modeStart, fan));
@@ -109,8 +111,8 @@ void AppClass::init()
 //	weekThermostats[0]->state.onChange(onStateChangeDelegate(&ThermostatClass::disable, thermostats[2]));
 	fan->setThermostatControlState(true);
 	fan->periodicDisable(true);
-	thermostats[1]->enable(true);
-	thermostats[2]->disable(true);
+	thermostats[1]->enable(true); //Pumps + airfans
+	thermostats[2]->enable(true); //LongEndPumps
 
 
 
@@ -170,29 +172,30 @@ void AppClass::_loop()
 	ApplicationClass::_loop();
 //	Serial.printf("AppClass loop\n");
 //	Serial.printf("GPIO 15: %d GPIO 16: %d\n", input[0]->getState(), input[1]->getState());
-	Serial.printf("%s - Fan: %d Pump: %d\n", nowTime.toShortTimeString(true).c_str(), thermostats[0]->state.get(), thermostats[1]->state.get());
-	Serial.printf("Free Heap: %d\r\n", system_get_free_heap_size());
+//	Serial.printf("%s - Fan: %d Pump: %d\n", nowTime.toShortTimeString(true).c_str(), thermostats[0]->state.get(), thermostats[1]->state.get());
+//	Serial.printf("Free Heap: %d\r\n", system_get_free_heap_size());
 	lcd.setCursor(0,0);
 	switch (fan->getMode())
 	{
 	case FanMode::IDLE:
-		lcd.print("IDLE ");
+		lcd.print("IDLE");
 		break;
 	case FanMode::START:
-		lcd.print("START");
+		lcd.print("STRT");
 		break;
 	case FanMode::RUN:
-		lcd.print("RUN  ");
+		lcd.print("RUN ");
 		break;
 	case FanMode::PERIODIC:
-		lcd.print("PERID");
+		lcd.print("PERI");
 		break;
 	case FanMode::STOP:
-		lcd.print("STOP ");
+		lcd.print("STOP");
 		break;
 	};
 	lcd.printf(" F:%d", output[0]->state.get());
 	lcd.printf(" P:%d", output[1]->state.get());
+	lcd.printf(" L:%d", output[2]->state.get());
 	lcd.setCursor(0,1);
 	lcd.print(tempSensor->getTemp());
 	lcd.setCursor(7,1);

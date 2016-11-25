@@ -113,7 +113,7 @@
 			<div>
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title">Термостат насоса</h3>
+						<h3 class="panel-title">Термостат насосов в.дуек</h3>
 					</div>
 					<div class="panel-body">
 						<form id="form_thermostat_pump" method="POST">
@@ -130,26 +130,26 @@
 				</div>
 			</div>
 			
-<!-- 			<!-- Pump Safety Thermostat config --> -->
-<!-- 			<div> -->
-<!-- 				<div class="panel panel-default"> -->
-<!-- 					<div class="panel-heading"> -->
-<!-- 						<h3 class="panel-title">Pump Safety thermostat settings</h3> -->
-<!-- 					</div> -->
-<!-- 					<div class="panel-body"> -->
-<!-- 						<form id="form_thermostat_pump_safety" method="POST"> -->
-<!-- 							<div class="form-group"> -->
-<!-- 								<label for="targetTemp_pump_safety">Target temp, &deg;C</label> -->
-<!-- 								<input type="number" required class="form-control" min="15" max="95" step="0.5" id="targetTemp_pump_safety" class="form-control" value="{targetTempPump}"> -->
-<!-- 								<label for="targetTempDelta_pump_safety">Target temp delta, &deg;C</label> -->
-<!-- 								<input type="number" required class="form-control" min="0.5" max="10" step="0.5" id="targetTempDelta_pump_safety" class="form-control" value="{targetTempDeltaPump}"> -->
-<!-- 							</div> -->
-<!-- 							<button type="submit" class="btn btn-success">Save settings</button> -->
-<!-- 					  		<button type="button" id="thermostat_pump_safety_cancel" class="btn btn-link">Cancel</button> -->
-<!-- 						</form> -->
-<!-- 					</div> -->
-<!-- 				</div> -->
-<!-- 			</div> -->
+			<!-- Pump Safety Thermostat config -->
+			<div>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Термостат дальних насосов</h3>
+					</div>
+					<div class="panel-body">
+						<form id="form_thermostat_pump_safety" method="POST">
+							<div class="form-group">
+								<label for="targetTemp_pump_safety">Температура включения, &deg;C</label>
+								<input type="number" required class="form-control" min="15" max="95" step="0.5" id="targetTemp_pump_safety" class="form-control" value="{targetTempPump}">
+								<label for="targetTempDelta_pump_safety">Дельта температуры, &deg;C</label>
+								<input type="number" required class="form-control" min="0.5" max="10" step="0.5" id="targetTempDelta_pump_safety" class="form-control" value="{targetTempDeltaPump}">
+							</div>
+							<button type="submit" class="btn btn-success">Сохранить</button>
+					  		<button type="button" id="thermostat_pump_safety_cancel" class="btn btn-link">Отмена</button>
+						</form>
+					</div>
+				</div>
+			</div>
 			
 			<!-- Fan config -->
 			<div>
