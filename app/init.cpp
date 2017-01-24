@@ -13,6 +13,8 @@ BinInPollerClass binInPoller;
 BinOutClass* output[3];
 ThermostatClass* thermostats[3];
 FanClass* fan;
+uint8_t _first = true;
+uint8_t _ssPin = 15;
 
 TempSensorsHttp *tempSensorsHttp;
 WeekThermostatClass *weekThermostats[maxWeekThermostats];

@@ -804,7 +804,8 @@ function onThermostats() {
 	document.getElementById("slider-segment-block-movepos").style.display="none";
 	
 	ajaxGetSchedule();
-	ajaxGetAllState();
+//	ajaxGetAllState();
+	wsGetThermostatStatus();
 }
 
 function ajaxSaveState(key) {

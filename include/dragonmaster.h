@@ -46,4 +46,8 @@ extern FanClass* fan;
 
 const uint8_t maxWeekThermostats = 1;
 extern WeekThermostatClass *weekThermostats[maxWeekThermostats];
+
+extern uint8_t _ssPin;
+//float _temps[6];
+extern uint8_t _first;
 #endif /* INCLUDE_DRAGONMASTER_H_ */

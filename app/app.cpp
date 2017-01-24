@@ -6,6 +6,7 @@
  */
 #include <app.h>
 #include <dragonmaster.h>
+#include <SPI.h>
 
 //AppClass
 void monitor(HttpRequest &request, HttpResponse &response); // Monitor via json some important params
@@ -161,6 +162,15 @@ void AppClass::init()
 	webServer.addPath("/state.json", onStateJson);
 	webServer.addPath("/schedule.json", onScheduleJson);
 	webServer.addPath("/thermostats.json", onThermostatsJson);
+
+	SPISettings mySPISettings = SPISettings(4700000, MSBFIRST, SPI_MODE1);
+
+	pinMode(_ssPin, OUTPUT);
+    digitalWrite(_ssPin, HIGH);             //Start de-selected
+
+    SPI.begin();
+    SPI.beginTransaction(mySPISettings);
+
 //	Serial.printf("AppClass init done!\n");
 }
 
@@ -215,6 +225,46 @@ void AppClass::_loop()
 	lcd.setCursor(7,1);
 //	lcd.print(_counter);
 	lcd.print(nowTime.toShortTimeString(true).c_str());
+
+	///TC
+    uint16_t tcData = 0;
+    float temp, avgTemp;
+    float _temps[6];
+
+    //read the temperature
+    digitalWrite(_ssPin, LOW);
+    tcData = SPI.transfer(0x00) << 8;
+    tcData |= SPI.transfer(0x00);
+    digitalWrite(_ssPin, HIGH);
+
+    Serial.printf("Termocouple: tcData: 0x%04X\n", tcData);
+
+    if (tcData & 0x0004) {                  //open thermocouple circuit
+       Serial.printf("Termocouple: ERROR!\n");
+    }
+    else {
+//        temp = (tcData >> 3) / 4.0;         //calculate deg C
+    	  temp = (tcData >> 3) * 0.25;
+        Serial.printf("Termocouple temp: "); Serial.println(temp);
+
+        if (_first) {                       //if first time through, fill the readings array
+            _first = false;
+            for (int i=0; i<6; i++) {
+                _temps[i] = temp;
+            }
+        }
+        for (int i=0; i<5; i++) {           //shift prior readings
+            _temps[i] = _temps[i+1];
+        }
+        _temps[5] = temp;                   //put the new reading in at the top end of the array
+        avgTemp = 0.0;                      //calculate the average
+        for (int i=0; i<6; i++) {
+            avgTemp += _temps[i];
+        }
+        avgTemp /= 6.0;
+       Serial.printf("Termocouple AVGtemp: "); Serial.println(avgTemp);
+    }
+	///TC
 }
 
 void AppClass::userSTAGotIP(IPAddress ip, IPAddress mask, IPAddress gateway)
