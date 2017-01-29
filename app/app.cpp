@@ -109,8 +109,8 @@ void AppClass::init()
 //	weekThermostats[0]->state.onChange(onStateChangeDelegate(&ThermostatClass::disable, thermostats[2]));
 	fan->setThermostatControlState(true);
 	fan->periodicDisable(true);
-	thermostats[1]->enable(true);
-	thermostats[2]->disable(true);
+	thermostats[1]->disable(true);
+	thermostats[2]->enable(true);
 
 	fan->active.onChange(onStateChangeDelegate(&ThermostatClass::enable, thermostats[1]));
 	fan->active.onChange(onStateChangeDelegate(&ThermostatClass::disable, thermostats[2]));
