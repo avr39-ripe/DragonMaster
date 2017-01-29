@@ -74,7 +74,7 @@ void AppClass::init()
 	thermostats[1] = new ThermostatClass(*tempSensor, ThermostatMode::COOLING, true, false, "Pump"); // Pump thermostat
 	thermostats[1]->state.onChange(onStateChangeDelegate(&BinStateClass::set, &output[1]->state));
 
-	thermostats[2] = new ThermostatClass(*tempSensor, ThermostatMode::COOLING, true, false, "Pump_safety"); // Pump thermostat
+	thermostats[2] = new ThermostatClass(*tempSensor, ThermostatMode::COOLING, true, false, "Pump_cooler"); // Pump cooler thermostat
 	thermostats[2]->state.onChange(onStateChangeDelegate(&BinStateClass::set, &output[1]->state));
 
 	fan = new FanClass(*tempSensor, *thermostats[0], *output[0]); // Fan controller
@@ -155,7 +155,7 @@ void AppClass::init()
 	webServer.addPath("/temperatureHome.json",HttpPathDelegate(&TempSensorsHttp::onHttpGet,(TempSensors*)tempSensorsHttp));
 	webServer.addPath("/thermostat.fan",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[0]));
 	webServer.addPath("/thermostat.pump",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[1]));
-	webServer.addPath("/thermostat.pump_safety",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[2]));
+	webServer.addPath("/thermostat.pump_cooler",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[2]));
 	webServer.addPath("/fan",HttpPathDelegate(&FanClass::onHttpConfig,fan));
 	webServer.addPath("/monitor",monitor);
 	webServer.addPath("/state.json", onStateJson);
