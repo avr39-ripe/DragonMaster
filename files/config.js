@@ -246,7 +246,7 @@ function onDocumentRedy() {
 	get_config();
     get_fan_config();
     get_pump_config();
-    get_pump_safety_config();
+    get_pump_cooler_config();
     getFanConfig();
     
     document.getElementById('form_netcfg').addEventListener('submit', post_netcfg);
