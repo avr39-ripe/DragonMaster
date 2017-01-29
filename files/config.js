@@ -44,23 +44,12 @@ function getThermostatConfig(name) {
 	});
 }
 
-function get_fan_config() {
-	getThermostatConfig('fan');
-}
-
-function get_pump_config() {
-	getThermostatConfig('pump');
-}
-
-function get_pump_safety_config() {
-	getThermostatConfig('pump_safety');
-}
-
-function get_pump_cooler_config() {
-	getThermostatConfig('pump_cooler');
-}
-
-function postThermostatConfg(name,jsonData) {
+function postThermostatConfg(name) {
+    var jsonData = {
+            'targetTemp'		:	document.getElementById(`targetTemp_${name}`).value * 100,
+            'targetTempDelta'	:	document.getElementById(`targetTempDelta_${name}`).value * 100
+            };
+    
 	fetch('/thermostat.'+name, {
 		method: 'post',
 		headers: {
@@ -71,41 +60,6 @@ function postThermostatConfg(name,jsonData) {
 	});
 }
 
-function post_fan_config(event) {
-	event.preventDefault();
-    var formData = {
-            'targetTemp'		:	document.getElementById('targetTemp_fan').value * 100,
-            'targetTempDelta'	:	document.getElementById('targetTempDelta_fan').value * 100
-            };
-    postThermostatConfg('fan', formData);
-}
-
-function post_pump_config(event) {
-	event.preventDefault();
-    var formData = {
-            'targetTemp'		:	document.getElementById('targetTemp_pump').value * 100,
-            'targetTempDelta'	:	document.getElementById('targetTempDelta_pump').value * 100
-            };
-    postThermostatConfg('pump', formData);
-}
-
-function post_pump_safety_config(event) {
-	event.preventDefault();
-    var formData = {
-            'targetTemp'		:	document.getElementById('targetTemp_pump_safety').value * 100,
-            'targetTempDelta'	:	document.getElementById('targetTempDelta_pump_safety').value * 100
-            };
-    postThermostatConfg('pump_safety', formData);
-}
-
-function post_pump_cooler_config(event) {
-	event.preventDefault();
-    var formData = {
-            'targetTemp'		:	document.getElementById('targetTemp_pump_cooler').value * 100,
-            'targetTempDelta'	:	document.getElementById('targetTempDelta_pump_cooler').value * 100
-            };
-    postThermostatConfg('pump_cooler', formData);
-}
 
 function get_config() {
     fetch('/config.json')
@@ -244,9 +198,9 @@ function onDocumentRedy() {
     //Init
 	initWS();
 	get_config();
-    get_fan_config();
-    get_pump_config();
-    get_pump_cooler_config();
+    getThermostatConfig('fan');
+    getThermostatConfig('pump');
+    getThermostatConfig('pump_cooler');
     getFanConfig();
     
     document.getElementById('form_netcfg').addEventListener('submit', post_netcfg);
@@ -255,14 +209,14 @@ function onDocumentRedy() {
 	document.getElementById('settings_cancel').addEventListener('click', get_config);
 	document.getElementById('settings_update_fw').addEventListener('click', function() { post_fw("update"); });
 	document.getElementById('settings_switch_fw').addEventListener('click', function() { post_fw("switch"); });
-	document.getElementById('form_thermostat_fan').addEventListener('submit', post_fan_config);
-	document.getElementById('thermostat_fan_cancel').addEventListener('click', get_fan_config);
-	document.getElementById('form_thermostat_pump').addEventListener('submit', post_pump_config);
-	document.getElementById('thermostat_pump_cancel').addEventListener('click', get_pump_config);
-	document.getElementById('form_thermostat_pump_safety').addEventListener('submit', post_pump_safety_config);
-	document.getElementById('thermostat_pump_safety_cancel').addEventListener('click', get_pump_safety_config);
-	document.getElementById('form_thermostat_pump_cooler').addEventListener('submit', post_pump_cooler_config);
-	document.getElementById('thermostat_pump_cooler_cancel').addEventListener('click', get_pump_cooler_config);	
+	document.getElementById('form_thermostat_fan').addEventListener('submit', function(event) { event.preventDefault(); postThermostatConfg('fan'); });
+	document.getElementById('thermostat_fan_cancel').addEventListener('click', function () { getThermostatConfig('fan'); });
+	document.getElementById('form_thermostat_pump').addEventListener('submit', function(event) { event.preventDefault(); postThermostatConfg('pump'); });
+	document.getElementById('thermostat_pump_cancel').addEventListener('click', function () { getThermostatConfig('pump'); });
+	document.getElementById('form_thermostat_pump_safety').addEventListener('submit', function(event) { event.preventDefault(); postThermostatConfg('pump_safety'); });
+	document.getElementById('thermostat_pump_safety_cancel').addEventListener('click', function () { getThermostatConfig('pump_safety'); });
+	document.getElementById('form_thermostat_pump_cooler').addEventListener('submit', function(event) { event.preventDefault(); postThermostatConfg('pump_cooler'); });
+	document.getElementById('thermostat_pump_cooler_cancel').addEventListener('click', function () { getThermostatConfig('pump_cooler'); });	
 	document.getElementById('form_fan').addEventListener('submit', postFanConfig);
 	document.getElementById('fan_cancel').addEventListener('click', getFanConfig);
 	
