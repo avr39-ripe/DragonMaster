@@ -77,6 +77,9 @@ void AppClass::init()
 	thermostats[2] = new ThermostatClass(*tempSensor, ThermostatMode::COOLING, true, false, "Pump_cooler"); // Pump cooler thermostat
 	thermostats[2]->state.onChange(onStateChangeDelegate(&BinStateClass::set, &output[1]->state));
 
+	thermostats[3] = new ThermostatClass(*tempSensor, ThermostatMode::COOLING, true, false, "Pump_safety"); // Pump safety thermostat
+	thermostats[3]->state.onChange(onStateChangeDelegate(&BinStateClass::set, &output[1]->state));
+
 	fan = new FanClass(*tempSensor, *thermostats[0], *output[0]); // Fan controller
 	input[0]->state.onChange(onStateChangeDelegate(&FanClass::_modeStart, fan));
 	input[1]->state.onChange(onStateChangeDelegate(&FanClass::_modeStop, fan));
@@ -99,19 +102,21 @@ void AppClass::init()
 	tempSensorsHttp = new TempSensorsHttp(4000);
 	tempSensorsHttp->addSensor("http://192.168.31.217/temperature.json?sensor=0"); // House tempsensor
 
+	thermostats[1]->disable(true);
+	thermostats[2]->enable(true);
+	thermostats[3]->disable(true);
+
 	weekThermostats[0] = new WeekThermostatClass(*tempSensorsHttp,0,"House", 4000);
 
 	BinStateHttpClass* weekThermostatState = new BinStateHttpClass(webServer, &weekThermostats[0]->state, "Термостат Дом", 2);
 	binStatesHttp->add(weekThermostatState);
-//	weekThermostats[0]->state.onChange(onStateChangeDelegate(&FanClass::setThermostatControlState, fan));
+	weekThermostats[0]->state.onChange(onStateChangeDelegate(&FanClass::setThermostatControlState, fan));
 //	weekThermostats[0]->state.onChange(onStateChangeDelegate(&FanClass::periodicDisable, fan));
-//	weekThermostats[0]->state.onChange(onStateChangeDelegate(&ThermostatClass::enable, thermostats[1]));
-//	weekThermostats[0]->state.onChange(onStateChangeDelegate(&ThermostatClass::disable, thermostats[2]));
-	fan->setThermostatControlState(true);
-	fan->periodicDisable(true);
+	weekThermostats[0]->state.onChange(onStateChangeDelegate(&ThermostatClass::enable, thermostats[1]));
+	weekThermostats[0]->state.onChange(onStateChangeDelegate(&ThermostatClass::disable, thermostats[3]));
 
-	thermostats[1]->disable(true);
-	thermostats[2]->enable(true);
+//	fan->setThermostatControlState(true);
+	fan->periodicDisable(true);
 
 	fan->active.onChange(onStateChangeDelegate(&ThermostatClass::enable, thermostats[1]));
 	fan->active.onChange(onStateChangeDelegate(&ThermostatClass::disable, thermostats[2]));
@@ -158,6 +163,7 @@ void AppClass::init()
 	webServer.addPath("/thermostat.fan",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[0]));
 	webServer.addPath("/thermostat.pump",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[1]));
 	webServer.addPath("/thermostat.pump_cooler",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[2]));
+	webServer.addPath("/thermostat.pump_safety",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[3]));
 	webServer.addPath("/fan",HttpPathDelegate(&FanClass::onHttpConfig,fan));
 	webServer.addPath("/monitor",monitor);
 	webServer.addPath("/state.json", onStateJson);

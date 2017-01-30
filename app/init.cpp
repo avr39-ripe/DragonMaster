@@ -11,7 +11,7 @@ TempSensors* tempSensor;
 BinInClass* input[2];
 BinInPollerClass binInPoller;
 BinOutClass* output[3];
-ThermostatClass* thermostats[3];
+ThermostatClass* thermostats[4];
 FanClass* fan;
 
 TempSensorsHttp *tempSensorsHttp;
