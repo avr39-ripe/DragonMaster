@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -71,7 +71,77 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__wsBin__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__appStatus_js__ = __webpack_require__(2);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return initWS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return websocket; });
 
+//Websockets
+var websocket;
+var appStatus;
+
+
+
+
+function onOpen(evt) {
+//	console.log.bind(console)("CONNECTED");
+	
+	appStatus = new __WEBPACK_IMPORTED_MODULE_1__appStatus_js__["a" /* default */]();
+	appStatus.enable(true);
+	
+//	binStates = new BinStatesClass();
+//	binStates.enableButtons(true);
+//	binStates.enableStates(true);
+//	setTimeout(function() { binStates.enableButtons(true); }, 500);
+//	setTimeout(function() { binStates.enableStates(true); }, 850);
+}
+
+function onMessage(evt) {
+//	console.log.bind(console)("Message recv: " + evt.data);
+	if(evt.data instanceof ArrayBuffer) {
+    	var bin = new DataView(evt.data);
+    	
+    	var cmd = bin.getUint8(__WEBPACK_IMPORTED_MODULE_0__wsBin__["a" /* default */].Const.wsCmd);
+    	var sysId = bin.getUint8(__WEBPACK_IMPORTED_MODULE_0__wsBin__["a" /* default */].Const.wsSysId);
+    	var subCmd = bin.getUint8(__WEBPACK_IMPORTED_MODULE_0__wsBin__["a" /* default */].Const.wsSubCmd);
+//    	console.log.bind(console)(`cmd = ${cmd}, sysId = ${sysId}, subCmd = ${subCmd}`);
+    	
+    	if ( cmd == __WEBPACK_IMPORTED_MODULE_0__wsBin__["a" /* default */].Const.getResponse && sysId == 1 ) {
+    		appStatus.wsBinProcess(bin);
+    	}
+    	
+//    	if ( cmd == wsBinConst.getResponse && ( sysId == 2 || sysId == 3) ) {
+//    		binStates.wsBinProcess(bin);
+//    	}
+    		
+  	} 
+}
+
+function onClose(evt) {
+//	console.log.bind(console)("DISCONNECTED");
+}
+
+function onError(evt) {
+//	console.log.bind(console)("ERROR: " + evt.data);
+}
+
+function initWS() {
+	var wsUri = "ws://" + "10.2.113.118" + "/";
+	websocket = new WebSocket(wsUri);
+	websocket.onopen = function(evt) { onOpen(evt) };
+	websocket.onclose = function(evt) { onClose(evt) };
+	websocket.onmessage = function(evt) { onMessage(evt) };
+	websocket.onerror = function(evt) { onError(evt) };
+	websocket.binaryType = 'arraybuffer';
+}
+
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 
 //wsBinProtocol constants
 var wsBin = {
@@ -141,34 +211,36 @@ var wsBin = {
 /* harmony default export */ __webpack_exports__["a"] = wsBin;
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__wsBin__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__websocket__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__wsBin__ = __webpack_require__(1);
 /* harmony export (immutable) */ __webpack_exports__["a"] = AppStatusClass;
 
 
 
 
-function AppStatusClass(websocket) {
+
+
+function AppStatusClass() {
 	this._counter = 0;
 	this._timestamp = 0;
 	this._dateStr = "";
 	this._timer = 0;
 	this._enable = false;
-	this._websocket = websocket
 }
 
 AppStatusClass.prototype.wsGetAppStatus = function() {
-	__WEBPACK_IMPORTED_MODULE_0__wsBin__["a" /* default */].Cmd.Get(this._websocket, 1, __WEBPACK_IMPORTED_MODULE_0__wsBin__["a" /* default */].Const.scAppGetStatus);
+	__WEBPACK_IMPORTED_MODULE_1__wsBin__["a" /* default */].Cmd.Get(__WEBPACK_IMPORTED_MODULE_0__websocket__["b" /* websocket */], 1, __WEBPACK_IMPORTED_MODULE_1__wsBin__["a" /* default */].Const.scAppGetStatus);
 }
 
 AppStatusClass.prototype.wsBinProcess = function (bin) {
-	var subCmd = bin.getUint8(__WEBPACK_IMPORTED_MODULE_0__wsBin__["a" /* default */].Const.wsSubCmd);
-	if (subCmd == __WEBPACK_IMPORTED_MODULE_0__wsBin__["a" /* default */].Const.scAppGetStatus) {
-		this._counter = bin.getUint32(__WEBPACK_IMPORTED_MODULE_0__wsBin__["a" /* default */].Const.wsPayLoadStart, true);
-    	this._timestamp = bin.getUint32(__WEBPACK_IMPORTED_MODULE_0__wsBin__["a" /* default */].Const.wsPayLoadStart + 4, true);
+	var subCmd = bin.getUint8(__WEBPACK_IMPORTED_MODULE_1__wsBin__["a" /* default */].Const.wsSubCmd);
+	if (subCmd == __WEBPACK_IMPORTED_MODULE_1__wsBin__["a" /* default */].Const.scAppGetStatus) {
+		this._counter = bin.getUint32(__WEBPACK_IMPORTED_MODULE_1__wsBin__["a" /* default */].Const.wsPayLoadStart, true);
+    	this._timestamp = bin.getUint32(__WEBPACK_IMPORTED_MODULE_1__wsBin__["a" /* default */].Const.wsPayLoadStart + 4, true);
 		var d = new Date();
 		d.setTime(this._timestamp * 1000);
 		this._dateStr = d.toLocaleString().replace(/,\ /,'<br>');
@@ -213,13 +285,12 @@ AppStatusClass.prototype.enable = function( enable ) {
 }
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__wsBin__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__appStatus_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__websocket__ = __webpack_require__(0);
 
 
 //import wsBin from './wsBin';
@@ -230,68 +301,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-var appStatus;
+
 //var binStates;
 //var tempsensors;
 //var tempsensorsHome;
 
-//Websockets
-var websocket;
-
-
-
-
-function onOpen(evt) {
-//	console.log.bind(console)("CONNECTED");
-	
-	appStatus = new __WEBPACK_IMPORTED_MODULE_1__appStatus_js__["a" /* default */](websocket);
-	appStatus.enable(true);
-	
-//	binStates = new BinStatesClass();
-//	binStates.enableButtons(true);
-//	binStates.enableStates(true);
-//	setTimeout(function() { binStates.enableButtons(true); }, 500);
-//	setTimeout(function() { binStates.enableStates(true); }, 850);
-}
-
-function onMessage(evt) {
-//	console.log.bind(console)("Message recv: " + evt.data);
-	if(evt.data instanceof ArrayBuffer) {
-    	var bin = new DataView(evt.data);
-    	
-    	var cmd = bin.getUint8(__WEBPACK_IMPORTED_MODULE_0__wsBin__["a" /* default */].Const.wsCmd);
-    	var sysId = bin.getUint8(__WEBPACK_IMPORTED_MODULE_0__wsBin__["a" /* default */].Const.wsSysId);
-    	var subCmd = bin.getUint8(__WEBPACK_IMPORTED_MODULE_0__wsBin__["a" /* default */].Const.wsSubCmd);
-//    	console.log.bind(console)(`cmd = ${cmd}, sysId = ${sysId}, subCmd = ${subCmd}`);
-    	
-    	if ( cmd == __WEBPACK_IMPORTED_MODULE_0__wsBin__["a" /* default */].Const.getResponse && sysId == 1 ) {
-    		appStatus.wsBinProcess(bin);
-    	}
-    	
-//    	if ( cmd == wsBinConst.getResponse && ( sysId == 2 || sysId == 3) ) {
-//    		binStates.wsBinProcess(bin);
-//    	}
-    		
-  	} 
-}
-
-function onClose(evt) {
-//	console.log.bind(console)("DISCONNECTED");
-}
-
-function onError(evt) {
-//	console.log.bind(console)("ERROR: " + evt.data);
-}
-
-function initWS() {
-	var wsUri = "ws://" + "192.168.31.133" + "/";
-	websocket = new WebSocket(wsUri);
-	websocket.onopen = function(evt) { onOpen(evt) };
-	websocket.onclose = function(evt) { onClose(evt) };
-	websocket.onmessage = function(evt) { onMessage(evt) };
-	websocket.onerror = function(evt) { onError(evt) };
-	websocket.binaryType = 'arraybuffer';
-}
+//import websocket from './websocket';
 
 
 //Here we put some initial code which starts after DOM loaded
@@ -304,7 +319,7 @@ function onDocumentRedy() {
 //	tempsensorsHome.enable(true);
 //	setInterval(function () { tempsensorsHome.wsGetAllTemperatures(); }, 5000);
 
-	initWS();
+	__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__websocket__["a" /* initWS */])();
 }
 
 document.addEventListener('DOMContentLoaded', onDocumentRedy);

@@ -1,5 +1,4 @@
 'use strict';
-
 //wsBinProtocol constants
 var wsBin = {
 	Const :{

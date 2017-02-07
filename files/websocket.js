@@ -1,0 +1,61 @@
+'use strict';
+//Websockets
+var websocket;
+var appStatus;
+
+import wsBin from './wsBin';
+import AppStatusClass from './appStatus.js';
+
+function onOpen(evt) {
+//	console.log.bind(console)("CONNECTED");
+	
+	appStatus = new AppStatusClass();
+	appStatus.enable(true);
+	
+//	binStates = new BinStatesClass();
+//	binStates.enableButtons(true);
+//	binStates.enableStates(true);
+//	setTimeout(function() { binStates.enableButtons(true); }, 500);
+//	setTimeout(function() { binStates.enableStates(true); }, 850);
+}
+
+function onMessage(evt) {
+//	console.log.bind(console)("Message recv: " + evt.data);
+	if(evt.data instanceof ArrayBuffer) {
+    	var bin = new DataView(evt.data);
+    	
+    	var cmd = bin.getUint8(wsBin.Const.wsCmd);
+    	var sysId = bin.getUint8(wsBin.Const.wsSysId);
+    	var subCmd = bin.getUint8(wsBin.Const.wsSubCmd);
+//    	console.log.bind(console)(`cmd = ${cmd}, sysId = ${sysId}, subCmd = ${subCmd}`);
+    	
+    	if ( cmd == wsBin.Const.getResponse && sysId == 1 ) {
+    		appStatus.wsBinProcess(bin);
+    	}
+    	
+//    	if ( cmd == wsBinConst.getResponse && ( sysId == 2 || sysId == 3) ) {
+//    		binStates.wsBinProcess(bin);
+//    	}
+    		
+  	} 
+}
+
+function onClose(evt) {
+//	console.log.bind(console)("DISCONNECTED");
+}
+
+function onError(evt) {
+//	console.log.bind(console)("ERROR: " + evt.data);
+}
+
+function initWS() {
+	var wsUri = "ws://" + "10.2.113.118" + "/";
+	websocket = new WebSocket(wsUri);
+	websocket.onopen = function(evt) { onOpen(evt) };
+	websocket.onclose = function(evt) { onClose(evt) };
+	websocket.onmessage = function(evt) { onMessage(evt) };
+	websocket.onerror = function(evt) { onError(evt) };
+	websocket.binaryType = 'arraybuffer';
+}
+
+export { initWS, websocket };

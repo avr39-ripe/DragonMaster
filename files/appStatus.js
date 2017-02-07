@@ -1,18 +1,19 @@
 'use strict';
 
+import { websocket } from './websocket';
 import wsBin from './wsBin';
 
-export default function AppStatusClass(websocket) {
+
+export default function AppStatusClass() {
 	this._counter = 0;
 	this._timestamp = 0;
 	this._dateStr = "";
 	this._timer = 0;
 	this._enable = false;
-	this._websocket = websocket
 }
 
 AppStatusClass.prototype.wsGetAppStatus = function() {
-	wsBin.Cmd.Get(this._websocket, 1, wsBin.Const.scAppGetStatus);
+	wsBin.Cmd.Get(websocket, 1, wsBin.Const.scAppGetStatus);
 }
 
 AppStatusClass.prototype.wsBinProcess = function (bin) {
