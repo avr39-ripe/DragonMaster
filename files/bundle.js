@@ -72,22 +72,22 @@
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__wsBin__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__appStatus_js__ = __webpack_require__(2);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return initWS; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return websocket; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return initWS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return websocket; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return wsObjects; });
 
 //Websockets
 var websocket;
-var appStatus;
-
+var wsObjects = {};
 
 
 
 function onOpen(evt) {
 //	console.log.bind(console)("CONNECTED");
 	
-	appStatus = new __WEBPACK_IMPORTED_MODULE_1__appStatus_js__["a" /* default */]();
-	appStatus.enable(true);
+	Object.keys(wsObjects).forEach( function(sysId) { 
+		wsObjects[sysId].enable(true);
+	});
 	
 //	binStates = new BinStatesClass();
 //	binStates.enableButtons(true);
@@ -106,9 +106,11 @@ function onMessage(evt) {
     	var subCmd = bin.getUint8(__WEBPACK_IMPORTED_MODULE_0__wsBin__["a" /* default */].Const.wsSubCmd);
 //    	console.log.bind(console)(`cmd = ${cmd}, sysId = ${sysId}, subCmd = ${subCmd}`);
     	
-    	if ( cmd == __WEBPACK_IMPORTED_MODULE_0__wsBin__["a" /* default */].Const.getResponse && sysId == 1 ) {
-    		appStatus.wsBinProcess(bin);
-    	}
+//    	if ( cmd == wsBin.Const.getResponse && sysId == 1 ) {
+//    		appStatus.wsBinProcess(bin);
+//    	}
+
+    	wsObjects[sysId].wsBinProcess(bin);
     	
 //    	if ( cmd == wsBinConst.getResponse && ( sysId == 2 || sysId == 3) ) {
 //    		binStates.wsBinProcess(bin);
@@ -232,8 +234,10 @@ function AppStatusClass() {
 	this._enable = false;
 }
 
+AppStatusClass.sysId = 1;
+
 AppStatusClass.prototype.wsGetAppStatus = function() {
-	__WEBPACK_IMPORTED_MODULE_1__wsBin__["a" /* default */].Cmd.Get(__WEBPACK_IMPORTED_MODULE_0__websocket__["b" /* websocket */], 1, __WEBPACK_IMPORTED_MODULE_1__wsBin__["a" /* default */].Const.scAppGetStatus);
+	__WEBPACK_IMPORTED_MODULE_1__wsBin__["a" /* default */].Cmd.Get(__WEBPACK_IMPORTED_MODULE_0__websocket__["c" /* websocket */], 1, __WEBPACK_IMPORTED_MODULE_1__wsBin__["a" /* default */].Const.scAppGetStatus);
 }
 
 AppStatusClass.prototype.wsBinProcess = function (bin) {
@@ -290,23 +294,17 @@ AppStatusClass.prototype.enable = function( enable ) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__websocket__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__appStatus_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__websocket__ = __webpack_require__(0);
 
 
-//import wsBin from './wsBin';
-//
-//console.log(`wsBin.Const.wsPayLoadStart = ${wsBin.Const.wsPayLoadStart}`);
-
-'use strict';
-
-
-
-
+var appStatus
 //var binStates;
 //var tempsensors;
 //var tempsensorsHome;
 
 //import websocket from './websocket';
+
 
 
 //Here we put some initial code which starts after DOM loaded
@@ -319,7 +317,10 @@ function onDocumentRedy() {
 //	tempsensorsHome.enable(true);
 //	setInterval(function () { tempsensorsHome.wsGetAllTemperatures(); }, 5000);
 
-	__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__websocket__["a" /* initWS */])();
+	var appStatus = new __WEBPACK_IMPORTED_MODULE_0__appStatus_js__["a" /* default */]();
+	__WEBPACK_IMPORTED_MODULE_1__websocket__["a" /* wsObjects */][__WEBPACK_IMPORTED_MODULE_0__appStatus_js__["a" /* default */].sysId] = appStatus;
+	
+	__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__websocket__["b" /* initWS */])();
 }
 
 document.addEventListener('DOMContentLoaded', onDocumentRedy);

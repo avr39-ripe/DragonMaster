@@ -1,20 +1,13 @@
 'use strict';
 
-//import wsBin from './wsBin';
-//
-//console.log(`wsBin.Const.wsPayLoadStart = ${wsBin.Const.wsPayLoadStart}`);
-
-'use strict';
-
-
-
-
+var appStatus
 //var binStates;
 //var tempsensors;
 //var tempsensorsHome;
 
 //import websocket from './websocket';
-import { initWS, websocket } from './websocket';
+import AppStatusClass from './appStatus.js';
+import { initWS, websocket, wsObjects } from './websocket';
 
 //Here we put some initial code which starts after DOM loaded
 function onDocumentRedy() {
@@ -26,6 +19,9 @@ function onDocumentRedy() {
 //	tempsensorsHome.enable(true);
 //	setInterval(function () { tempsensorsHome.wsGetAllTemperatures(); }, 5000);
 
+	var appStatus = new AppStatusClass();
+	wsObjects[AppStatusClass.sysId] = appStatus;
+	
 	initWS();
 }
 

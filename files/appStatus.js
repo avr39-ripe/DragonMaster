@@ -12,6 +12,8 @@ export default function AppStatusClass() {
 	this._enable = false;
 }
 
+AppStatusClass.sysId = 1;
+
 AppStatusClass.prototype.wsGetAppStatus = function() {
 	wsBin.Cmd.Get(websocket, 1, wsBin.Const.scAppGetStatus);
 }
