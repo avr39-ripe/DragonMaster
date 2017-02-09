@@ -98,7 +98,7 @@ public:
 	void wsBinGetter(WebSocket& socket, uint8_t* data, size_t size);
 	void wsBinSetter(WebSocket& socket, uint8_t* data, size_t size);
 	void add(BinStateHttpClass* binStateHttp) { _binStatesHttp[binStateHttp->getUid()] = binStateHttp; };
-	static const uint8_t sysId = 3;
+	static const uint8_t sysId = 2;
 private:
 	HashMap<uint8_t,BinStateHttpClass*> _binStatesHttp;
 };
