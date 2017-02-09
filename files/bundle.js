@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -71,259 +71,35 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__wsBin__ = __webpack_require__(1);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return initWS; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return websocket; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return wsObjects; });
-
-//Websockets
-var websocket;
-var wsObjects = {};
-
-
-
-function onOpen(evt) {
-//	console.log.bind(console)("CONNECTED");
-	
-	Object.keys(wsObjects).forEach( function(sysId) { 
-		wsObjects[sysId].enable(true);
-	});
-	
-//	binStates = new BinStatesClass();
-//	binStates.enableButtons(true);
-//	binStates.enableStates(true);
-//	setTimeout(function() { binStates.enableButtons(true); }, 500);
-//	setTimeout(function() { binStates.enableStates(true); }, 850);
-}
-
-function onMessage(evt) {
-//	console.log.bind(console)("Message recv: " + evt.data);
-	if(evt.data instanceof ArrayBuffer) {
-    	var bin = new DataView(evt.data);
-    	
-    	var cmd = bin.getUint8(__WEBPACK_IMPORTED_MODULE_0__wsBin__["a" /* default */].Const.wsCmd);
-    	var sysId = bin.getUint8(__WEBPACK_IMPORTED_MODULE_0__wsBin__["a" /* default */].Const.wsSysId);
-    	var subCmd = bin.getUint8(__WEBPACK_IMPORTED_MODULE_0__wsBin__["a" /* default */].Const.wsSubCmd);
-//    	console.log.bind(console)(`cmd = ${cmd}, sysId = ${sysId}, subCmd = ${subCmd}`);
-    	
-//    	if ( cmd == wsBin.Const.getResponse && sysId == 1 ) {
-//    		appStatus.wsBinProcess(bin);
-//    	}
-
-    	wsObjects[sysId].wsBinProcess(bin);
-    	
-//    	if ( cmd == wsBinConst.getResponse && ( sysId == 2 || sysId == 3) ) {
-//    		binStates.wsBinProcess(bin);
-//    	}
-    		
-  	} 
-}
-
-function onClose(evt) {
-//	console.log.bind(console)("DISCONNECTED");
-}
-
-function onError(evt) {
-//	console.log.bind(console)("ERROR: " + evt.data);
-}
-
-function initWS() {
-	var wsUri = "ws://" + "10.2.113.118" + "/";
-	websocket = new WebSocket(wsUri);
-	websocket.onopen = function(evt) { onOpen(evt) };
-	websocket.onclose = function(evt) { onClose(evt) };
-	websocket.onmessage = function(evt) { onMessage(evt) };
-	websocket.onerror = function(evt) { onError(evt) };
-	websocket.binaryType = 'arraybuffer';
-}
-
-
+eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__wsBin__ = __webpack_require__(1);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"b\", function() { return initWS; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"c\", function() { return websocket; });\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"a\", function() { return wsObjects; });\n\n//Websockets\nvar websocket;\nvar wsObjects = {};\n\n\n\nfunction onOpen(evt) {\n//\tconsole.log.bind(console)(\"CONNECTED\");\n\t\n\tObject.keys(wsObjects).forEach( function(sysId) { \n\t\twsObjects[sysId].enable(true);\n\t});\n\t\n//\tbinStates = new BinStatesClass();\n//\tbinStates.enableButtons(true);\n//\tbinStates.enableStates(true);\n//\tsetTimeout(function() { binStates.enableButtons(true); }, 500);\n//\tsetTimeout(function() { binStates.enableStates(true); }, 850);\n}\n\nfunction onMessage(evt) {\n//\tconsole.log.bind(console)(\"Message recv: \" + evt.data);\n\tif(evt.data instanceof ArrayBuffer) {\n    \tvar bin = new DataView(evt.data);\n    \t\n    \tvar cmd = bin.getUint8(__WEBPACK_IMPORTED_MODULE_0__wsBin__[\"a\" /* default */].Const.wsCmd);\n    \tvar sysId = bin.getUint8(__WEBPACK_IMPORTED_MODULE_0__wsBin__[\"a\" /* default */].Const.wsSysId);\n    \tvar subCmd = bin.getUint8(__WEBPACK_IMPORTED_MODULE_0__wsBin__[\"a\" /* default */].Const.wsSubCmd);\n//    \tconsole.log.bind(console)(`cmd = ${cmd}, sysId = ${sysId}, subCmd = ${subCmd}`);\n    \t\n//    \tif ( cmd == wsBin.Const.getResponse && sysId == 1 ) {\n//    \t\tappStatus.wsBinProcess(bin);\n//    \t}\n\n    \twsObjects[sysId].wsBinProcess(bin);\n    \t\n//    \tif ( cmd == wsBinConst.getResponse && ( sysId == 2 || sysId == 3) ) {\n//    \t\tbinStates.wsBinProcess(bin);\n//    \t}\n    \t\t\n  \t} \n}\n\nfunction onClose(evt) {\n//\tconsole.log.bind(console)(\"DISCONNECTED\");\n}\n\nfunction onError(evt) {\n//\tconsole.log.bind(console)(\"ERROR: \" + evt.data);\n}\n\nfunction initWS() {\n\tvar wsUri = \"ws://\" + \"10.2.113.118\" + \"/\";\n\twebsocket = new WebSocket(wsUri);\n\twebsocket.onopen = function(evt) { onOpen(evt) };\n\twebsocket.onclose = function(evt) { onClose(evt) };\n\twebsocket.onmessage = function(evt) { onMessage(evt) };\n\twebsocket.onerror = function(evt) { onError(evt) };\n\twebsocket.binaryType = 'arraybuffer';\n}\n\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8vLi93ZWJzb2NrZXQuanM/M2M4NCJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7O0FBQUE7QUFDQTtBQUNBO0FBQ0E7O0FBRUE7O0FBRUE7QUFDQTs7QUFFQSxrRDtBQUNBO0FBQ0EsRUFBRTs7QUFFRjtBQUNBO0FBQ0E7QUFDQSwwQkFBMEIsK0JBQStCLEVBQUU7QUFDM0QsMEJBQTBCLDhCQUE4QixFQUFFO0FBQzFEOztBQUVBO0FBQ0E7QUFDQTtBQUNBOztBQUVBO0FBQ0E7QUFDQTtBQUNBLDBDQUEwQyxJQUFJLFlBQVksTUFBTSxhQUFhLE9BQU87O0FBRXBGO0FBQ0E7QUFDQTs7QUFFQTs7QUFFQTtBQUNBO0FBQ0E7O0FBRUEsSTtBQUNBOztBQUVBO0FBQ0E7QUFDQTs7QUFFQTtBQUNBO0FBQ0E7O0FBRUE7QUFDQTtBQUNBO0FBQ0EsbUNBQW1DO0FBQ25DLG9DQUFvQztBQUNwQyxzQ0FBc0M7QUFDdEMsb0NBQW9DO0FBQ3BDO0FBQ0EiLCJmaWxlIjoiMC5qcyIsInNvdXJjZXNDb250ZW50IjpbIid1c2Ugc3RyaWN0Jztcbi8vV2Vic29ja2V0c1xudmFyIHdlYnNvY2tldDtcbnZhciB3c09iamVjdHMgPSB7fTtcblxuaW1wb3J0IHdzQmluIGZyb20gJy4vd3NCaW4nO1xuXG5mdW5jdGlvbiBvbk9wZW4oZXZ0KSB7XG4vL1x0Y29uc29sZS5sb2cuYmluZChjb25zb2xlKShcIkNPTk5FQ1RFRFwiKTtcblx0XG5cdE9iamVjdC5rZXlzKHdzT2JqZWN0cykuZm9yRWFjaCggZnVuY3Rpb24oc3lzSWQpIHsgXG5cdFx0d3NPYmplY3RzW3N5c0lkXS5lbmFibGUodHJ1ZSk7XG5cdH0pO1xuXHRcbi8vXHRiaW5TdGF0ZXMgPSBuZXcgQmluU3RhdGVzQ2xhc3MoKTtcbi8vXHRiaW5TdGF0ZXMuZW5hYmxlQnV0dG9ucyh0cnVlKTtcbi8vXHRiaW5TdGF0ZXMuZW5hYmxlU3RhdGVzKHRydWUpO1xuLy9cdHNldFRpbWVvdXQoZnVuY3Rpb24oKSB7IGJpblN0YXRlcy5lbmFibGVCdXR0b25zKHRydWUpOyB9LCA1MDApO1xuLy9cdHNldFRpbWVvdXQoZnVuY3Rpb24oKSB7IGJpblN0YXRlcy5lbmFibGVTdGF0ZXModHJ1ZSk7IH0sIDg1MCk7XG59XG5cbmZ1bmN0aW9uIG9uTWVzc2FnZShldnQpIHtcbi8vXHRjb25zb2xlLmxvZy5iaW5kKGNvbnNvbGUpKFwiTWVzc2FnZSByZWN2OiBcIiArIGV2dC5kYXRhKTtcblx0aWYoZXZ0LmRhdGEgaW5zdGFuY2VvZiBBcnJheUJ1ZmZlcikge1xuICAgIFx0dmFyIGJpbiA9IG5ldyBEYXRhVmlldyhldnQuZGF0YSk7XG4gICAgXHRcbiAgICBcdHZhciBjbWQgPSBiaW4uZ2V0VWludDgod3NCaW4uQ29uc3Qud3NDbWQpO1xuICAgIFx0dmFyIHN5c0lkID0gYmluLmdldFVpbnQ4KHdzQmluLkNvbnN0LndzU3lzSWQpO1xuICAgIFx0dmFyIHN1YkNtZCA9IGJpbi5nZXRVaW50OCh3c0Jpbi5Db25zdC53c1N1YkNtZCk7XG4vLyAgICBcdGNvbnNvbGUubG9nLmJpbmQoY29uc29sZSkoYGNtZCA9ICR7Y21kfSwgc3lzSWQgPSAke3N5c0lkfSwgc3ViQ21kID0gJHtzdWJDbWR9YCk7XG4gICAgXHRcbi8vICAgIFx0aWYgKCBjbWQgPT0gd3NCaW4uQ29uc3QuZ2V0UmVzcG9uc2UgJiYgc3lzSWQgPT0gMSApIHtcbi8vICAgIFx0XHRhcHBTdGF0dXMud3NCaW5Qcm9jZXNzKGJpbik7XG4vLyAgICBcdH1cblxuICAgIFx0d3NPYmplY3RzW3N5c0lkXS53c0JpblByb2Nlc3MoYmluKTtcbiAgICBcdFxuLy8gICAgXHRpZiAoIGNtZCA9PSB3c0JpbkNvbnN0LmdldFJlc3BvbnNlICYmICggc3lzSWQgPT0gMiB8fCBzeXNJZCA9PSAzKSApIHtcbi8vICAgIFx0XHRiaW5TdGF0ZXMud3NCaW5Qcm9jZXNzKGJpbik7XG4vLyAgICBcdH1cbiAgICBcdFx0XG4gIFx0fSBcbn1cblxuZnVuY3Rpb24gb25DbG9zZShldnQpIHtcbi8vXHRjb25zb2xlLmxvZy5iaW5kKGNvbnNvbGUpKFwiRElTQ09OTkVDVEVEXCIpO1xufVxuXG5mdW5jdGlvbiBvbkVycm9yKGV2dCkge1xuLy9cdGNvbnNvbGUubG9nLmJpbmQoY29uc29sZSkoXCJFUlJPUjogXCIgKyBldnQuZGF0YSk7XG59XG5cbmZ1bmN0aW9uIGluaXRXUygpIHtcblx0dmFyIHdzVXJpID0gXCJ3czovL1wiICsgXCIxMC4yLjExMy4xMThcIiArIFwiL1wiO1xuXHR3ZWJzb2NrZXQgPSBuZXcgV2ViU29ja2V0KHdzVXJpKTtcblx0d2Vic29ja2V0Lm9ub3BlbiA9IGZ1bmN0aW9uKGV2dCkgeyBvbk9wZW4oZXZ0KSB9O1xuXHR3ZWJzb2NrZXQub25jbG9zZSA9IGZ1bmN0aW9uKGV2dCkgeyBvbkNsb3NlKGV2dCkgfTtcblx0d2Vic29ja2V0Lm9ubWVzc2FnZSA9IGZ1bmN0aW9uKGV2dCkgeyBvbk1lc3NhZ2UoZXZ0KSB9O1xuXHR3ZWJzb2NrZXQub25lcnJvciA9IGZ1bmN0aW9uKGV2dCkgeyBvbkVycm9yKGV2dCkgfTtcblx0d2Vic29ja2V0LmJpbmFyeVR5cGUgPSAnYXJyYXlidWZmZXInO1xufVxuXG5leHBvcnQgeyBpbml0V1MsIHdlYnNvY2tldCwgd3NPYmplY3RzIH07XG5cblxuLy8vLy8vLy8vLy8vLy8vLy8vXG4vLyBXRUJQQUNLIEZPT1RFUlxuLy8gLi93ZWJzb2NrZXQuanNcbi8vIG1vZHVsZSBpZCA9IDBcbi8vIG1vZHVsZSBjaHVua3MgPSAwIl0sInNvdXJjZVJvb3QiOiIifQ==");
 
 /***/ }),
 /* 1 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-
-//wsBinProtocol constants
-var wsBin = {
-	Const :{
-//Frame header offsets
-	wsCmd			: 0, //Command type
-	wsSysId			: 1, //target sysId
-	wsSubCmd		: 2, //sub-command type
-	wsPayLoadStart	: 3,
-	//alternatively if we need argument to Get value
-	wsPayLoadStartGetSetArg	: 4,
-	wsGetSetArg		: 3,
-
-	reservedCmd		: 0,
-	getCmd			: 1,
-	setCmd			: 2,
-	getResponse		: 3,
-	setAck			: 4,
-	setNack			: 5,
-
-// sub-command
-	scAppSetTime	: 1,
-	scAppGetStatus	: 2,
-	scAppConfigGet	: 3,
-	scAppConfigSet	: 4,
-// sub-commands for BinStateHttpClass sysId=2 and BinStatesHttpClass sysId=3
-	scBinStateGetName	: 1,
-	scBinStateGetState	: 2,
-	scBinStateSetState	: 3,
-// sub-commands for BinStatesHttpClass sysId=3
-	scBinStatesGetAll		: 10,
-	scBinStatesGetAllStates	: 20,
-	scBinStatesGetAllButtons	: 30,
-// BinHttp State/Buttons base numbers
-	uidHttpState		: 0,
-	uidHttpButton		: 127
-	},
-	
-	Cmd: {
-	Get	: function (socket, sysId, subCmd) {
-		var ab = new ArrayBuffer(3);
-		var bin = new DataView(ab);
-		
-		bin.setUint8(wsBin.Const.wsCmd, wsBin.Const.getCmd);
-		bin.setUint8(wsBin.Const.wsSysId, sysId);
-		bin.setUint8(wsBin.Const.wsSubCmd, subCmd);
-	
-		socket.send(bin.buffer);
-//		console.log.bind(console)(`wsGet sysId = ${sysId}, subCmd = ${subCmd}`);
-	},
-	SetArg: function (socket, sysId, subCmd, setArg, setValue) {
-		var ab = new ArrayBuffer(5);
-		var bin = new DataView(ab);
-		
-		bin.setUint8(wsBin.Const.wsCmd, wsBin.Const.setCmd);
-		bin.setUint8(wsBin.Const.wsSysId, sysId);
-		bin.setUint8(wsBin.Const.wsSubCmd, subCmd);
-		bin.setUint8(wsBin.Const.wsGetSetArg, setArg);
-		bin.setUint8(wsBin.Const.wsPayLoadStartGetSetArg, setValue);
-	
-		socket.send(bin.buffer);
-//		console.log.bind(console)(`wsGet sysId = ${sysId}, subCmd = ${subCmd}`);
-	}
-	}
-};
-
-/* harmony default export */ __webpack_exports__["a"] = wsBin;
+eval("\n//wsBinProtocol constants\nvar wsBin = {\n\tConst :{\n//Frame header offsets\n\twsCmd\t\t\t: 0, //Command type\n\twsSysId\t\t\t: 1, //target sysId\n\twsSubCmd\t\t: 2, //sub-command type\n\twsPayLoadStart\t: 3,\n\t//alternatively if we need argument to Get value\n\twsPayLoadStartGetSetArg\t: 4,\n\twsGetSetArg\t\t: 3,\n\n\treservedCmd\t\t: 0,\n\tgetCmd\t\t\t: 1,\n\tsetCmd\t\t\t: 2,\n\tgetResponse\t\t: 3,\n\tsetAck\t\t\t: 4,\n\tsetNack\t\t\t: 5,\n\n// sub-command\n\tscAppSetTime\t: 1,\n\tscAppGetStatus\t: 2,\n\tscAppConfigGet\t: 3,\n\tscAppConfigSet\t: 4,\n// sub-commands for BinStateHttpClass sysId=2 and BinStatesHttpClass sysId=3\n\tscBinStateGetName\t: 1,\n\tscBinStateGetState\t: 2,\n\tscBinStateSetState\t: 3,\n// sub-commands for BinStatesHttpClass sysId=3\n\tscBinStatesGetAll\t\t: 10,\n\tscBinStatesGetAllStates\t: 20,\n\tscBinStatesGetAllButtons\t: 30,\n// BinHttp State/Buttons base numbers\n\tuidHttpState\t\t: 0,\n\tuidHttpButton\t\t: 127\n\t},\n\t\n\tCmd: {\n\tGet\t: function (socket, sysId, subCmd) {\n\t\tvar ab = new ArrayBuffer(3);\n\t\tvar bin = new DataView(ab);\n\t\t\n\t\tbin.setUint8(wsBin.Const.wsCmd, wsBin.Const.getCmd);\n\t\tbin.setUint8(wsBin.Const.wsSysId, sysId);\n\t\tbin.setUint8(wsBin.Const.wsSubCmd, subCmd);\n\t\n\t\tsocket.send(bin.buffer);\n//\t\tconsole.log.bind(console)(`wsGet sysId = ${sysId}, subCmd = ${subCmd}`);\n\t},\n\tSetArg: function (socket, sysId, subCmd, setArg, setValue) {\n\t\tvar ab = new ArrayBuffer(5);\n\t\tvar bin = new DataView(ab);\n\t\t\n\t\tbin.setUint8(wsBin.Const.wsCmd, wsBin.Const.setCmd);\n\t\tbin.setUint8(wsBin.Const.wsSysId, sysId);\n\t\tbin.setUint8(wsBin.Const.wsSubCmd, subCmd);\n\t\tbin.setUint8(wsBin.Const.wsGetSetArg, setArg);\n\t\tbin.setUint8(wsBin.Const.wsPayLoadStartGetSetArg, setValue);\n\t\n\t\tsocket.send(bin.buffer);\n//\t\tconsole.log.bind(console)(`wsGet sysId = ${sysId}, subCmd = ${subCmd}`);\n\t}\n\t}\n};\n\n/* harmony default export */ __webpack_exports__[\"a\"] = wsBin;//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8vLi93c0Jpbi5qcz8xOGYyIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTs7QUFFQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7O0FBRUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQSxFQUFFOztBQUVGO0FBQ0E7QUFDQTtBQUNBOztBQUVBO0FBQ0E7QUFDQTs7QUFFQTtBQUNBLCtDQUErQyxNQUFNLGFBQWEsT0FBTztBQUN6RSxFQUFFO0FBQ0Y7QUFDQTtBQUNBOztBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7O0FBRUE7QUFDQSwrQ0FBK0MsTUFBTSxhQUFhLE9BQU87QUFDekU7QUFDQTtBQUNBOztBQUVBIiwiZmlsZSI6IjEuanMiLCJzb3VyY2VzQ29udGVudCI6WyIndXNlIHN0cmljdCc7XG4vL3dzQmluUHJvdG9jb2wgY29uc3RhbnRzXG52YXIgd3NCaW4gPSB7XG5cdENvbnN0IDp7XG4vL0ZyYW1lIGhlYWRlciBvZmZzZXRzXG5cdHdzQ21kXHRcdFx0OiAwLCAvL0NvbW1hbmQgdHlwZVxuXHR3c1N5c0lkXHRcdFx0OiAxLCAvL3RhcmdldCBzeXNJZFxuXHR3c1N1YkNtZFx0XHQ6IDIsIC8vc3ViLWNvbW1hbmQgdHlwZVxuXHR3c1BheUxvYWRTdGFydFx0OiAzLFxuXHQvL2FsdGVybmF0aXZlbHkgaWYgd2UgbmVlZCBhcmd1bWVudCB0byBHZXQgdmFsdWVcblx0d3NQYXlMb2FkU3RhcnRHZXRTZXRBcmdcdDogNCxcblx0d3NHZXRTZXRBcmdcdFx0OiAzLFxuXG5cdHJlc2VydmVkQ21kXHRcdDogMCxcblx0Z2V0Q21kXHRcdFx0OiAxLFxuXHRzZXRDbWRcdFx0XHQ6IDIsXG5cdGdldFJlc3BvbnNlXHRcdDogMyxcblx0c2V0QWNrXHRcdFx0OiA0LFxuXHRzZXROYWNrXHRcdFx0OiA1LFxuXG4vLyBzdWItY29tbWFuZFxuXHRzY0FwcFNldFRpbWVcdDogMSxcblx0c2NBcHBHZXRTdGF0dXNcdDogMixcblx0c2NBcHBDb25maWdHZXRcdDogMyxcblx0c2NBcHBDb25maWdTZXRcdDogNCxcbi8vIHN1Yi1jb21tYW5kcyBmb3IgQmluU3RhdGVIdHRwQ2xhc3Mgc3lzSWQ9MiBhbmQgQmluU3RhdGVzSHR0cENsYXNzIHN5c0lkPTNcblx0c2NCaW5TdGF0ZUdldE5hbWVcdDogMSxcblx0c2NCaW5TdGF0ZUdldFN0YXRlXHQ6IDIsXG5cdHNjQmluU3RhdGVTZXRTdGF0ZVx0OiAzLFxuLy8gc3ViLWNvbW1hbmRzIGZvciBCaW5TdGF0ZXNIdHRwQ2xhc3Mgc3lzSWQ9M1xuXHRzY0JpblN0YXRlc0dldEFsbFx0XHQ6IDEwLFxuXHRzY0JpblN0YXRlc0dldEFsbFN0YXRlc1x0OiAyMCxcblx0c2NCaW5TdGF0ZXNHZXRBbGxCdXR0b25zXHQ6IDMwLFxuLy8gQmluSHR0cCBTdGF0ZS9CdXR0b25zIGJhc2UgbnVtYmVyc1xuXHR1aWRIdHRwU3RhdGVcdFx0OiAwLFxuXHR1aWRIdHRwQnV0dG9uXHRcdDogMTI3XG5cdH0sXG5cdFxuXHRDbWQ6IHtcblx0R2V0XHQ6IGZ1bmN0aW9uIChzb2NrZXQsIHN5c0lkLCBzdWJDbWQpIHtcblx0XHR2YXIgYWIgPSBuZXcgQXJyYXlCdWZmZXIoMyk7XG5cdFx0dmFyIGJpbiA9IG5ldyBEYXRhVmlldyhhYik7XG5cdFx0XG5cdFx0YmluLnNldFVpbnQ4KHdzQmluLkNvbnN0LndzQ21kLCB3c0Jpbi5Db25zdC5nZXRDbWQpO1xuXHRcdGJpbi5zZXRVaW50OCh3c0Jpbi5Db25zdC53c1N5c0lkLCBzeXNJZCk7XG5cdFx0YmluLnNldFVpbnQ4KHdzQmluLkNvbnN0LndzU3ViQ21kLCBzdWJDbWQpO1xuXHRcblx0XHRzb2NrZXQuc2VuZChiaW4uYnVmZmVyKTtcbi8vXHRcdGNvbnNvbGUubG9nLmJpbmQoY29uc29sZSkoYHdzR2V0IHN5c0lkID0gJHtzeXNJZH0sIHN1YkNtZCA9ICR7c3ViQ21kfWApO1xuXHR9LFxuXHRTZXRBcmc6IGZ1bmN0aW9uIChzb2NrZXQsIHN5c0lkLCBzdWJDbWQsIHNldEFyZywgc2V0VmFsdWUpIHtcblx0XHR2YXIgYWIgPSBuZXcgQXJyYXlCdWZmZXIoNSk7XG5cdFx0dmFyIGJpbiA9IG5ldyBEYXRhVmlldyhhYik7XG5cdFx0XG5cdFx0YmluLnNldFVpbnQ4KHdzQmluLkNvbnN0LndzQ21kLCB3c0Jpbi5Db25zdC5zZXRDbWQpO1xuXHRcdGJpbi5zZXRVaW50OCh3c0Jpbi5Db25zdC53c1N5c0lkLCBzeXNJZCk7XG5cdFx0YmluLnNldFVpbnQ4KHdzQmluLkNvbnN0LndzU3ViQ21kLCBzdWJDbWQpO1xuXHRcdGJpbi5zZXRVaW50OCh3c0Jpbi5Db25zdC53c0dldFNldEFyZywgc2V0QXJnKTtcblx0XHRiaW4uc2V0VWludDgod3NCaW4uQ29uc3Qud3NQYXlMb2FkU3RhcnRHZXRTZXRBcmcsIHNldFZhbHVlKTtcblx0XG5cdFx0c29ja2V0LnNlbmQoYmluLmJ1ZmZlcik7XG4vL1x0XHRjb25zb2xlLmxvZy5iaW5kKGNvbnNvbGUpKGB3c0dldCBzeXNJZCA9ICR7c3lzSWR9LCBzdWJDbWQgPSAke3N1YkNtZH1gKTtcblx0fVxuXHR9XG59O1xuXG5leHBvcnQgZGVmYXVsdCB3c0JpbjtcblxuXG4vLy8vLy8vLy8vLy8vLy8vLy9cbi8vIFdFQlBBQ0sgRk9PVEVSXG4vLyAuL3dzQmluLmpzXG4vLyBtb2R1bGUgaWQgPSAxXG4vLyBtb2R1bGUgY2h1bmtzID0gMCJdLCJzb3VyY2VSb290IjoiIn0=");
 
 /***/ }),
 /* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__websocket__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__wsBin__ = __webpack_require__(1);
-/* harmony export (immutable) */ __webpack_exports__["a"] = AppStatusClass;
-
-
-
-
-
-
-function AppStatusClass() {
-	this._counter = 0;
-	this._timestamp = 0;
-	this._dateStr = "";
-	this._timer = 0;
-	this._enable = false;
-}
-
-AppStatusClass.sysId = 1;
-
-AppStatusClass.prototype.wsGetAppStatus = function() {
-	__WEBPACK_IMPORTED_MODULE_1__wsBin__["a" /* default */].Cmd.Get(__WEBPACK_IMPORTED_MODULE_0__websocket__["c" /* websocket */], 1, __WEBPACK_IMPORTED_MODULE_1__wsBin__["a" /* default */].Const.scAppGetStatus);
-}
-
-AppStatusClass.prototype.wsBinProcess = function (bin) {
-	var subCmd = bin.getUint8(__WEBPACK_IMPORTED_MODULE_1__wsBin__["a" /* default */].Const.wsSubCmd);
-	if (subCmd == __WEBPACK_IMPORTED_MODULE_1__wsBin__["a" /* default */].Const.scAppGetStatus) {
-		this._counter = bin.getUint32(__WEBPACK_IMPORTED_MODULE_1__wsBin__["a" /* default */].Const.wsPayLoadStart, true);
-    	this._timestamp = bin.getUint32(__WEBPACK_IMPORTED_MODULE_1__wsBin__["a" /* default */].Const.wsPayLoadStart + 4, true);
-		var d = new Date();
-		d.setTime(this._timestamp * 1000);
-		this._dateStr = d.toLocaleString().replace(/,\ /,'<br>');
-		this.renderStatus();
-	}
-}
-
-AppStatusClass.prototype.render = function () {
-	var t = document.querySelector('#AppStatusClass');
-	var clone = document.importNode(t.content, true);
-	var container = document.getElementById("Container-AppStatusClass");
-	container.appendChild(clone);
-}
-
-AppStatusClass.prototype.renderStatus = function () {
-	document.querySelector('#AppStatusClassCounter').textContent = this._counter;
-	document.querySelector('#AppStatusClassDateTime').innerHTML = this._dateStr;
-}
-
-AppStatusClass.prototype.remove = function () {
-		var removeElement = document.querySelector('#Container-AppStatusClass');
-		this.removeChilds(removeElement);
-}
-
-AppStatusClass.prototype.removeChilds = function (node) {
-    var last;
-    while (last = node.lastChild) node.removeChild(last);
-}
-
-AppStatusClass.prototype.enable = function( enable ) {
-	if ( enable != this._enable ) {
-		this._enable = enable;
-		if (! this._enable) {
-			clearInterval(this._timer);
-			this.remove();
-		} else {
-			this.render();
-			this.wsGetAppStatus()
-			this._timer = setInterval(this.wsGetAppStatus, 5000);
-		}	
-	}
-}
+eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__websocket__ = __webpack_require__(0);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__wsBin__ = __webpack_require__(1);\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = AppStatusClass;\n\n\n\n\n\n\nfunction AppStatusClass() {\n\tthis._counter = 0;\n\tthis._timestamp = 0;\n\tthis._dateStr = \"\";\n\tthis._timer = 0;\n\tthis._enable = false;\n}\n\nAppStatusClass.sysId = 1;\n\nAppStatusClass.prototype.wsGetAppStatus = function() {\n\t__WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Cmd.Get(__WEBPACK_IMPORTED_MODULE_0__websocket__[\"c\" /* websocket */], 1, __WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.scAppGetStatus);\n}\n\nAppStatusClass.prototype.wsBinProcess = function (bin) {\n\tvar subCmd = bin.getUint8(__WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.wsSubCmd);\n\tif (subCmd == __WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.scAppGetStatus) {\n\t\tthis._counter = bin.getUint32(__WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.wsPayLoadStart, true);\n    \tthis._timestamp = bin.getUint32(__WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.wsPayLoadStart + 4, true);\n\t\tvar d = new Date();\n\t\td.setTime(this._timestamp * 1000);\n\t\tthis._dateStr = d.toLocaleString().replace(/,\\ /,'<br>');\n\t\tthis.renderStatus();\n\t}\n}\n\nAppStatusClass.prototype.render = function () {\n\tvar t = document.querySelector('#AppStatusClass');\n\tvar clone = document.importNode(t.content, true);\n\tvar container = document.getElementById(\"Container-AppStatusClass\");\n\tcontainer.appendChild(clone);\n}\n\nAppStatusClass.prototype.renderStatus = function () {\n\tdocument.querySelector('#AppStatusClassCounter').textContent = this._counter;\n\tdocument.querySelector('#AppStatusClassDateTime').innerHTML = this._dateStr;\n}\n\nAppStatusClass.prototype.remove = function () {\n\t\tvar removeElement = document.querySelector('#Container-AppStatusClass');\n\t\tthis.removeChilds(removeElement);\n}\n\nAppStatusClass.prototype.removeChilds = function (node) {\n    var last;\n    while (last = node.lastChild) node.removeChild(last);\n}\n\nAppStatusClass.prototype.enable = function( enable ) {\n\tif ( enable != this._enable ) {\n\t\tthis._enable = enable;\n\t\tif (! this._enable) {\n\t\t\tclearInterval(this._timer);\n\t\t\tthis.remove();\n\t\t} else {\n\t\t\tthis.render();\n\t\t\tthis.wsGetAppStatus()\n\t\t\tthis._timer = setInterval(this.wsGetAppStatus, 5000);\n\t\t}\t\n\t}\n}//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8vLi9hcHBTdGF0dXMuanM/NzczNyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7QUFBQTs7QUFFb0I7QUFDcEI7OztBQUdBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBOztBQUVBOztBQUVBO0FBQ0E7QUFDQTs7QUFFQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBOztBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTs7QUFFQTtBQUNBO0FBQ0E7QUFDQTs7QUFFQTtBQUNBO0FBQ0E7QUFDQTs7QUFFQTtBQUNBO0FBQ0E7QUFDQTs7QUFFQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQSxHQUFHO0FBQ0g7QUFDQTtBQUNBO0FBQ0EsRztBQUNBO0FBQ0EiLCJmaWxlIjoiMi5qcyIsInNvdXJjZXNDb250ZW50IjpbIid1c2Ugc3RyaWN0JztcblxuaW1wb3J0IHsgd2Vic29ja2V0IH0gZnJvbSAnLi93ZWJzb2NrZXQnO1xuaW1wb3J0IHdzQmluIGZyb20gJy4vd3NCaW4nO1xuXG5cbmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIEFwcFN0YXR1c0NsYXNzKCkge1xuXHR0aGlzLl9jb3VudGVyID0gMDtcblx0dGhpcy5fdGltZXN0YW1wID0gMDtcblx0dGhpcy5fZGF0ZVN0ciA9IFwiXCI7XG5cdHRoaXMuX3RpbWVyID0gMDtcblx0dGhpcy5fZW5hYmxlID0gZmFsc2U7XG59XG5cbkFwcFN0YXR1c0NsYXNzLnN5c0lkID0gMTtcblxuQXBwU3RhdHVzQ2xhc3MucHJvdG90eXBlLndzR2V0QXBwU3RhdHVzID0gZnVuY3Rpb24oKSB7XG5cdHdzQmluLkNtZC5HZXQod2Vic29ja2V0LCAxLCB3c0Jpbi5Db25zdC5zY0FwcEdldFN0YXR1cyk7XG59XG5cbkFwcFN0YXR1c0NsYXNzLnByb3RvdHlwZS53c0JpblByb2Nlc3MgPSBmdW5jdGlvbiAoYmluKSB7XG5cdHZhciBzdWJDbWQgPSBiaW4uZ2V0VWludDgod3NCaW4uQ29uc3Qud3NTdWJDbWQpO1xuXHRpZiAoc3ViQ21kID09IHdzQmluLkNvbnN0LnNjQXBwR2V0U3RhdHVzKSB7XG5cdFx0dGhpcy5fY291bnRlciA9IGJpbi5nZXRVaW50MzIod3NCaW4uQ29uc3Qud3NQYXlMb2FkU3RhcnQsIHRydWUpO1xuICAgIFx0dGhpcy5fdGltZXN0YW1wID0gYmluLmdldFVpbnQzMih3c0Jpbi5Db25zdC53c1BheUxvYWRTdGFydCArIDQsIHRydWUpO1xuXHRcdHZhciBkID0gbmV3IERhdGUoKTtcblx0XHRkLnNldFRpbWUodGhpcy5fdGltZXN0YW1wICogMTAwMCk7XG5cdFx0dGhpcy5fZGF0ZVN0ciA9IGQudG9Mb2NhbGVTdHJpbmcoKS5yZXBsYWNlKC8sXFwgLywnPGJyPicpO1xuXHRcdHRoaXMucmVuZGVyU3RhdHVzKCk7XG5cdH1cbn1cblxuQXBwU3RhdHVzQ2xhc3MucHJvdG90eXBlLnJlbmRlciA9IGZ1bmN0aW9uICgpIHtcblx0dmFyIHQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCcjQXBwU3RhdHVzQ2xhc3MnKTtcblx0dmFyIGNsb25lID0gZG9jdW1lbnQuaW1wb3J0Tm9kZSh0LmNvbnRlbnQsIHRydWUpO1xuXHR2YXIgY29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJDb250YWluZXItQXBwU3RhdHVzQ2xhc3NcIik7XG5cdGNvbnRhaW5lci5hcHBlbmRDaGlsZChjbG9uZSk7XG59XG5cbkFwcFN0YXR1c0NsYXNzLnByb3RvdHlwZS5yZW5kZXJTdGF0dXMgPSBmdW5jdGlvbiAoKSB7XG5cdGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoJyNBcHBTdGF0dXNDbGFzc0NvdW50ZXInKS50ZXh0Q29udGVudCA9IHRoaXMuX2NvdW50ZXI7XG5cdGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoJyNBcHBTdGF0dXNDbGFzc0RhdGVUaW1lJykuaW5uZXJIVE1MID0gdGhpcy5fZGF0ZVN0cjtcbn1cblxuQXBwU3RhdHVzQ2xhc3MucHJvdG90eXBlLnJlbW92ZSA9IGZ1bmN0aW9uICgpIHtcblx0XHR2YXIgcmVtb3ZlRWxlbWVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoJyNDb250YWluZXItQXBwU3RhdHVzQ2xhc3MnKTtcblx0XHR0aGlzLnJlbW92ZUNoaWxkcyhyZW1vdmVFbGVtZW50KTtcbn1cblxuQXBwU3RhdHVzQ2xhc3MucHJvdG90eXBlLnJlbW92ZUNoaWxkcyA9IGZ1bmN0aW9uIChub2RlKSB7XG4gICAgdmFyIGxhc3Q7XG4gICAgd2hpbGUgKGxhc3QgPSBub2RlLmxhc3RDaGlsZCkgbm9kZS5yZW1vdmVDaGlsZChsYXN0KTtcbn1cblxuQXBwU3RhdHVzQ2xhc3MucHJvdG90eXBlLmVuYWJsZSA9IGZ1bmN0aW9uKCBlbmFibGUgKSB7XG5cdGlmICggZW5hYmxlICE9IHRoaXMuX2VuYWJsZSApIHtcblx0XHR0aGlzLl9lbmFibGUgPSBlbmFibGU7XG5cdFx0aWYgKCEgdGhpcy5fZW5hYmxlKSB7XG5cdFx0XHRjbGVhckludGVydmFsKHRoaXMuX3RpbWVyKTtcblx0XHRcdHRoaXMucmVtb3ZlKCk7XG5cdFx0fSBlbHNlIHtcblx0XHRcdHRoaXMucmVuZGVyKCk7XG5cdFx0XHR0aGlzLndzR2V0QXBwU3RhdHVzKClcblx0XHRcdHRoaXMuX3RpbWVyID0gc2V0SW50ZXJ2YWwodGhpcy53c0dldEFwcFN0YXR1cywgNTAwMCk7XG5cdFx0fVx0XG5cdH1cbn1cblxuXG4vLy8vLy8vLy8vLy8vLy8vLy9cbi8vIFdFQlBBQ0sgRk9PVEVSXG4vLyAuL2FwcFN0YXR1cy5qc1xuLy8gbW9kdWxlIGlkID0gMlxuLy8gbW9kdWxlIGNodW5rcyA9IDAiXSwic291cmNlUm9vdCI6IiJ9");
 
 /***/ }),
 /* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__appStatus_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__websocket__ = __webpack_require__(0);
+eval("/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__websocket__ = __webpack_require__(0);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__wsBin__ = __webpack_require__(1);\n/* harmony export (immutable) */ __webpack_exports__[\"a\"] = BinStatesClass;\n\n\n\n\n\n//BinStateHttpClass\n\nfunction BinStateClass (uid) {\n\tthis.uid = uid;\n\tthis._state = 0; //false\n\tthis._name = \"\";\n\tthis.render();\n}\n\nBinStateClass.sysId = 2;\n\nBinStateClass.prototype.wsGet = function (cmd) {\n\tvar ab = new ArrayBuffer(3);\n\tvar bin = new DataView(ab);\n\t\n\tbin.setUint8(__WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.wsCmd, __WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.getCmd);\n\tbin.setUint8(__WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.wsSysId, BinStateClass.sysId); //BinStateHttpClass.sysId = 2\n\tbin.setUint8(__WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.wsSubCmd, cmd);\n\n\t__WEBPACK_IMPORTED_MODULE_0__websocket__[\"c\" /* websocket */].send(bin.buffer);\n//\tconsole.log.bind(console)(`wsGet cmd = ${cmd}`);\n}\n\nBinStateClass.prototype.wsGetName = function () {\n\tthis.wsGet(1);\n}\n\nBinStateClass.prototype.wsGetState = function () {\n\tthis.wsGet(2);\n}\n\nBinStateClass.prototype.wsSetState = function (state) {\n\t__WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Cmd.SetArg(__WEBPACK_IMPORTED_MODULE_0__websocket__[\"c\" /* websocket */], BinStateClass.sysId, __WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.scBinStateSetState, this.uid, state);\n}\n\nBinStateClass.prototype.wsGotName = function (bin) {\n\tvar strBuffer = new Uint8Array(bin.byteLength -(__WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.wsPayLoadStart + 1));\n\tconsole.log.bind(console)(`uid = ${this.uid}, bin.byteLength = ${bin.byteLength}`);\n\n    for (var i = 0; i < strBuffer.length; i++) {\n        strBuffer[i] = bin.getUint8(__WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.wsPayLoadStart + 1 + i);\n//        console.log.bind(console)(`uid = ${this.uid}, strBuffer[${i}] = ${bin.getUint8(wsBin.Const.wsPayLoadStart + 1 + i)}`);\n    }\n\n    this._name = new TextDecoder().decode(strBuffer)\n    this.renderName();\n}\n\nBinStateClass.prototype.wsGotState = function (bin) {\n\tthis._state = bin.getUint8(__WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.wsPayLoadStart + 1, true);\n\tthis.renderState();\n}\n\nBinStateClass.prototype.render = function () {\n\tif ( this.isState() ) {\n\t\tvar t = document.querySelector('#BinStateHttpClass');\n\t\tvar clone = document.importNode(t.content, true);\n//\t\tclone.querySelector('#binState').textContent = this._name;\n\t\tclone.querySelector('#binStateDiv').id = `binStateDiv${this.uid}`;\n\t\tclone.querySelector('#binStatePanel').id = `binStatePanel${this.uid}`;\n\t\tclone.querySelector('#binState').id = `binState${this.uid}`\n\t\tvar container = document.getElementById(\"Container-BinStateHttpClassStates\");\n\t}\n\t\t\t\n\tif ( this.isButton() ) {\n\t\tvar t = document.querySelector('#BinStateHttpClassButton');\n\t\tvar clone = document.importNode(t.content, true);\n//\t\tclone.querySelector('#binStateButton').textContent = this._name;\n\t\tclone.querySelector('#binStateButtonDiv').id = `binStateButtonDiv${this.uid}`\n\t\tclone.querySelector('#binStateButton').addEventListener('mousedown', this);\n\t\tclone.querySelector('#binStateButton').addEventListener('mouseup', this);\n\t\tclone.querySelector('#binStateButton').id = `binStateButton${this.uid}`\n\t\tvar container = document.getElementById(\"Container-BinStateHttpClassButtons\");\n\t}\n\t\n\tcontainer.appendChild(clone);\t\n}\n\nBinStateClass.prototype.renderName = function () {\n\tif ( this.isState() ) {\n\t\tdocument.querySelector(`#binState${this.uid}`).textContent = this._name;\n\t}\n\t\n\tif ( this.isButton() ) {\n\t\tdocument.querySelector(`#binStateButton${this.uid}`).textContent = this._name;\n\t}\n}\n\nBinStateClass.prototype.renderState = function () {\n\tif ( this.isState()) {\n\t    \tvar panel = document.querySelector(`#binStatePanel${this.uid}`);\n\t    \t\n\t    \tif (this._state) {\n\t    \t\tpanel.classList.remove(\"panel-primary\");\n\t    \t\tpanel.classList.add(\"panel-danger\");\t\n\t    \t} else {\n\t    \t\tpanel.classList.remove(\"panel-danger\");\n\t    \t\tpanel.classList.add(\"panel-primary\");\n\t    \t}\n    \t}\n    \t\n    \tif ( this.isButton()) {\n    \t\tvar panel = document.querySelector(`#binStateButton${this.uid}`);\n\t    \t\n\t    \tif (this._state) {\n\t    \t\tpanel.classList.remove(\"btn-primary\");\n\t    \t\tpanel.classList.add(\"btn-warning\");\t\n\t    \t} else {\n\t    \t\tpanel.classList.remove(\"btn-warning\");\n\t    \t\tpanel.classList.add(\"btn-primary\");\n\t    \t}\n    \t}\t\n}\n\nBinStateClass.prototype.remove = function () {\n\t\tvar selector = this.isState() ?  `#binStateDiv${this.uid}` : `#binStateButtonDiv${this.uid}`\n\n\t\tvar removeElement = document.querySelector(selector);\n\t\tthis.removeChilds(removeElement);\n\t\tremoveElement.remove();\n}\n\nBinStateClass.prototype.removeChilds = function (node) {\n    var last;\n    while (last = node.lastChild) node.removeChild(last);\n}\n\nBinStateClass.prototype.wsBinProcess = function (bin) {\n\tvar subCmd = bin.getUint8(__WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.wsSubCmd);\n\t\n\tif ( subCmd == __WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.scBinStateGetName) {\n\t\tthis.wsGotName(bin);\n\t}\n\t\n\tif ( subCmd == __WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.scBinStateGetState) {\n\t\tthis.wsGotState(bin);\n\t}\n\t\n}\n\nBinStateClass.prototype.isButton = function () { return this.uid >= __WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.uidHttpButton; }\nBinStateClass.prototype.isState = function () { return this.uid < __WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.uidHttpButton; }\n\nBinStateClass.prototype.handleEvent = function(event) {\n\tswitch(event.type) {\n\t\tcase 'mousedown':\n\t        this.wsSetState(1);\n\t        break;\n        case 'mouseup':\n            this.wsSetState(0);\n            break;\n\t}\n}\n\n//BinStatesHttpClass\n// @param states - render/process states\n// @param  buttons - render/process buttons\n\nfunction BinStatesClass () {\n\tthis._binStatesHttp = {};\n\tthis._statesEnable = false;\n\tthis._buttonsEnable = false;\n\tthis._enable = false;\n}\n\nBinStatesClass.sysId = 2;\n\nBinStatesClass.prototype.enableStates = function( statesEnable ) {\n\tif ( statesEnable != this._statesEnable ) {\n\t\tthis._statesEnable = statesEnable;\n\t\tif (! this._statesEnable) {\n\t\t\tvar self = this\n\t\t\tObject.keys(this._binStatesHttp).forEach(function(uid) {\n\t\t\t\tif ( self.isState(uid) ) {\n\t\t\t\t\tself._binStatesHttp[uid].remove();\n\t\t\t\t\tdelete self._binStatesHttp[uid];\n\t\t\t\t}\n\t\t\t});\n\t\t} else {\n\t\t\tthis.wsGetAllStates();\n\t\t}\t\n\t}\n}\n\nBinStatesClass.prototype.enableButtons = function( buttonsEnable ) {\n\tif ( buttonsEnable != this._buttonsEnable ) {\n\t\tthis._buttonsEnable = buttonsEnable;\n\t\tif (! this._buttonsEnable) {\n\t\t\tvar self = this\n\t\t\tObject.keys(this._binStatesHttp).forEach(function(uid) {\n\t\t\t\tif ( self.isButton(uid) ) {\n\t\t\t\t\tself._binStatesHttp[uid].remove();\n\t\t\t\t\tdelete self._binStatesHttp[uid];\n\t\t\t\t}\n\t\t\t});\n\t\t} else {\n\t\t\tthis.wsGetAllButtons();\n\t\t}\t\n\t}\n}\n\nBinStatesClass.prototype.enable = function( Enable ) {\n\tif ( Enable != this._enable ) {\n\t\tthis._enable = Enable;\n\t\tthis.enableStates(this._enable);\n\t\tthis.enableButtons(this._enable);\n\t}\n}\nBinStatesClass.prototype.wsGetAll = function() {\n\t__WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Cmd.Get(__WEBPACK_IMPORTED_MODULE_0__websocket__[\"c\" /* websocket */], BinStatesClass.sysId, __WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.scBinStatesGetAll);\n}\n\nBinStatesClass.prototype.wsGetAllStates = function() {\n\t__WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Cmd.Get(__WEBPACK_IMPORTED_MODULE_0__websocket__[\"c\" /* websocket */], BinStatesClass.sysId, __WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.scBinStatesGetAllStates);\n}\n\nBinStatesClass.prototype.wsGetAllButtons = function() {\n\t__WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Cmd.Get(__WEBPACK_IMPORTED_MODULE_0__websocket__[\"c\" /* websocket */], BinStatesClass.sysId, __WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.scBinStatesGetAllButtons);\n}\n\nBinStatesClass.prototype.wsBinProcess = function (bin) {\n\tvar subCmd = bin.getUint8(__WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.wsSubCmd);\n\tvar uid = bin.getUint8(__WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.wsPayLoadStart);\n\t\n\tif ( (this.isState(uid) && this._statesEnable) || (this.isButton(uid) && this._buttonsEnable ) ) {\n\t\tif (subCmd == __WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.scBinStateGetName) {\n\t\t\tif ( !this._binStatesHttp.hasOwnProperty(uid) ) {\n\t\t\t\tthis._binStatesHttp[uid] = new BinStateClass(uid);\n\t\t\t}\n\t\t\tthis._binStatesHttp[uid].wsGotName(bin);\n\t\t}\n\t\t\n\t\tif (subCmd == __WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.scBinStateGetState) {\n\t\t\tthis._binStatesHttp[uid].wsGotState(bin);\n\t\t}\n\t}\n\t\n\t\n}\n\nBinStatesClass.prototype.isButton = function (uid) { return uid >= __WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.uidHttpButton; }\nBinStatesClass.prototype.isState = function (uid) { return uid < __WEBPACK_IMPORTED_MODULE_1__wsBin__[\"a\" /* default */].Const.uidHttpButton; }//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8vLi9iaW5TdGF0ZXMuanM/MmNmNCJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7QUFBQTs7QUFFb0I7QUFDcEI7O0FBRUE7O0FBRUE7QUFDQTtBQUNBLGlCQUFpQjtBQUNqQjtBQUNBO0FBQ0E7O0FBRUE7O0FBRUE7QUFDQTtBQUNBOztBQUVBO0FBQ0EsMEdBQXdEO0FBQ3hEOztBQUVBO0FBQ0EsNENBQTRDLElBQUk7QUFDaEQ7O0FBRUE7QUFDQTtBQUNBOztBQUVBO0FBQ0E7QUFDQTs7QUFFQTtBQUNBO0FBQ0E7O0FBRUE7QUFDQTtBQUNBLG9DQUFvQyxTQUFTLHFCQUFxQixlQUFlOztBQUVqRixtQkFBbUIsc0JBQXNCO0FBQ3pDO0FBQ0EsNkNBQTZDLFNBQVMsY0FBYyxFQUFFLE1BQU0saURBQWlEO0FBQzdIOztBQUVBO0FBQ0E7QUFDQTs7QUFFQTtBQUNBO0FBQ0E7QUFDQTs7QUFFQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0EseURBQXlELFNBQVM7QUFDbEUsNkRBQTZELFNBQVM7QUFDdEUsbURBQW1ELFNBQVM7QUFDNUQ7QUFDQTs7QUFFQTtBQUNBO0FBQ0E7QUFDQTtBQUNBLHFFQUFxRSxTQUFTO0FBQzlFO0FBQ0E7QUFDQSwrREFBK0QsU0FBUztBQUN4RTtBQUNBOztBQUVBLDhCO0FBQ0E7O0FBRUE7QUFDQTtBQUNBLHFDQUFxQyxTQUFTO0FBQzlDOztBQUVBO0FBQ0EsMkNBQTJDLFNBQVM7QUFDcEQ7QUFDQTs7QUFFQTtBQUNBO0FBQ0EsMERBQTBELFNBQVM7O0FBRW5FO0FBQ0E7QUFDQSwyQztBQUNBLE9BQU87QUFDUDtBQUNBO0FBQ0E7QUFDQTs7QUFFQTtBQUNBLDJEQUEyRCxTQUFTOztBQUVwRTtBQUNBO0FBQ0EsMEM7QUFDQSxPQUFPO0FBQ1A7QUFDQTtBQUNBO0FBQ0EsTTtBQUNBOztBQUVBO0FBQ0Esa0RBQWtELFNBQVMseUJBQXlCLFNBQVM7O0FBRTdGO0FBQ0E7QUFDQTtBQUNBOztBQUVBO0FBQ0E7QUFDQTtBQUNBOztBQUVBO0FBQ0E7O0FBRUE7QUFDQTtBQUNBOztBQUVBO0FBQ0E7QUFDQTs7QUFFQTs7QUFFQSxnREFBZ0QsZ0dBQThDO0FBQzlGLCtDQUErQywrRkFBNkM7O0FBRTVGO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBOztBQUVBO0FBQ0E7QUFDQTs7QUFFQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7O0FBRUE7O0FBRUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQSxJQUFJO0FBQ0osR0FBRztBQUNIO0FBQ0EsRztBQUNBO0FBQ0E7O0FBRUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQSxJQUFJO0FBQ0osR0FBRztBQUNIO0FBQ0EsRztBQUNBO0FBQ0E7O0FBRUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7O0FBRUE7QUFDQTtBQUNBOztBQUVBO0FBQ0E7QUFDQTs7QUFFQTtBQUNBO0FBQ0E7O0FBRUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7O0FBRUE7QUFDQTtBQUNBO0FBQ0E7OztBQUdBOztBQUVBLG9EQUFvRCwyRkFBeUM7QUFDN0YsbURBQW1ELDBGQUF3QyIsImZpbGUiOiIzLmpzIiwic291cmNlc0NvbnRlbnQiOlsiJ3VzZSBzdHJpY3QnO1xuXG5pbXBvcnQgeyB3ZWJzb2NrZXQgfSBmcm9tICcuL3dlYnNvY2tldCc7XG5pbXBvcnQgd3NCaW4gZnJvbSAnLi93c0Jpbic7XG5cbi8vQmluU3RhdGVIdHRwQ2xhc3NcblxuZnVuY3Rpb24gQmluU3RhdGVDbGFzcyAodWlkKSB7XG5cdHRoaXMudWlkID0gdWlkO1xuXHR0aGlzLl9zdGF0ZSA9IDA7IC8vZmFsc2Vcblx0dGhpcy5fbmFtZSA9IFwiXCI7XG5cdHRoaXMucmVuZGVyKCk7XG59XG5cbkJpblN0YXRlQ2xhc3Muc3lzSWQgPSAyO1xuXG5CaW5TdGF0ZUNsYXNzLnByb3RvdHlwZS53c0dldCA9IGZ1bmN0aW9uIChjbWQpIHtcblx0dmFyIGFiID0gbmV3IEFycmF5QnVmZmVyKDMpO1xuXHR2YXIgYmluID0gbmV3IERhdGFWaWV3KGFiKTtcblx0XG5cdGJpbi5zZXRVaW50OCh3c0Jpbi5Db25zdC53c0NtZCwgd3NCaW4uQ29uc3QuZ2V0Q21kKTtcblx0YmluLnNldFVpbnQ4KHdzQmluLkNvbnN0LndzU3lzSWQsIEJpblN0YXRlQ2xhc3Muc3lzSWQpOyAvL0JpblN0YXRlSHR0cENsYXNzLnN5c0lkID0gMlxuXHRiaW4uc2V0VWludDgod3NCaW4uQ29uc3Qud3NTdWJDbWQsIGNtZCk7XG5cblx0d2Vic29ja2V0LnNlbmQoYmluLmJ1ZmZlcik7XG4vL1x0Y29uc29sZS5sb2cuYmluZChjb25zb2xlKShgd3NHZXQgY21kID0gJHtjbWR9YCk7XG59XG5cbkJpblN0YXRlQ2xhc3MucHJvdG90eXBlLndzR2V0TmFtZSA9IGZ1bmN0aW9uICgpIHtcblx0dGhpcy53c0dldCgxKTtcbn1cblxuQmluU3RhdGVDbGFzcy5wcm90b3R5cGUud3NHZXRTdGF0ZSA9IGZ1bmN0aW9uICgpIHtcblx0dGhpcy53c0dldCgyKTtcbn1cblxuQmluU3RhdGVDbGFzcy5wcm90b3R5cGUud3NTZXRTdGF0ZSA9IGZ1bmN0aW9uIChzdGF0ZSkge1xuXHR3c0Jpbi5DbWQuU2V0QXJnKHdlYnNvY2tldCwgQmluU3RhdGVDbGFzcy5zeXNJZCwgd3NCaW4uQ29uc3Quc2NCaW5TdGF0ZVNldFN0YXRlLCB0aGlzLnVpZCwgc3RhdGUpO1xufVxuXG5CaW5TdGF0ZUNsYXNzLnByb3RvdHlwZS53c0dvdE5hbWUgPSBmdW5jdGlvbiAoYmluKSB7XG5cdHZhciBzdHJCdWZmZXIgPSBuZXcgVWludDhBcnJheShiaW4uYnl0ZUxlbmd0aCAtKHdzQmluLkNvbnN0LndzUGF5TG9hZFN0YXJ0ICsgMSkpO1xuXHRjb25zb2xlLmxvZy5iaW5kKGNvbnNvbGUpKGB1aWQgPSAke3RoaXMudWlkfSwgYmluLmJ5dGVMZW5ndGggPSAke2Jpbi5ieXRlTGVuZ3RofWApO1xuXG4gICAgZm9yICh2YXIgaSA9IDA7IGkgPCBzdHJCdWZmZXIubGVuZ3RoOyBpKyspIHtcbiAgICAgICAgc3RyQnVmZmVyW2ldID0gYmluLmdldFVpbnQ4KHdzQmluLkNvbnN0LndzUGF5TG9hZFN0YXJ0ICsgMSArIGkpO1xuLy8gICAgICAgIGNvbnNvbGUubG9nLmJpbmQoY29uc29sZSkoYHVpZCA9ICR7dGhpcy51aWR9LCBzdHJCdWZmZXJbJHtpfV0gPSAke2Jpbi5nZXRVaW50OCh3c0Jpbi5Db25zdC53c1BheUxvYWRTdGFydCArIDEgKyBpKX1gKTtcbiAgICB9XG5cbiAgICB0aGlzLl9uYW1lID0gbmV3IFRleHREZWNvZGVyKCkuZGVjb2RlKHN0ckJ1ZmZlcilcbiAgICB0aGlzLnJlbmRlck5hbWUoKTtcbn1cblxuQmluU3RhdGVDbGFzcy5wcm90b3R5cGUud3NHb3RTdGF0ZSA9IGZ1bmN0aW9uIChiaW4pIHtcblx0dGhpcy5fc3RhdGUgPSBiaW4uZ2V0VWludDgod3NCaW4uQ29uc3Qud3NQYXlMb2FkU3RhcnQgKyAxLCB0cnVlKTtcblx0dGhpcy5yZW5kZXJTdGF0ZSgpO1xufVxuXG5CaW5TdGF0ZUNsYXNzLnByb3RvdHlwZS5yZW5kZXIgPSBmdW5jdGlvbiAoKSB7XG5cdGlmICggdGhpcy5pc1N0YXRlKCkgKSB7XG5cdFx0dmFyIHQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCcjQmluU3RhdGVIdHRwQ2xhc3MnKTtcblx0XHR2YXIgY2xvbmUgPSBkb2N1bWVudC5pbXBvcnROb2RlKHQuY29udGVudCwgdHJ1ZSk7XG4vL1x0XHRjbG9uZS5xdWVyeVNlbGVjdG9yKCcjYmluU3RhdGUnKS50ZXh0Q29udGVudCA9IHRoaXMuX25hbWU7XG5cdFx0Y2xvbmUucXVlcnlTZWxlY3RvcignI2JpblN0YXRlRGl2JykuaWQgPSBgYmluU3RhdGVEaXYke3RoaXMudWlkfWA7XG5cdFx0Y2xvbmUucXVlcnlTZWxlY3RvcignI2JpblN0YXRlUGFuZWwnKS5pZCA9IGBiaW5TdGF0ZVBhbmVsJHt0aGlzLnVpZH1gO1xuXHRcdGNsb25lLnF1ZXJ5U2VsZWN0b3IoJyNiaW5TdGF0ZScpLmlkID0gYGJpblN0YXRlJHt0aGlzLnVpZH1gXG5cdFx0dmFyIGNvbnRhaW5lciA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKFwiQ29udGFpbmVyLUJpblN0YXRlSHR0cENsYXNzU3RhdGVzXCIpO1xuXHR9XG5cdFx0XHRcblx0aWYgKCB0aGlzLmlzQnV0dG9uKCkgKSB7XG5cdFx0dmFyIHQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCcjQmluU3RhdGVIdHRwQ2xhc3NCdXR0b24nKTtcblx0XHR2YXIgY2xvbmUgPSBkb2N1bWVudC5pbXBvcnROb2RlKHQuY29udGVudCwgdHJ1ZSk7XG4vL1x0XHRjbG9uZS5xdWVyeVNlbGVjdG9yKCcjYmluU3RhdGVCdXR0b24nKS50ZXh0Q29udGVudCA9IHRoaXMuX25hbWU7XG5cdFx0Y2xvbmUucXVlcnlTZWxlY3RvcignI2JpblN0YXRlQnV0dG9uRGl2JykuaWQgPSBgYmluU3RhdGVCdXR0b25EaXYke3RoaXMudWlkfWBcblx0XHRjbG9uZS5xdWVyeVNlbGVjdG9yKCcjYmluU3RhdGVCdXR0b24nKS5hZGRFdmVudExpc3RlbmVyKCdtb3VzZWRvd24nLCB0aGlzKTtcblx0XHRjbG9uZS5xdWVyeVNlbGVjdG9yKCcjYmluU3RhdGVCdXR0b24nKS5hZGRFdmVudExpc3RlbmVyKCdtb3VzZXVwJywgdGhpcyk7XG5cdFx0Y2xvbmUucXVlcnlTZWxlY3RvcignI2JpblN0YXRlQnV0dG9uJykuaWQgPSBgYmluU3RhdGVCdXR0b24ke3RoaXMudWlkfWBcblx0XHR2YXIgY29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoXCJDb250YWluZXItQmluU3RhdGVIdHRwQ2xhc3NCdXR0b25zXCIpO1xuXHR9XG5cdFxuXHRjb250YWluZXIuYXBwZW5kQ2hpbGQoY2xvbmUpO1x0XG59XG5cbkJpblN0YXRlQ2xhc3MucHJvdG90eXBlLnJlbmRlck5hbWUgPSBmdW5jdGlvbiAoKSB7XG5cdGlmICggdGhpcy5pc1N0YXRlKCkgKSB7XG5cdFx0ZG9jdW1lbnQucXVlcnlTZWxlY3RvcihgI2JpblN0YXRlJHt0aGlzLnVpZH1gKS50ZXh0Q29udGVudCA9IHRoaXMuX25hbWU7XG5cdH1cblx0XG5cdGlmICggdGhpcy5pc0J1dHRvbigpICkge1xuXHRcdGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYCNiaW5TdGF0ZUJ1dHRvbiR7dGhpcy51aWR9YCkudGV4dENvbnRlbnQgPSB0aGlzLl9uYW1lO1xuXHR9XG59XG5cbkJpblN0YXRlQ2xhc3MucHJvdG90eXBlLnJlbmRlclN0YXRlID0gZnVuY3Rpb24gKCkge1xuXHRpZiAoIHRoaXMuaXNTdGF0ZSgpKSB7XG5cdCAgICBcdHZhciBwYW5lbCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYCNiaW5TdGF0ZVBhbmVsJHt0aGlzLnVpZH1gKTtcblx0ICAgIFx0XG5cdCAgICBcdGlmICh0aGlzLl9zdGF0ZSkge1xuXHQgICAgXHRcdHBhbmVsLmNsYXNzTGlzdC5yZW1vdmUoXCJwYW5lbC1wcmltYXJ5XCIpO1xuXHQgICAgXHRcdHBhbmVsLmNsYXNzTGlzdC5hZGQoXCJwYW5lbC1kYW5nZXJcIik7XHRcblx0ICAgIFx0fSBlbHNlIHtcblx0ICAgIFx0XHRwYW5lbC5jbGFzc0xpc3QucmVtb3ZlKFwicGFuZWwtZGFuZ2VyXCIpO1xuXHQgICAgXHRcdHBhbmVsLmNsYXNzTGlzdC5hZGQoXCJwYW5lbC1wcmltYXJ5XCIpO1xuXHQgICAgXHR9XG4gICAgXHR9XG4gICAgXHRcbiAgICBcdGlmICggdGhpcy5pc0J1dHRvbigpKSB7XG4gICAgXHRcdHZhciBwYW5lbCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYCNiaW5TdGF0ZUJ1dHRvbiR7dGhpcy51aWR9YCk7XG5cdCAgICBcdFxuXHQgICAgXHRpZiAodGhpcy5fc3RhdGUpIHtcblx0ICAgIFx0XHRwYW5lbC5jbGFzc0xpc3QucmVtb3ZlKFwiYnRuLXByaW1hcnlcIik7XG5cdCAgICBcdFx0cGFuZWwuY2xhc3NMaXN0LmFkZChcImJ0bi13YXJuaW5nXCIpO1x0XG5cdCAgICBcdH0gZWxzZSB7XG5cdCAgICBcdFx0cGFuZWwuY2xhc3NMaXN0LnJlbW92ZShcImJ0bi13YXJuaW5nXCIpO1xuXHQgICAgXHRcdHBhbmVsLmNsYXNzTGlzdC5hZGQoXCJidG4tcHJpbWFyeVwiKTtcblx0ICAgIFx0fVxuICAgIFx0fVx0XG59XG5cbkJpblN0YXRlQ2xhc3MucHJvdG90eXBlLnJlbW92ZSA9IGZ1bmN0aW9uICgpIHtcblx0XHR2YXIgc2VsZWN0b3IgPSB0aGlzLmlzU3RhdGUoKSA/ICBgI2JpblN0YXRlRGl2JHt0aGlzLnVpZH1gIDogYCNiaW5TdGF0ZUJ1dHRvbkRpdiR7dGhpcy51aWR9YFxuXG5cdFx0dmFyIHJlbW92ZUVsZW1lbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKHNlbGVjdG9yKTtcblx0XHR0aGlzLnJlbW92ZUNoaWxkcyhyZW1vdmVFbGVtZW50KTtcblx0XHRyZW1vdmVFbGVtZW50LnJlbW92ZSgpO1xufVxuXG5CaW5TdGF0ZUNsYXNzLnByb3RvdHlwZS5yZW1vdmVDaGlsZHMgPSBmdW5jdGlvbiAobm9kZSkge1xuICAgIHZhciBsYXN0O1xuICAgIHdoaWxlIChsYXN0ID0gbm9kZS5sYXN0Q2hpbGQpIG5vZGUucmVtb3ZlQ2hpbGQobGFzdCk7XG59XG5cbkJpblN0YXRlQ2xhc3MucHJvdG90eXBlLndzQmluUHJvY2VzcyA9IGZ1bmN0aW9uIChiaW4pIHtcblx0dmFyIHN1YkNtZCA9IGJpbi5nZXRVaW50OCh3c0Jpbi5Db25zdC53c1N1YkNtZCk7XG5cdFxuXHRpZiAoIHN1YkNtZCA9PSB3c0Jpbi5Db25zdC5zY0JpblN0YXRlR2V0TmFtZSkge1xuXHRcdHRoaXMud3NHb3ROYW1lKGJpbik7XG5cdH1cblx0XG5cdGlmICggc3ViQ21kID09IHdzQmluLkNvbnN0LnNjQmluU3RhdGVHZXRTdGF0ZSkge1xuXHRcdHRoaXMud3NHb3RTdGF0ZShiaW4pO1xuXHR9XG5cdFxufVxuXG5CaW5TdGF0ZUNsYXNzLnByb3RvdHlwZS5pc0J1dHRvbiA9IGZ1bmN0aW9uICgpIHsgcmV0dXJuIHRoaXMudWlkID49IHdzQmluLkNvbnN0LnVpZEh0dHBCdXR0b247IH1cbkJpblN0YXRlQ2xhc3MucHJvdG90eXBlLmlzU3RhdGUgPSBmdW5jdGlvbiAoKSB7IHJldHVybiB0aGlzLnVpZCA8IHdzQmluLkNvbnN0LnVpZEh0dHBCdXR0b247IH1cblxuQmluU3RhdGVDbGFzcy5wcm90b3R5cGUuaGFuZGxlRXZlbnQgPSBmdW5jdGlvbihldmVudCkge1xuXHRzd2l0Y2goZXZlbnQudHlwZSkge1xuXHRcdGNhc2UgJ21vdXNlZG93bic6XG5cdCAgICAgICAgdGhpcy53c1NldFN0YXRlKDEpO1xuXHQgICAgICAgIGJyZWFrO1xuICAgICAgICBjYXNlICdtb3VzZXVwJzpcbiAgICAgICAgICAgIHRoaXMud3NTZXRTdGF0ZSgwKTtcbiAgICAgICAgICAgIGJyZWFrO1xuXHR9XG59XG5cbi8vQmluU3RhdGVzSHR0cENsYXNzXG4vLyBAcGFyYW0gc3RhdGVzIC0gcmVuZGVyL3Byb2Nlc3Mgc3RhdGVzXG4vLyBAcGFyYW0gIGJ1dHRvbnMgLSByZW5kZXIvcHJvY2VzcyBidXR0b25zXG5cbmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIEJpblN0YXRlc0NsYXNzICgpIHtcblx0dGhpcy5fYmluU3RhdGVzSHR0cCA9IHt9O1xuXHR0aGlzLl9zdGF0ZXNFbmFibGUgPSBmYWxzZTtcblx0dGhpcy5fYnV0dG9uc0VuYWJsZSA9IGZhbHNlO1xuXHR0aGlzLl9lbmFibGUgPSBmYWxzZTtcbn1cblxuQmluU3RhdGVzQ2xhc3Muc3lzSWQgPSAyO1xuXG5CaW5TdGF0ZXNDbGFzcy5wcm90b3R5cGUuZW5hYmxlU3RhdGVzID0gZnVuY3Rpb24oIHN0YXRlc0VuYWJsZSApIHtcblx0aWYgKCBzdGF0ZXNFbmFibGUgIT0gdGhpcy5fc3RhdGVzRW5hYmxlICkge1xuXHRcdHRoaXMuX3N0YXRlc0VuYWJsZSA9IHN0YXRlc0VuYWJsZTtcblx0XHRpZiAoISB0aGlzLl9zdGF0ZXNFbmFibGUpIHtcblx0XHRcdHZhciBzZWxmID0gdGhpc1xuXHRcdFx0T2JqZWN0LmtleXModGhpcy5fYmluU3RhdGVzSHR0cCkuZm9yRWFjaChmdW5jdGlvbih1aWQpIHtcblx0XHRcdFx0aWYgKCBzZWxmLmlzU3RhdGUodWlkKSApIHtcblx0XHRcdFx0XHRzZWxmLl9iaW5TdGF0ZXNIdHRwW3VpZF0ucmVtb3ZlKCk7XG5cdFx0XHRcdFx0ZGVsZXRlIHNlbGYuX2JpblN0YXRlc0h0dHBbdWlkXTtcblx0XHRcdFx0fVxuXHRcdFx0fSk7XG5cdFx0fSBlbHNlIHtcblx0XHRcdHRoaXMud3NHZXRBbGxTdGF0ZXMoKTtcblx0XHR9XHRcblx0fVxufVxuXG5CaW5TdGF0ZXNDbGFzcy5wcm90b3R5cGUuZW5hYmxlQnV0dG9ucyA9IGZ1bmN0aW9uKCBidXR0b25zRW5hYmxlICkge1xuXHRpZiAoIGJ1dHRvbnNFbmFibGUgIT0gdGhpcy5fYnV0dG9uc0VuYWJsZSApIHtcblx0XHR0aGlzLl9idXR0b25zRW5hYmxlID0gYnV0dG9uc0VuYWJsZTtcblx0XHRpZiAoISB0aGlzLl9idXR0b25zRW5hYmxlKSB7XG5cdFx0XHR2YXIgc2VsZiA9IHRoaXNcblx0XHRcdE9iamVjdC5rZXlzKHRoaXMuX2JpblN0YXRlc0h0dHApLmZvckVhY2goZnVuY3Rpb24odWlkKSB7XG5cdFx0XHRcdGlmICggc2VsZi5pc0J1dHRvbih1aWQpICkge1xuXHRcdFx0XHRcdHNlbGYuX2JpblN0YXRlc0h0dHBbdWlkXS5yZW1vdmUoKTtcblx0XHRcdFx0XHRkZWxldGUgc2VsZi5fYmluU3RhdGVzSHR0cFt1aWRdO1xuXHRcdFx0XHR9XG5cdFx0XHR9KTtcblx0XHR9IGVsc2Uge1xuXHRcdFx0dGhpcy53c0dldEFsbEJ1dHRvbnMoKTtcblx0XHR9XHRcblx0fVxufVxuXG5CaW5TdGF0ZXNDbGFzcy5wcm90b3R5cGUuZW5hYmxlID0gZnVuY3Rpb24oIEVuYWJsZSApIHtcblx0aWYgKCBFbmFibGUgIT0gdGhpcy5fZW5hYmxlICkge1xuXHRcdHRoaXMuX2VuYWJsZSA9IEVuYWJsZTtcblx0XHR0aGlzLmVuYWJsZVN0YXRlcyh0aGlzLl9lbmFibGUpO1xuXHRcdHRoaXMuZW5hYmxlQnV0dG9ucyh0aGlzLl9lbmFibGUpO1xuXHR9XG59XG5CaW5TdGF0ZXNDbGFzcy5wcm90b3R5cGUud3NHZXRBbGwgPSBmdW5jdGlvbigpIHtcblx0d3NCaW4uQ21kLkdldCh3ZWJzb2NrZXQsIEJpblN0YXRlc0NsYXNzLnN5c0lkLCB3c0Jpbi5Db25zdC5zY0JpblN0YXRlc0dldEFsbCk7XG59XG5cbkJpblN0YXRlc0NsYXNzLnByb3RvdHlwZS53c0dldEFsbFN0YXRlcyA9IGZ1bmN0aW9uKCkge1xuXHR3c0Jpbi5DbWQuR2V0KHdlYnNvY2tldCwgQmluU3RhdGVzQ2xhc3Muc3lzSWQsIHdzQmluLkNvbnN0LnNjQmluU3RhdGVzR2V0QWxsU3RhdGVzKTtcbn1cblxuQmluU3RhdGVzQ2xhc3MucHJvdG90eXBlLndzR2V0QWxsQnV0dG9ucyA9IGZ1bmN0aW9uKCkge1xuXHR3c0Jpbi5DbWQuR2V0KHdlYnNvY2tldCwgQmluU3RhdGVzQ2xhc3Muc3lzSWQsIHdzQmluLkNvbnN0LnNjQmluU3RhdGVzR2V0QWxsQnV0dG9ucyk7XG59XG5cbkJpblN0YXRlc0NsYXNzLnByb3RvdHlwZS53c0JpblByb2Nlc3MgPSBmdW5jdGlvbiAoYmluKSB7XG5cdHZhciBzdWJDbWQgPSBiaW4uZ2V0VWludDgod3NCaW4uQ29uc3Qud3NTdWJDbWQpO1xuXHR2YXIgdWlkID0gYmluLmdldFVpbnQ4KHdzQmluLkNvbnN0LndzUGF5TG9hZFN0YXJ0KTtcblx0XG5cdGlmICggKHRoaXMuaXNTdGF0ZSh1aWQpICYmIHRoaXMuX3N0YXRlc0VuYWJsZSkgfHwgKHRoaXMuaXNCdXR0b24odWlkKSAmJiB0aGlzLl9idXR0b25zRW5hYmxlICkgKSB7XG5cdFx0aWYgKHN1YkNtZCA9PSB3c0Jpbi5Db25zdC5zY0JpblN0YXRlR2V0TmFtZSkge1xuXHRcdFx0aWYgKCAhdGhpcy5fYmluU3RhdGVzSHR0cC5oYXNPd25Qcm9wZXJ0eSh1aWQpICkge1xuXHRcdFx0XHR0aGlzLl9iaW5TdGF0ZXNIdHRwW3VpZF0gPSBuZXcgQmluU3RhdGVDbGFzcyh1aWQpO1xuXHRcdFx0fVxuXHRcdFx0dGhpcy5fYmluU3RhdGVzSHR0cFt1aWRdLndzR290TmFtZShiaW4pO1xuXHRcdH1cblx0XHRcblx0XHRpZiAoc3ViQ21kID09IHdzQmluLkNvbnN0LnNjQmluU3RhdGVHZXRTdGF0ZSkge1xuXHRcdFx0dGhpcy5fYmluU3RhdGVzSHR0cFt1aWRdLndzR290U3RhdGUoYmluKTtcblx0XHR9XG5cdH1cblx0XG5cdFxufVxuXG5CaW5TdGF0ZXNDbGFzcy5wcm90b3R5cGUuaXNCdXR0b24gPSBmdW5jdGlvbiAodWlkKSB7IHJldHVybiB1aWQgPj0gd3NCaW4uQ29uc3QudWlkSHR0cEJ1dHRvbjsgfVxuQmluU3RhdGVzQ2xhc3MucHJvdG90eXBlLmlzU3RhdGUgPSBmdW5jdGlvbiAodWlkKSB7IHJldHVybiB1aWQgPCB3c0Jpbi5Db25zdC51aWRIdHRwQnV0dG9uOyB9XG5cblxuLy8vLy8vLy8vLy8vLy8vLy8vXG4vLyBXRUJQQUNLIEZPT1RFUlxuLy8gLi9iaW5TdGF0ZXMuanNcbi8vIG1vZHVsZSBpZCA9IDNcbi8vIG1vZHVsZSBjaHVua3MgPSAwIl0sInNvdXJjZVJvb3QiOiIifQ==");
 
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-var appStatus
-//var binStates;
-//var tempsensors;
-//var tempsensorsHome;
-
-//import websocket from './websocket';
-
-
-
-//Here we put some initial code which starts after DOM loaded
-function onDocumentRedy() {
-//	tempsensors = new TempsensorsClass('/temperature.json', 0);
-//	tempsensors.enable(true);
-//	setInterval(function () { tempsensors.wsGetAllTemperatures(); }, 5000);
-//	
-//	tempsensorsHome = new TempsensorsClass('/temperatureHome.json', 1);
-//	tempsensorsHome.enable(true);
-//	setInterval(function () { tempsensorsHome.wsGetAllTemperatures(); }, 5000);
-
-	var appStatus = new __WEBPACK_IMPORTED_MODULE_0__appStatus_js__["a" /* default */]();
-	__WEBPACK_IMPORTED_MODULE_1__websocket__["a" /* wsObjects */][__WEBPACK_IMPORTED_MODULE_0__appStatus_js__["a" /* default */].sysId] = appStatus;
-	
-	__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__websocket__["b" /* initWS */])();
-}
-
-document.addEventListener('DOMContentLoaded', onDocumentRedy);
+"use strict";
+eval("Object.defineProperty(__webpack_exports__, \"__esModule\", { value: true });\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__appStatus_js__ = __webpack_require__(2);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__binStates_js__ = __webpack_require__(3);\n/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__websocket__ = __webpack_require__(0);\n\n\nvar appStatus\n//var binStates;\n//var tempsensors;\n//var tempsensorsHome;\n\n//import websocket from './websocket';\n\n\n\n\n//Here we put some initial code which starts after DOM loaded\nfunction onDocumentRedy() {\n//\ttempsensors = new TempsensorsClass('/temperature.json', 0);\n//\ttempsensors.enable(true);\n//\tsetInterval(function () { tempsensors.wsGetAllTemperatures(); }, 5000);\n//\t\n//\ttempsensorsHome = new TempsensorsClass('/temperatureHome.json', 1);\n//\ttempsensorsHome.enable(true);\n//\tsetInterval(function () { tempsensorsHome.wsGetAllTemperatures(); }, 5000);\n\n\tvar appStatus = new __WEBPACK_IMPORTED_MODULE_0__appStatus_js__[\"a\" /* default */]();\n\tvar binStates = new __WEBPACK_IMPORTED_MODULE_1__binStates_js__[\"a\" /* default */]();\n\t\n\t__WEBPACK_IMPORTED_MODULE_2__websocket__[\"a\" /* wsObjects */][__WEBPACK_IMPORTED_MODULE_0__appStatus_js__[\"a\" /* default */].sysId] = appStatus;\n\t__WEBPACK_IMPORTED_MODULE_2__websocket__[\"a\" /* wsObjects */][__WEBPACK_IMPORTED_MODULE_1__binStates_js__[\"a\" /* default */].sysId] = binStates;\n\t\n\t__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__websocket__[\"b\" /* initWS */])();\n}\n\ndocument.addEventListener('DOMContentLoaded', onDocumentRedy);//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8vLi9pbmRleF9uZXcuanM/NjZjMyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7O0FBQUE7O0FBRUE7QUFDQTtBQUNBO0FBQ0E7O0FBRUE7QUFDQTtBQUNBO0FBQ3VDOztBQUV2QztBQUNBO0FBQ0E7QUFDQTtBQUNBLDRCQUE0QixvQ0FBb0MsRUFBRTtBQUNsRTtBQUNBO0FBQ0E7QUFDQSw0QkFBNEIsd0NBQXdDLEVBQUU7O0FBRXRFO0FBQ0E7O0FBRUE7QUFDQTs7QUFFQTtBQUNBOztBQUVBIiwiZmlsZSI6IjQuanMiLCJzb3VyY2VzQ29udGVudCI6WyIndXNlIHN0cmljdCc7XG5cbnZhciBhcHBTdGF0dXNcbi8vdmFyIGJpblN0YXRlcztcbi8vdmFyIHRlbXBzZW5zb3JzO1xuLy92YXIgdGVtcHNlbnNvcnNIb21lO1xuXG4vL2ltcG9ydCB3ZWJzb2NrZXQgZnJvbSAnLi93ZWJzb2NrZXQnO1xuaW1wb3J0IEFwcFN0YXR1c0NsYXNzIGZyb20gJy4vYXBwU3RhdHVzLmpzJztcbmltcG9ydCBCaW5TdGF0ZXNDbGFzcyBmcm9tICcuL2JpblN0YXRlcy5qcydcbmltcG9ydCB7IGluaXRXUywgd2Vic29ja2V0LCB3c09iamVjdHMgfSBmcm9tICcuL3dlYnNvY2tldCc7XG5cbi8vSGVyZSB3ZSBwdXQgc29tZSBpbml0aWFsIGNvZGUgd2hpY2ggc3RhcnRzIGFmdGVyIERPTSBsb2FkZWRcbmZ1bmN0aW9uIG9uRG9jdW1lbnRSZWR5KCkge1xuLy9cdHRlbXBzZW5zb3JzID0gbmV3IFRlbXBzZW5zb3JzQ2xhc3MoJy90ZW1wZXJhdHVyZS5qc29uJywgMCk7XG4vL1x0dGVtcHNlbnNvcnMuZW5hYmxlKHRydWUpO1xuLy9cdHNldEludGVydmFsKGZ1bmN0aW9uICgpIHsgdGVtcHNlbnNvcnMud3NHZXRBbGxUZW1wZXJhdHVyZXMoKTsgfSwgNTAwMCk7XG4vL1x0XG4vL1x0dGVtcHNlbnNvcnNIb21lID0gbmV3IFRlbXBzZW5zb3JzQ2xhc3MoJy90ZW1wZXJhdHVyZUhvbWUuanNvbicsIDEpO1xuLy9cdHRlbXBzZW5zb3JzSG9tZS5lbmFibGUodHJ1ZSk7XG4vL1x0c2V0SW50ZXJ2YWwoZnVuY3Rpb24gKCkgeyB0ZW1wc2Vuc29yc0hvbWUud3NHZXRBbGxUZW1wZXJhdHVyZXMoKTsgfSwgNTAwMCk7XG5cblx0dmFyIGFwcFN0YXR1cyA9IG5ldyBBcHBTdGF0dXNDbGFzcygpO1xuXHR2YXIgYmluU3RhdGVzID0gbmV3IEJpblN0YXRlc0NsYXNzKCk7XG5cdFxuXHR3c09iamVjdHNbQXBwU3RhdHVzQ2xhc3Muc3lzSWRdID0gYXBwU3RhdHVzO1xuXHR3c09iamVjdHNbQmluU3RhdGVzQ2xhc3Muc3lzSWRdID0gYmluU3RhdGVzO1xuXHRcblx0aW5pdFdTKCk7XG59XG5cbmRvY3VtZW50LmFkZEV2ZW50TGlzdGVuZXIoJ0RPTUNvbnRlbnRMb2FkZWQnLCBvbkRvY3VtZW50UmVkeSk7XG5cblxuLy8vLy8vLy8vLy8vLy8vLy8vXG4vLyBXRUJQQUNLIEZPT1RFUlxuLy8gLi9pbmRleF9uZXcuanNcbi8vIG1vZHVsZSBpZCA9IDRcbi8vIG1vZHVsZSBjaHVua3MgPSAwIl0sInNvdXJjZVJvb3QiOiIifQ==");
 
 /***/ })
 /******/ ]);

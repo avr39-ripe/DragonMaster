@@ -7,6 +7,7 @@ var appStatus
 
 //import websocket from './websocket';
 import AppStatusClass from './appStatus.js';
+import BinStatesClass from './binStates.js'
 import { initWS, websocket, wsObjects } from './websocket';
 
 //Here we put some initial code which starts after DOM loaded
@@ -20,7 +21,10 @@ function onDocumentRedy() {
 //	setInterval(function () { tempsensorsHome.wsGetAllTemperatures(); }, 5000);
 
 	var appStatus = new AppStatusClass();
+	var binStates = new BinStatesClass();
+	
 	wsObjects[AppStatusClass.sysId] = appStatus;
+	wsObjects[BinStatesClass.sysId] = binStates;
 	
 	initWS();
 }

@@ -94,7 +94,7 @@ BinStateClass.prototype.wsGetState = function () {
 }
 
 BinStateClass.prototype.wsSetState = function (state) {
-	wsBinCmd.SetArg(websocket, 3, wsBinConst.scBinStateSetState, this.uid, state);
+	wsBinCmd.SetArg(websocket, 2, wsBinConst.scBinStateSetState, this.uid, state);
 }
 
 BinStateClass.prototype.wsGotName = function (bin) {
@@ -261,15 +261,15 @@ BinStatesClass.prototype.enableButtons = function( buttonsEnable ) {
 }
 
 BinStatesClass.prototype.wsGetAll = function() {
-	wsBinCmd.Get(websocket, 3, wsBinConst.scBinStatesGetAll);
+	wsBinCmd.Get(websocket, 2, wsBinConst.scBinStatesGetAll);
 }
 
 BinStatesClass.prototype.wsGetAllStates = function() {
-	wsBinCmd.Get(websocket, 3, wsBinConst.scBinStatesGetAllStates);
+	wsBinCmd.Get(websocket, 2, wsBinConst.scBinStatesGetAllStates);
 }
 
 BinStatesClass.prototype.wsGetAllButtons = function() {
-	wsBinCmd.Get(websocket, 3, wsBinConst.scBinStatesGetAllButtons);
+	wsBinCmd.Get(websocket, 2, wsBinConst.scBinStatesGetAllButtons);
 }
 
 BinStatesClass.prototype.wsBinProcess = function (bin) {
