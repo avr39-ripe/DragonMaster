@@ -1,6 +1,6 @@
 'use strict';
 
-var appStatus
+//var appStatus
 //var binStates;
 //var tempsensors;
 //var tempsensorsHome;
@@ -8,7 +8,7 @@ var appStatus
 //import websocket from './websocket';
 import AppStatusClass from './appStatus.js';
 import BinStatesClass from './binStates.js'
-import { initWS, websocket, wsObjects } from './websocket';
+import { initWS, websocket, wsEnablers, wsBinProcessors } from './websocket';
 
 //Here we put some initial code which starts after DOM loaded
 function onDocumentRedy() {
@@ -23,8 +23,12 @@ function onDocumentRedy() {
 	var appStatus = new AppStatusClass();
 	var binStates = new BinStatesClass();
 	
-	wsObjects[AppStatusClass.sysId] = appStatus;
-	wsObjects[BinStatesClass.sysId] = binStates;
+	wsEnablers.push(appStatus.enable.bind(appStatus));
+	wsEnablers.push(binStates.enableStates.bind(binStates));
+	wsEnablers.push(binStates.enableButtons.bind(binStates));
+	
+	wsBinProcessors[AppStatusClass.sysId] = appStatus.wsBinProcess.bind(appStatus);
+	wsBinProcessors[BinStatesClass.sysId] = binStates.wsBinProcess.bind(binStates);
 	
 	initWS();
 }

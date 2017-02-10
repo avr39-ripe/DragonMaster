@@ -1,15 +1,16 @@
 'use strict';
 //Websockets
 var websocket;
-var wsObjects = {};
+var wsEnablers = [];
+var wsBinProcessors = {};
 
 import wsBin from './wsBin';
 
 function onOpen(evt) {
 //	console.log.bind(console)("CONNECTED");
 	
-	Object.keys(wsObjects).forEach( function(sysId) { 
-		wsObjects[sysId].enable(true);
+	Object.keys(wsEnablers).forEach( function(Id) { 
+		wsEnablers[Id](true);
 	});
 	
 //	binStates = new BinStatesClass();
@@ -33,7 +34,7 @@ function onMessage(evt) {
 //    		appStatus.wsBinProcess(bin);
 //    	}
 
-    	wsObjects[sysId].wsBinProcess(bin);
+    	wsBinProcessors[sysId](bin);
     	
 //    	if ( cmd == wsBinConst.getResponse && ( sysId == 2 || sysId == 3) ) {
 //    		binStates.wsBinProcess(bin);
@@ -60,4 +61,4 @@ function initWS() {
 	websocket.binaryType = 'arraybuffer';
 }
 
-export { initWS, websocket, wsObjects };
+export { initWS, websocket, wsEnablers, wsBinProcessors };
