@@ -6,9 +6,9 @@
 //var tempsensorsHome;
 
 //import websocket from './websocket';
-import AppStatusClass from './appStatus.js';
-import BinStatesClass from './binStates.js'
-import { initWS, websocket, wsEnablers, wsBinProcessors } from './websocket';
+import AppStatusClass from 'appStatus';
+import BinStatesClass from 'binStates';
+import { initWS, websocket, wsEnablers, wsBinProcessors } from 'websocket';
 
 //Here we put some initial code which starts after DOM loaded
 function onDocumentRedy() {
