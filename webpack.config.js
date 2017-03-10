@@ -12,7 +12,7 @@ module.exports = {
 	},
 	output : {
 		path: path.join(__dirname, 'files'),
-		filename : '[name].[hash].js'
+		filename : '[name].[hash:10].js'
 	},
 	module : {
 		loaders : [ {
