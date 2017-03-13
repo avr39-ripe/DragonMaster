@@ -5,7 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
 	resolve: {
-		modules: [path.resolve(__dirname, "lib/application"), path.resolve(__dirname, "lib/binio"), "node_modules"]
+		modules: [path.resolve(__dirname, "lib/application"), path.resolve(__dirname, "lib/binio"), path.resolve(__dirname, "lib/tempsensor"), "node_modules"]
 	},
 	entry : {
 		index: './files/index_new.js'
