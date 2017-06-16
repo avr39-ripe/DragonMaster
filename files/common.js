@@ -233,7 +233,7 @@ BinStatesClass.prototype.enableStates = function( statesEnable ) {
 			var self = this
 			Object.keys(this._binStatesHttp).forEach(function(uid) {
 				if ( self.isState(uid) ) {
-					self._binStatesHttp[uid].remove();
+					self._binStatesHttp[uid].remove();localhost
 					delete self._binStatesHttp[uid];
 				}
 			});

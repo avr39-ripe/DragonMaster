@@ -132,7 +132,7 @@ void FanClass::_modeStopEnd()
 
 void FanClass::onHttpConfig(HttpRequest &request, HttpResponse &response)
 {
-	if (request.getRequestMethod() == RequestMethod::POST)
+	if (request.method == HTTP_POST)
 		{
 			if (request.getBody() == NULL)
 			{

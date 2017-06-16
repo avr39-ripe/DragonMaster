@@ -36,7 +36,7 @@ void TempSensors::addSensor()
 
 void TempSensors::onHttpGet(HttpRequest &request, HttpResponse &response)
 {
-	if (request.getRequestMethod() == RequestMethod::GET)
+	if (request.method == HTTP_GET)
 	{
 		DynamicJsonBuffer jsonBuffer;
 		String buf;
@@ -64,14 +64,14 @@ void TempSensors::onHttpGet(HttpRequest &request, HttpResponse &response)
 		root.printTo(buf);
 
 		response.setHeader("Access-Control-Allow-Origin", "*");
-		response.setContentType(ContentType::JSON);
+		response.setContentType(MIME_JSON);
 		response.sendString(buf);
 	}
 }
 
 void TempSensors::onHttpConfig(HttpRequest &request, HttpResponse &response)
 {
-	if (request.getRequestMethod() == RequestMethod::POST)
+	if (request.method == HTTP_POST)
 		{
 			if (request.getBody() == NULL)
 			{
@@ -133,7 +133,7 @@ void TempSensors::onHttpConfig(HttpRequest &request, HttpResponse &response)
 			root.printTo(buf);
 
 			response.setHeader("Access-Control-Allow-Origin", "*");
-			response.setContentType(ContentType::JSON);
+			response.setContentType(MIME_JSON);
 			response.sendString(buf);
 		}
 }
@@ -350,15 +350,15 @@ void TempSensorsHttp::addSensor(String url)
 
 void TempSensorsHttp::_getHttpTemp()
 {
-	if (_httpClient.isProcessing())
-	{
-		return; // We need to wait while request processing was completed
-	}
-	else
-	{
-		_httpClient.reset();
-		_httpClient.downloadString(_addresses[_currentSensorId], HttpClientCompletedDelegate(&TempSensorsHttp::_temp_read, this));
-	}
+//	if (_httpClient.isProcessing())
+//	{
+//		return; // We need to wait while request processing was completed
+//	}
+//	else
+//	{
+//		_httpClient.reset();
+		_httpClient.downloadString(_addresses[_currentSensorId], RequestCompletedDelegate(&TempSensorsHttp::_temp_read, this));
+//	}
 
 }
 void TempSensorsHttp::_temp_start()
@@ -374,7 +374,7 @@ void TempSensorsHttp::_temp_start()
 	}
 }
 
-void TempSensorsHttp::_temp_read(HttpClient& client, bool successful)
+int TempSensorsHttp::_temp_read(HttpConnection& client, bool successful)
 {
 //	Serial.println("temp-read");
 	if (successful)

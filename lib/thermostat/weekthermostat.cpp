@@ -155,7 +155,7 @@ uint8_t WeekThermostatClass::loadStateCfg()
 }
 void WeekThermostatClass::onStateCfg(HttpRequest &request, HttpResponse &response)
 {
-	if (request.getRequestMethod() == RequestMethod::POST)
+	if (request.method == HTTP_POST)
 	{
 		if (request.getBody() == NULL)
 		{
@@ -261,7 +261,7 @@ uint8_t WeekThermostatClass::loadScheduleCfg()
 void WeekThermostatClass::onScheduleCfg(HttpRequest &request, HttpResponse &response)
 {
 	StaticJsonBuffer<scheduleJsonBufSize> jsonBuffer;
-	if (request.getRequestMethod() == RequestMethod::POST)
+	if (request.method == HTTP_POST)
 	{
 		if (request.getBody() == NULL)
 		{
@@ -310,7 +310,7 @@ void WeekThermostatClass::onScheduleCfg(HttpRequest &request, HttpResponse &resp
 		root.printTo(buf, sizeof(buf));
 
 		response.setHeader("Access-Control-Allow-Origin", "*");
-		response.setContentType(ContentType::JSON);
+		response.setContentType(MIME_JSON);
 		response.sendString(buf);
 	}
 }

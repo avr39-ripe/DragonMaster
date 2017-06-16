@@ -139,7 +139,7 @@ void ThermostatClass::_check()
 
 void ThermostatClass::onHttpConfig(HttpRequest &request, HttpResponse &response)
 {
-	if (request.getRequestMethod() == RequestMethod::POST)
+	if (request.method == HTTP_POST)
 		{
 			if (request.getBody() == NULL)
 			{
