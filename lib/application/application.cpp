@@ -201,7 +201,7 @@ void ApplicationClass::_httpOnFile(HttpRequest &request, HttpResponse &response)
 void ApplicationClass::_httpOnIndex(HttpRequest &request, HttpResponse &response)
 {
 	response.setCache(86400, true); // It's important to use cache for better performance.
-	response.sendFile("index.html");
+	response.sendFile("index_new.html");
 }
 
 void ApplicationClass::_httpOnConfiguration(HttpRequest &request, HttpResponse &response)
