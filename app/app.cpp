@@ -6,7 +6,7 @@
  */
 #include <app.h>
 #include <dragonmaster.h>
-
+extern "C" int fb_test();
 //AppClass
 void onStateJson(HttpRequest &request, HttpResponse &response);
 void onScheduleJson(HttpRequest &request, HttpResponse &response);
@@ -30,7 +30,7 @@ void AppClass::init()
 
 // http tempsensors + Week Thermostat
 	tempSensorsHttp = new TempSensorsHttp(4000);
-	tempSensorsHttp->addSensor("http://192.168.31.217/temperature.json?sensor=0"); // House tempsensor
+	tempSensorsHttp->addSensor("http://10.2.113.125/temperature.json?sensor=0"); // House tempsensor
 
 	weekThermostats[0] = new WeekThermostatClass(*tempSensorsHttp,0,"House", 4000);
 
@@ -79,7 +79,14 @@ void AppClass::init()
 	webServer.addPath("/state.json", onStateJson);
 	webServer.addPath("/schedule.json", onScheduleJson);
 	webServer.addPath("/thermostats.json", onThermostatsJson);
-//	Serial.printf("AppClass init done!\n");
+
+	for(uint8_t i=0; i<50; i++)
+	{
+		Serial.printf("Pre FB Free Heap: %d\n", system_get_free_heap_size());
+		fb_test();
+		Serial.printf("Post FB Free Heap: %d\n", system_get_free_heap_size());
+		//Serial.printf("fb_test CALLED!\n");
+	}
 }
 
 void AppClass::start()
