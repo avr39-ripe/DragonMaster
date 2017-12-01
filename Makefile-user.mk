@@ -68,7 +68,8 @@ RBOOT_RTC_ENABLED = 1
 SPIFF_SIZE      ?= 262144
 #RBOOT_SPIFFS_0  ?= 0x300000
 
-MODULES = app lib/application lib/tempsensor lib/binio lib/thermostat lib/fan lib/wsbinconst
-EXTRA_INCLUDES = lib/application lib/tempsensor lib/binio lib/thermostat lib/fan lib/wsbinconst
+MODULES = app lib/application lib/tempsensor lib/binio lib/thermostat lib/fan lib/wsbinconst lib/application/flatcc
+EXTRA_INCLUDES = lib/application lib/tempsensor lib/binio lib/thermostat lib/fan lib/wsbinconst lib/application/flatcc
 
 ENABLE_CUSTOM_LWIP=1
+
