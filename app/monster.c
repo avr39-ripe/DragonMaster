@@ -356,8 +356,7 @@ int fb_test()
     // Eventually the builder must be cleaned up:
     flatcc_builder_clear(&builder);
 
- //   printf("The FlatBuffer was successfully created and accessed!\n");
+    ets_printf("The FlatBuffer was successfully created and accessed!\n");
 
-    ets_printf("FLATBUFERCC TESTED!\n");
     return 0;
 }

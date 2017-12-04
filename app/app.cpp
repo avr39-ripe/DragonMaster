@@ -80,7 +80,7 @@ void AppClass::init()
 	webServer.addPath("/schedule.json", onScheduleJson);
 	webServer.addPath("/thermostats.json", onThermostatsJson);
 
-	for(uint8_t i=0; i<50; i++)
+	for(uint8_t i=0; i<5; i++)
 	{
 		Serial.printf("Pre FB Free Heap: %d\n", system_get_free_heap_size());
 		fb_test();

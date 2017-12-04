@@ -146,10 +146,10 @@ static inline void __portable_aligned_free(void *p)
 
 #endif /* aligned_alloc */
 
-#if !defined(aligned_free) && !defined(__aligned_free_is_defined)
-#define aligned_free(p) free(p)
-#define __aligned_free_is_defined 1
-#endif
+//#if !defined(aligned_free) && !defined(__aligned_free_is_defined)
+//#define aligned_free(p) free(p)
+//#define __aligned_free_is_defined 1
+//#endif
 
 #ifdef __cplusplus
 }

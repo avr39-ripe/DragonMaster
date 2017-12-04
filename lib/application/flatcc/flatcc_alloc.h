@@ -1,6 +1,6 @@
 #ifndef FLATCC_ALLOC_H
 #define FLATCC_ALLOC_H
-
+#pragma once
 /*
  * These allocation abstractions are __only__ for runtime libraries.
  *
@@ -65,7 +65,7 @@
 //#ifndef FLATCC_USE_GENERIC_ALIGNED_ALLOC
 //
 //#ifndef FLATCC_NO_PALIGNED_ALLOC
-#include "flatcc/portable/paligned_alloc.h"
+//#include "flatcc/portable/paligned_alloc.h"
 static inline void *__portable_aligned_alloc(size_t alignment, size_t size)
 {
 //    char *raw;
@@ -90,8 +90,32 @@ static inline void __portable_aligned_free(void *p)
 //    free(raw);
 	free(p);
 }
-#define FLATCC_ALIGNED_ALLOC(alignment, size) __portable_aligned_alloc(alignment, size)
-#define FLATCC_ALIGNED_FREE(p) __portable_aligned_free(p)
+
+extern void* p__aligned_malloc(size_t alignment, size_t bytes);
+//{
+//	void *p1 ,*p2;
+//		if((p1 =(void *) malloc(bytes + alignment + sizeof(size_t)))==NULL)
+//			return NULL;
+//		size_t addr=(size_t)p1+alignment+sizeof(size_t);
+//		p2=(void *)(addr - (addr%alignment));
+//		*((size_t *)p2-1)=(size_t)p1;
+//		return p2;
+//}
+
+extern void p__aligned_free(void *p );
+//{
+//	free((void *)(*((size_t *) p-1)));
+//}
+
+#define FLATCC_ALIGNED_ALLOC(alignment, size) p__aligned_malloc(alignment, size)
+#define FLATCC_ALIGNED_FREE(p) p__aligned_free(p)
+#define aligned_alloc(alignment, size) p__aligned_malloc(alignment, size)
+#define aligned_free(p) p__aligned_free(p)
+#define __aligned_alloc_is_defined 1
+#define __aligned_free_is_defined 1
+
+//#define FLATCC_ALIGNED_ALLOC(alignment, size) __portable_aligned_alloc(alignment, size)
+//#define FLATCC_ALIGNED_FREE(p) __portable_aligned_free(p)
 //#else
 //#if !defined(__aligned_free_is_defined) || !__aligned_free_is_defined
 //#define aligned_free free
@@ -131,12 +155,12 @@ static inline void __portable_aligned_free(void *p)
 
 //#endif /* FLATCC_USE_GENERIC_ALIGNED_ALLOC */
 
-#ifndef FLATCC_ALIGNED_ALLOC
-#define FLATCC_ALIGNED_ALLOC(a, n) aligned_alloc(a, n)
-#endif
-
-#ifndef FLATCC_ALIGNED_FREE
-#define FLATCC_ALIGNED_FREE(p) aligned_free(p)
-#endif
+//#ifndef FLATCC_ALIGNED_ALLOC
+//#define FLATCC_ALIGNED_ALLOC(a, n) aligned_alloc(a, n)
+//#endif
+//
+//#ifndef FLATCC_ALIGNED_FREE
+//#define FLATCC_ALIGNED_FREE(p) aligned_free(p)
+//#endif
 
 #endif /* FLATCC_ALLOC_H */
