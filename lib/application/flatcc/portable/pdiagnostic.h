@@ -13,8 +13,6 @@
  *
  * Alternatively use #include "pdiagnostic_push/pop.h"
  */
-#define PDIAGNOSTIC_AWARE_MSVC 0
-#define PDIAGNOSTIC_AWARE_CLANG 0
 
 #ifdef _MSC_VER
 #pragma warning(disable: 4668) /* preprocessor name not defined */
@@ -31,29 +29,29 @@
 #endif
 
 #if defined(PDIAGNOSTIC_IGNORE_UNUSED_FUNCTION) || defined(PDIAGNOSTIC_IGNORE_UNUSED)
-#if PDIAGNOSTIC_AWARE_CLANG
+#if defined(PDIAGNOSTIC_AWARE_CLANG)
 #pragma clang diagnostic ignored "-Wunused-function"
-#elif PDIAGNOSTIC_AWARE_GCC
+#elif defined(PDIAGNOSTIC_AWARE_GCC)
 #pragma GCC diagnostic ignored "-Wunused-function" */
 #endif
 #endif
 #undef PDIAGNOSTIC_IGNORE_UNUSED_FUNCTION
 
 #if defined(PDIAGNOSTIC_IGNORE_UNUSED_VARIABLE) || defined(PDIAGNOSTIC_IGNORE_UNUSED)
-#if PDIAGNOSTIC_AWARE_MSVC
+#if defined(PDIAGNOSTIC_AWARE_MSVC)
 #pragma warning(disable: 4101) /* unused local variable */
-#elif PDIAGNOSTIC_AWARE_CLANG
+#elif defined(PDIAGNOSTIC_AWARE_CLANG)
 #pragma clang diagnostic ignored "-Wunused-variable"
-#elif PDIAGNOSTIC_AWARE_GCC
+#elif defined(PDIAGNOSTIC_AWARE_GCC)
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
 #endif
 #undef PDIAGNOSTIC_IGNORE_UNUSED_VARIABLE
 
 #if defined(PDIAGNOSTIC_IGNORE_UNUSED_PARAMETER) || defined(PDIAGNOSTIC_IGNORE_UNUSED)
-#if PDIAGNOSTIC_AWARE_CLANG
+#if defined(PDIAGNOSTIC_AWARE_CLANG)
 #pragma clang diagnostic ignored "-Wunused-parameter"
-#elif PDIAGNOSTIC_AWARE_GCC
+#elif defined(PDIAGNOSTIC_AWARE_GCC)
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 #endif

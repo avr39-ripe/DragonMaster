@@ -28,7 +28,6 @@ void __attribute__((weak))
     while (1){};
 }
 
-//#define assert(condition) if (!(condition)) SYSTEM_ERROR("ASSERT: %s %d", __FUNCTION__, __LINE__)
 // This allows us to verify result in optimized builds.
 //#define test_assert(x) do { if (!(x)) { assert(0); return -1; }} while(0)
 #define test_assert(x) do { if (!(x)) {return -1; }} while(0)

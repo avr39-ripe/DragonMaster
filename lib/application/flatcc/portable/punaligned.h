@@ -155,7 +155,7 @@
         ((uint8_t *)(p))[7] = (uint8_t)(((uint64_t)(v)) >>  0);             \
         } while (0)
 
-#if __LITTLE_ENDIAN__
+#if defined(__LITTLE_ENDIAN__)
 #define unaligned_read_16(p) unaligned_read_le16toh(p)
 #define unaligned_read_32(p) unaligned_read_le32toh(p)
 #define unaligned_read_64(p) unaligned_read_le64toh(p)

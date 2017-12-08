@@ -6,7 +6,7 @@
  */
 #include <flatcc_alloc.h>
 
-void* p__aligned_malloc(size_t alignment, size_t bytes)
+void* __aligned_malloc(size_t alignment, size_t bytes)
 {
 	void *p1 ,*p2;
 		if((p1 =(void *) malloc(bytes + alignment + sizeof(void*)))==NULL)
@@ -17,7 +17,7 @@ void* p__aligned_malloc(size_t alignment, size_t bytes)
 		return p2;
 }
 
-void p__aligned_free(void *p )
+void __aligned_free(void *p )
 {
 	free((void *)(*((size_t *) p-1)));
 }
