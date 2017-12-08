@@ -94,13 +94,13 @@ void WeekThermostatClass::check()
 			else
 				targetTemp = (float)daySchedule[currentProg].targetTemp / 100.0; //in-place convert to float
 
-			if (_manual && (_manualProg != currentProg))
-			{
-				Serial.println("turn Manual off with program change");
-				_manual = false;
-				_prevManual = false;
-				targetTemp = (float)daySchedule[currentProg].targetTemp / 100.0; //in-place convert to float
-			}
+//			if (_manual && (_manualProg != currentProg))
+//			{
+//				Serial.println("turn Manual off with program change");
+//				_manual = false;
+//				_prevManual = false;
+//				targetTemp = (float)daySchedule[currentProg].targetTemp / 100.0; //in-place convert to float
+//			}
 		}
 
 //		Serial.print("targetTemp: "); Serial.print(targetTemp); //FLOAT!!!
