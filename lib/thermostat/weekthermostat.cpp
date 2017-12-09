@@ -143,7 +143,7 @@ uint8_t WeekThermostatClass::loadStateCfg()
 
 		_name = String((const char*)root["name"]);
 		_active = root["active"];
-//		_manual = root["manual"];
+		_manual = root["manual"];
 		_manualTargetTemp = root["manualTargetTemp"];
 		_targetTempDelta = root["targetTempDelta"];
 
@@ -177,7 +177,7 @@ void WeekThermostatClass::onStateCfg(HttpRequest &request, HttpResponse &respons
 			if (root["manual"].success()) // Settings
 			{
 				_manual = root["manual"];
-//				saveStateCfg();
+				saveStateCfg();
 				return;
 			}
 			if (root["manualTargetTemp"].success()) // Settings
@@ -219,7 +219,7 @@ uint8_t WeekThermostatClass::saveStateCfg()
 
 	root["name"] = _name.c_str();
 	root["active"] = _active;
-//	root["manual"] = _manual;
+	root["manual"] = _manual;
 	root["manualTargetTemp"] = _manualTargetTemp;
 	root["targetTempDelta"] = _targetTempDelta;
 
