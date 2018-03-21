@@ -264,6 +264,6 @@ void onThermostatsJson(HttpRequest &request, HttpResponse &response)
 	root.printTo(buf, sizeof(buf));
 
 	response.setHeader("Access-Control-Allow-Origin", "*");
-	response.setContentType(ContentType::JSON);
+	response.setContentType(MIME_JSON);
 	response.sendString(buf);
 }

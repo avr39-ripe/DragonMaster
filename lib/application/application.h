@@ -1,6 +1,7 @@
 #ifndef INCLUDE_APPLICATION_H_
 #define INCLUDE_APPLICATION_H_
 #include <SmingCore/SmingCore.h>
+#include <SmingCore/Network/Http/Websocket/WebsocketResource.h>
 #include <wsbinconst.h>
 
 // If you want, you can define settings globally in Operation System ENV
@@ -67,12 +68,12 @@ protected:
 	void _httpOnConfigurationJson(HttpRequest &request, HttpResponse &response);
 	void _httpOnUpdate(HttpRequest &request, HttpResponse &response);
 	void _handleWifiConfig(JsonObject& root);
-	void wsConnected(WebSocket& socket);
-	void wsDisconnected(WebSocket& socket);
-	void wsMessageReceived(WebSocket& socket, const String& message);
-	void wsBinaryReceived(WebSocket& socket, uint8_t* data, size_t size);
-	virtual void wsBinSetter(WebSocket& socket, uint8_t* data, size_t size);
-	virtual void wsBinGetter(WebSocket& socket, uint8_t* data, size_t size);
+	void wsConnected(WebSocketConnection& socket);
+	void wsDisconnected(WebSocketConnection& socket);
+	void wsMessageReceived(WebSocketConnection& socket, const String& message);
+	void wsBinaryReceived(WebSocketConnection& socket, uint8_t* data, size_t size);
+	virtual void wsBinSetter(WebSocketConnection& socket, uint8_t* data, size_t size);
+	virtual void wsBinGetter(WebSocketConnection& socket, uint8_t* data, size_t size);
 	uint32_t _counter = 0; // Kind of heartbeat counter
 	Timer _loopTimer; // Timer for serving loop
 	Timer _reconnectTimer; // Timer for STA reconnect routine
@@ -86,6 +87,7 @@ protected:
 	uint8_t timeZone = 2;
 	//Binary configuration file name
 	String _fileName = APP_CONFIG_FILE;
+	WebsocketResource* _wsResource;
 	void loadConfig();
 	void saveConfig();
 	virtual void _loadAppConfig(file_t file) {}; //override this in child class to load additional config values

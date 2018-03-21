@@ -41,17 +41,23 @@ void ApplicationClass::init()
 	Serial.printf("Time zone: %d\n", timeZone);
 
 	// Attach Wifi events handlers
-	WifiEvents.onStationDisconnect(onStationDisconnectDelegate(&ApplicationClass::_STADisconnect, this));
-	WifiEvents.onStationConnect(onStationConnectDelegate(&ApplicationClass::_STAConnect, this));
-	WifiEvents.onStationAuthModeChange(onStationAuthModeChangeDelegate(&ApplicationClass::_STAAuthModeChange, this));
-	WifiEvents.onStationGotIP(onStationGotIPDelegate(&ApplicationClass::_STAGotIP, this));
+	WifiEvents.onStationDisconnect(StationDisconnectDelegate(&ApplicationClass::_STADisconnect, this));
+	WifiEvents.onStationConnect(StationConnectDelegate(&ApplicationClass::_STAConnect, this));
+	WifiEvents.onStationAuthModeChange(StationAuthModeChangeDelegate(&ApplicationClass::_STAAuthModeChange, this));
+	WifiEvents.onStationGotIP(StationGotIPDelegate(&ApplicationClass::_STAGotIP, this));
 
 	// Web Sockets configuration
-	webServer.enableWebSockets(true);
-	webServer.setWebSocketConnectionHandler(WebSocketDelegate(&ApplicationClass::wsConnected,this));
-	webServer.setWebSocketMessageHandler(WebSocketMessageDelegate(&ApplicationClass::wsMessageReceived,this));
-	webServer.setWebSocketBinaryHandler(WebSocketBinaryDelegate(&ApplicationClass::wsBinaryReceived,this));
-	webServer.setWebSocketDisconnectionHandler(WebSocketDelegate(&ApplicationClass::wsDisconnected,this));
+	_wsResource=new WebsocketResource();
+	_wsResource->setConnectionHandler(WebSocketDelegate(&ApplicationClass::wsConnected,this));
+	_wsResource->setMessageHandler(WebSocketMessageDelegate(&ApplicationClass::wsMessageReceived,this));
+	_wsResource->setBinaryHandler(WebSocketBinaryDelegate(&ApplicationClass::wsBinaryReceived,this));
+	_wsResource->setDisconnectionHandler(WebSocketDelegate(&ApplicationClass::wsDisconnected,this));
+
+	webServer.addPath("/ws", _wsResource);
+//	webServer.setWebSocketConnectionHandler(WebSocketDelegate(&ApplicationClass::wsConnected,this));
+//	webServer.setWebSocketMessageHandler(WebSocketMessageDelegate(&ApplicationClass::wsMessageReceived,this));
+//	webServer.setWebSocketBinaryHandler(WebSocketBinaryDelegate(&ApplicationClass::wsBinaryReceived,this));
+//	webServer.setWebSocketDisconnectionHandler(WebSocketDelegate(&ApplicationClass::wsDisconnected,this));
 
 	wsAddBinSetter(sysId, WebSocketBinaryDelegate(&ApplicationClass::wsBinSetter,this));
 	wsAddBinGetter(sysId, WebSocketBinaryDelegate(&ApplicationClass::wsBinGetter,this));
@@ -175,6 +181,7 @@ void ApplicationClass::startWebServer()
 //	webServer.addPath("/state.json",HttpPathDelegate(&ApplicationClass::_httpOnStateJson,this));
 	webServer.addPath("/update",HttpPathDelegate(&ApplicationClass::_httpOnUpdate,this));
 	webServer.setDefaultHandler(HttpPathDelegate(&ApplicationClass::_httpOnFile,this));
+	webServer.setBodyParser("application/json", bodyToStringParser);
 	_webServerStarted = true;
 
 	if (WifiStation.isEnabled())
@@ -207,22 +214,23 @@ void ApplicationClass::_httpOnIndex(HttpRequest &request, HttpResponse &response
 void ApplicationClass::_httpOnConfiguration(HttpRequest &request, HttpResponse &response)
 {
 
-	if (request.getRequestMethod() == RequestMethod::POST)
+	if (request.method == HTTP_POST)
 	{
+		String body = request.getBody();
 		debugf("Update configuration\n");
 
-		if (request.getBody() == NULL)
+		if (body == NULL)
 		{
-			debugf("Empty Request Body!\n");
+			debug_d("Empty Request Body!\n");
 			return;
 		}
 		else // Request Body Not Empty
 		{
 //Uncomment next line for extra debuginfo
-//			Serial.printf(request.getBody());
+//			Serial.printf(body);
 			uint8_t needSave = false;
 			DynamicJsonBuffer jsonBuffer;
-			JsonObject& root = jsonBuffer.parseObject(request.getBody());
+			JsonObject& root = jsonBuffer.parseObject(body);
 //Uncomment next line for extra debuginfo
 //			root.prettyPrintTo(Serial);
 
@@ -408,7 +416,7 @@ void ApplicationClass::OtaUpdate() {
 	// request switch and reboot on success
 	//otaUpdater->switchToRom(slot);
 	// and/or set a callback (called on failure or success without switching requested)
-	otaUpdater->setCallback(otaUpdateDelegate(&ApplicationClass::OtaUpdate_CallBack,this));
+	otaUpdater->setCallback(OtaUpdateDelegate(&ApplicationClass::OtaUpdate_CallBack,this));
 
 	// start update
 	otaUpdater->start();
@@ -426,11 +434,12 @@ void ApplicationClass::Switch() {
 
 void ApplicationClass::_httpOnUpdate(HttpRequest &request, HttpResponse &response)
 {
-	if (request.getRequestMethod() == RequestMethod::POST)
+	if (request.method == HTTP_POST)
 		{
-			debugf("Update POST request\n");
+			String body = request.getBody();
+			debug_d("Update POST request\n");
 
-			if (request.getBody() == NULL)
+			if (body == NULL)
 			{
 				debugf("Empty Request Body!\n");
 				return;
@@ -440,7 +449,7 @@ void ApplicationClass::_httpOnUpdate(HttpRequest &request, HttpResponse &respons
 	//Uncomment next line for extra debuginfo
 	//			Serial.printf(request.getBody());
 				DynamicJsonBuffer jsonBuffer;
-				JsonObject& root = jsonBuffer.parseObject(request.getBody());
+				JsonObject& root = jsonBuffer.parseObject(body);
 	//Uncomment next line for extra debuginfo
 				root.prettyPrintTo(Serial);
 
@@ -459,22 +468,22 @@ void ApplicationClass::_httpOnUpdate(HttpRequest &request, HttpResponse &respons
 		} // Request method is POST
 }
 //WebSocket handling
-void ApplicationClass::wsConnected(WebSocket& socket)
+void ApplicationClass::wsConnected(WebSocketConnection& socket)
 {
 	Serial.printf("WS CONN!\n");
 }
 
-void ApplicationClass::wsDisconnected(WebSocket& socket)
+void ApplicationClass::wsDisconnected(WebSocketConnection& socket)
 {
 	Serial.printf("WS DISCONN!\n");
 }
 
-void ApplicationClass::wsMessageReceived(WebSocket& socket, const String& message)
+void ApplicationClass::wsMessageReceived(WebSocketConnection& socket, const String& message)
 {
 	Serial.printf("WS msg recv: %s\n", message.c_str());
 }
 
-void ApplicationClass::wsBinaryReceived(WebSocket& socket, uint8_t* data, size_t size)
+void ApplicationClass::wsBinaryReceived(WebSocketConnection& socket, uint8_t* data, size_t size)
 {
 	Serial.printf("WS bin data recv, size: %d\r\n", size);
 	Serial.printf("Opcode: %d\n", data[0]);
@@ -500,7 +509,7 @@ void ApplicationClass::wsBinaryReceived(WebSocket& socket, uint8_t* data, size_t
 	}
 }
 
-void ApplicationClass::wsBinSetter(WebSocket& socket, uint8_t* data, size_t size)
+void ApplicationClass::wsBinSetter(WebSocketConnection& socket, uint8_t* data, size_t size)
 {
 	switch (data[wsBinConst::wsSubCmd])
 	{
@@ -520,7 +529,7 @@ void ApplicationClass::wsBinSetter(WebSocket& socket, uint8_t* data, size_t size
 	}
 }
 
-void ApplicationClass::wsBinGetter(WebSocket& socket, uint8_t* data, size_t size)
+void ApplicationClass::wsBinGetter(WebSocketConnection& socket, uint8_t* data, size_t size)
 {
 	uint8_t* buffer;
 	switch (data[wsBinConst::wsSubCmd])

@@ -107,7 +107,7 @@ BinStateHttpClass::BinStateHttpClass(HttpServer& webServer, BinStateClass* outSt
 	_outState->onChange(onStateChangeDelegate(&BinStateHttpClass::wsSendStateAll, this));
 };
 
-void BinStateHttpClass::wsBinGetter(WebSocket& socket, uint8_t* data, size_t size)
+void BinStateHttpClass::wsBinGetter(WebSocketConnection& socket, uint8_t* data, size_t size)
 {
 	switch (data[wsBinConst::wsSubCmd])
 	{
@@ -142,7 +142,7 @@ void BinStateHttpClass::_fillStateBuffer(uint8_t* buffer)
 	os_memcpy((&buffer[wsBinConst::wsPayLoadStart]), &_uid, sizeof(_uid));
 	os_memcpy((&buffer[wsBinConst::wsPayLoadStart + 1]), &tmpState, sizeof(tmpState));
 }
-void BinStateHttpClass::wsSendName(WebSocket& socket)
+void BinStateHttpClass::wsSendName(WebSocketConnection& socket)
 {
 	uint16_t bufferLength = wsBinConst::wsPayLoadStart + 1 + _name.length();
 	uint8_t* buffer = new uint8_t[bufferLength];
@@ -152,7 +152,7 @@ void BinStateHttpClass::wsSendName(WebSocket& socket)
 	delete buffer;
 }
 
-void BinStateHttpClass::wsSendState(WebSocket& socket)
+void BinStateHttpClass::wsSendState(WebSocketConnection& socket)
 {
 	uint8_t* buffer = new uint8_t[wsBinConst::wsPayLoadStart + 1 + 1];
 
@@ -169,11 +169,12 @@ void BinStateHttpClass::wsSendStateAll(uint8_t state)
 
 	_fillStateBuffer(buffer);
 
-	WebSocketsList &clients = _webServer.getActiveWebSockets();
-	for (uint8_t i = 0; i < clients.count(); i++)
-	{
-		clients[i].sendBinary(buffer, wsBinConst::wsPayLoadStart + 1 + 1);
-	}
+//	WebSocketsList &clients = _webServer.getActiveWebSockets();
+//	for (uint8_t i = 0; i < clients.count(); i++)
+//	{
+//		clients[i].sendBinary(buffer, wsBinConst::wsPayLoadStart + 1 + 1);
+//	}
+	WebSocketConnection::broadcast((const char*)buffer, wsBinConst::wsPayLoadStart + 1 + 1, WS_BINARY_FRAME);
 
 	delete buffer;
 }
@@ -194,7 +195,7 @@ void BinStateHttpClass::setState(uint8_t state)
 //	}
 };
 
-void BinStatesHttpClass::wsBinGetter(WebSocket& socket, uint8_t* data, size_t size)
+void BinStatesHttpClass::wsBinGetter(WebSocketConnection& socket, uint8_t* data, size_t size)
 {
 	uint8_t* buffer = nullptr;
 	switch (data[wsBinConst::wsSubCmd])
@@ -235,7 +236,7 @@ void BinStatesHttpClass::wsBinGetter(WebSocket& socket, uint8_t* data, size_t si
 	}
 }
 
-void BinStatesHttpClass::wsBinSetter(WebSocket& socket, uint8_t* data, size_t size)
+void BinStatesHttpClass::wsBinSetter(WebSocketConnection& socket, uint8_t* data, size_t size)
 {
 	uint8_t* buffer = nullptr;
 //	Serial.printf("BinStatesHttp -> wsBinSetter -> wsGetSetArg = %d\n", data[wsBinConst::wsGetSetArg]);

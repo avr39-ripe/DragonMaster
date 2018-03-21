@@ -71,11 +71,11 @@ class BinStateHttpClass
 public:
 	BinStateHttpClass(HttpServer& webServer, BinStateClass* outState, String name, uint8_t uid, BinStateClass* inState = nullptr);
 //	: _webServer(webServer), _state(state), _name(name), _uid(uid) { _updateLength(); };
-	void wsBinGetter(WebSocket& socket, uint8_t* data, size_t size);
-	void wsBinSetter(WebSocket& socket, uint8_t* data, size_t size);
+	void wsBinGetter(WebSocketConnection& socket, uint8_t* data, size_t size);
+	void wsBinSetter(WebSocketConnection& socket, uint8_t* data, size_t size);
 	void wsSendStateAll(uint8_t state);
-	void wsSendState(WebSocket& socket);
-	void wsSendName(WebSocket& socket);
+	void wsSendState(WebSocketConnection& socket);
+	void wsSendName(WebSocketConnection& socket);
 	void addOutState(BinStateClass *outState) { if (outState) { _outState = outState; }; };
 	void setState(uint8_t state);
 	uint8_t getState() { return _outState->get(); };
@@ -95,8 +95,8 @@ private:
 class BinStatesHttpClass
 {
 public:
-	void wsBinGetter(WebSocket& socket, uint8_t* data, size_t size);
-	void wsBinSetter(WebSocket& socket, uint8_t* data, size_t size);
+	void wsBinGetter(WebSocketConnection& socket, uint8_t* data, size_t size);
+	void wsBinSetter(WebSocketConnection& socket, uint8_t* data, size_t size);
 	void add(BinStateHttpClass* binStateHttp) { _binStatesHttp[binStateHttp->getUid()] = binStateHttp; };
 	static const uint8_t sysId = 2;
 private:
