@@ -9,6 +9,7 @@
 #define LIB_BINIO_BINSTATE_H_
 #include <SmingCore/SmingCore.h>
 #include <wsbinconst.h>
+#include <vector>
 
 #ifndef ONSTATECHANGEDELEGATE_TYPE_DEFINED
 #define ONSTATECHANGEDELEGATE
@@ -63,7 +64,7 @@ protected:
 	uint8_t _uid = 0; // unic id used if persistent enabled as file name uid, must be unic on device
 	void _callOnChangeDelegates();
 	onStateChangeDelegate _onSet = nullptr; // call this with _state as argument
-	Vector<OnStateChange> _onChange = Vector<OnStateChange>(0,1); // call them with _state as argument
+	std::vector<OnStateChange> _onChange;// = Vector<OnStateChange>(1,1); // call them with _state as argument
 };
 
 class BinStateHttpClass
@@ -127,6 +128,6 @@ public:
 	void addState(BinStateClass* binState);
 	void onChangeProcessor(uint8_t state);
 private:
-	Vector<BinStateClass*> _states = Vector<BinStateClass*>(0,1);
+	std::vector<BinStateClass*> _states; // = Vector<BinStateClass*>(1,1);
 };
 #endif /* LIB_BINIO_BINSTATE_H_ */

@@ -58,12 +58,12 @@ void BinStateClass::onSet(onStateChangeDelegate delegateFunction)
 void BinStateClass::onChange(onStateChangeDelegate delegateFunction, uint8_t polarity)
 {
 //	OnStateChange onStateChange = {delegateFunction, polarity};
-	_onChange.add({delegateFunction, polarity});
+	_onChange.push_back({delegateFunction, polarity});
 }
 
 void BinStateClass::_callOnChangeDelegates()
 {
-	for (uint8_t i = 0; i < _onChange.count(); i++)
+	for (uint8_t i = 0; i < _onChange.size(); i++)
 	{
 		_onChange[i].delegateFunction(get() ? _onChange[i].polarity : !_onChange[i].polarity);
 	}
@@ -299,14 +299,14 @@ void BinStateSharedDeferredClass::_deferredSet()
 
 void BinStateAndClass::addState(BinStateClass* binState)
 {
-	_states.add(binState);
+	_states.push_back(binState);
 	binState->onChange(onStateChangeDelegate(&BinStateAndClass::onChangeProcessor, this));
 }
 
 void BinStateAndClass::onChangeProcessor(uint8_t state)
 {
 	uint8_t result = true;
-	for (uint8_t i = 0; i < _states.count(); i++)
+	for (uint8_t i = 0; i < _states.size(); i++)
 	{
 		result &= _states[i]->get();
 	}
