@@ -221,7 +221,7 @@ void AppClass::_loop()
 
 void AppClass::userSTAGotIP(IPAddress ip, IPAddress mask, IPAddress gateway)
 {
-	tempSensorsHttp->start();
+//	tempSensorsHttp->start();
 	for (auto _thermostat: weekThermostats)
 		_thermostat->start();
 }
