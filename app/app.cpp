@@ -72,20 +72,25 @@ void AppClass::init()
 //	thermostats[0]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[2]));
 
 	thermostats[1] = new ThermostatClass(*tempSensor, ThermostatMode::COOLING, true, false, "Pump"); // Pump thermostat
-	thermostats[1]->state.onChange(onStateChangeDelegate(&BinStateClass::set, &output[1]->state));
+	//thermostats[1]->state.onChange(std::bind(static_cast<void (BinStateClass::*) (uint8_t)>(&BinStateClass::set), &output[1]->state, std::placeholders::_1));
+	thermostats[1]->state.onChange([=](uint8_t state){output[1]->state.set(state);});
 
 	thermostats[2] = new ThermostatClass(*tempSensor, ThermostatMode::COOLING, true, false, "Pump_cooler"); // Pump cooler thermostat
-	thermostats[2]->state.onChange(onStateChangeDelegate(&BinStateClass::set, &output[1]->state));
+	//thermostats[2]->state.onChange(std::bind(static_cast<void (BinStateClass::*) (uint8_t)>(&BinStateClass::set), &output[1]->state, std::placeholders::_1));
+	thermostats[2]->state.onChange([=](uint8_t state){output[1]->state.set(state);});
 
 	fan = new FanClass(*tempSensor, *thermostats[0], *output[0]); // Fan controller
-	input[0]->state.onChange(onStateChangeDelegate(&FanClass::_modeStart, fan));
-	input[1]->state.onChange(onStateChangeDelegate(&FanClass::_modeStop, fan));
+	//input[0]->state.onChange(std::bind(&FanClass::_modeStart, fan, std::placeholders::_1));
+	input[0]->state.onChange([=](uint8_t state){fan->_modeStart(state);});
+	//input[1]->state.onChange(std::bind(&FanClass::_modeStop, fan, std::placeholders::_1));
+	input[1]->state.onChange([=](uint8_t state){fan->_modeStop(state);});
 
 	BinHttpButtonClass* webStart = new BinHttpButtonClass(webServer, *binStatesHttp, 0, "Старт");
-	webStart->state.onChange(onStateChangeDelegate(&FanClass::_modeStart, fan));
-
+	//webStart->state.onChange(std::bind(&FanClass::_modeStart, fan, std::placeholders::_1));
+	webStart->state.onChange([=](uint8_t state){fan->_modeStart(state);});
 	BinHttpButtonClass* webStop = new BinHttpButtonClass(webServer, *binStatesHttp, 1, "Стоп");
-	webStop->state.onChange(onStateChangeDelegate(&FanClass::_modeStop, fan));
+	//webStop->state.onChange(std::bind(&FanClass::_modeStop, fan, std::placeholders::_1));
+	webStop->state.onChange([=](uint8_t state){fan->_modeStop(state);});
 
 	ds.begin();
 	tempSensor->addSensor();
@@ -113,20 +118,24 @@ void AppClass::init()
 	thermostats[1]->disable(true);
 	thermostats[2]->enable(true);
 
-	fan->active.onChange(onStateChangeDelegate(&ThermostatClass::enable, thermostats[1]));
-	fan->active.onChange(onStateChangeDelegate(&ThermostatClass::disable, thermostats[2]));
+	//fan->active.onChange(std::bind(&ThermostatClass::enable, thermostats[1], std::placeholders::_1));
+	fan->active.onChange([=](uint8_t state){thermostats[1]->enable(state);});
+	//fan->active.onChange(std::bind(&ThermostatClass::disable, thermostats[2], std::placeholders::_1));
+	fan->active.onChange([=](uint8_t state){thermostats[2]->disable(state);});
 
 	//GasHeating
 	BinStateClass* gasEnable = new BinStateClass();
 	gasEnable->persistent(0);
 
 	BinHttpButtonClass* webGasEnable = new BinHttpButtonClass(webServer, *binStatesHttp, 2, "Газовое отопление", gasEnable);
-	webGasEnable->state.onChange(onStateChangeDelegate(&BinStateClass::toggle, gasEnable));
+	//webGasEnable->state.onChange(std::bind(&BinStateClass::toggle, gasEnable, std::placeholders::_1));
+	webGasEnable->state.onChange([=](uint8_t state){gasEnable->toggle(state); Serial.printf("LAMBDA!\n");});
 
 	BinStateAndClass* gasCaldron = new BinStateAndClass();
 	gasCaldron->addState(gasEnable);
 	gasCaldron->addState(&weekThermostats[0]->state);
-	gasCaldron->onChange(onStateChangeDelegate(&BinStateClass::set, &output[2]->state));
+	//gasCaldron->onChange(std::bind(static_cast<void (BinStateClass::*) (uint8_t)>(&BinStateClass::set), &output[2]->state, std::placeholders::_1));
+	gasCaldron->onChange([=](uint8_t state){output[2]->state.set(state);});
 
 	BinStateHttpClass* gasCaldronState = new BinStateHttpClass(webServer, gasCaldron, "Газовый котел", 3);
 	binStatesHttp->add(gasCaldronState);
@@ -238,6 +247,7 @@ void monitor(HttpRequest &request, HttpResponse &response)
 	response.setHeader("Access-Control-Allow-Origin", "*");
 	response.sendJsonObject(stream);
 }
+
 
 void onStateJson(HttpRequest &request, HttpResponse &response)
 {

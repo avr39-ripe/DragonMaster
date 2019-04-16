@@ -10,7 +10,7 @@
 BinCyclerClass::BinCyclerClass(BinStateClass& cycleState, uint16_t duration, uint16_t interval)
 : _cycleState(cycleState), _duration(duration), _interval(interval)
 {
-	state.onChange(onStateChangeDelegate(&BinCyclerClass::_enable, this));
+	state.onChange(std::bind(&BinCyclerClass::_enable, this, std::placeholders::_1));
 }
 
 void BinCyclerClass::_enable(uint8_t enableState)

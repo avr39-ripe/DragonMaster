@@ -13,8 +13,7 @@ BinOutClass::BinOutClass(uint8_t unitNumber, uint8_t polarity)
 {
 	_unitNumber = unitNumber;
 	state.setPolarity(polarity);
-	state.onSet(onStateChangeDelegate(&BinOutClass::_setUnitState, this));
-
+	state.onSet(std::bind(&BinOutClass::_setUnitState, this, std::placeholders::_1));
 }
 
 

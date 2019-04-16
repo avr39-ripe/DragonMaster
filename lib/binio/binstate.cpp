@@ -104,7 +104,7 @@ void BinStateClass::persistent(uint8_t uid)
 BinStateHttpClass::BinStateHttpClass(HttpServer& webServer, BinStateClass* outState, String name, uint8_t uid, BinStateClass* inState)
 : _webServer(webServer), _outState(outState), _name(name), _uid(uid), _inState(inState)
 {
-	_outState->onChange(onStateChangeDelegate(&BinStateHttpClass::wsSendStateAll, this));
+	_outState->onChange(std::bind(&BinStateHttpClass::wsSendStateAll, this, std::placeholders::_1));
 };
 
 void BinStateHttpClass::wsBinGetter(WebSocketConnection& socket, uint8_t* data, size_t size)
@@ -300,7 +300,7 @@ void BinStateSharedDeferredClass::_deferredSet()
 void BinStateAndClass::addState(BinStateClass* binState)
 {
 	_states.push_back(binState);
-	binState->onChange(onStateChangeDelegate(&BinStateAndClass::onChangeProcessor, this));
+	binState->onChange(std::bind(&BinStateAndClass::onChangeProcessor, this, std::placeholders::_1));
 }
 
 void BinStateAndClass::onChangeProcessor(uint8_t state)
