@@ -48,26 +48,27 @@ void ApplicationClass::init()
 
 	// Web Sockets configuration
 	_wsResource=new WebsocketResource();
-	_wsResource->setConnectionHandler(WebSocketDelegate(&ApplicationClass::wsConnected,this));
-	_wsResource->setMessageHandler(WebSocketMessageDelegate(&ApplicationClass::wsMessageReceived,this));
-	_wsResource->setBinaryHandler(WebSocketBinaryDelegate(&ApplicationClass::wsBinaryReceived,this));
-	_wsResource->setDisconnectionHandler(WebSocketDelegate(&ApplicationClass::wsDisconnected,this));
+	_wsResource->setConnectionHandler(WebsocketDelegate(&ApplicationClass::wsConnected,this));
+	_wsResource->setMessageHandler(WebsocketMessageDelegate(&ApplicationClass::wsMessageReceived,this));
+	_wsResource->setBinaryHandler(WebsocketBinaryDelegate(&ApplicationClass::wsBinaryReceived,this));
+	_wsResource->setDisconnectionHandler(WebsocketDelegate(&ApplicationClass::wsDisconnected,this));
 
-	webServer.addPath("/ws", _wsResource);
+	webServer.paths.set("/ws", _wsResource);
 //	webServer.setWebSocketConnectionHandler(WebSocketDelegate(&ApplicationClass::wsConnected,this));
 //	webServer.setWebSocketMessageHandler(WebSocketMessageDelegate(&ApplicationClass::wsMessageReceived,this));
 //	webServer.setWebSocketBinaryHandler(WebSocketBinaryDelegate(&ApplicationClass::wsBinaryReceived,this));
 //	webServer.setWebSocketDisconnectionHandler(WebSocketDelegate(&ApplicationClass::wsDisconnected,this));
 
-	wsAddBinSetter(sysId, WebSocketBinaryDelegate(&ApplicationClass::wsBinSetter,this));
-	wsAddBinGetter(sysId, WebSocketBinaryDelegate(&ApplicationClass::wsBinGetter,this));
+	wsAddBinSetter(sysId, WebsocketBinaryDelegate(&ApplicationClass::wsBinSetter,this));
+	wsAddBinGetter(sysId, WebsocketBinaryDelegate(&ApplicationClass::wsBinGetter,this));
 
 	startWebServer();
 }
 
 void ApplicationClass::start()
 {
-	_loopTimer.initializeMs(loopInterval, TimerDelegate(&ApplicationClass::_loop, this)).start(true);
+//	_loopTimer.initializeMs(loopInterval, TimerDelegateStdFunction(&ApplicationClass::_loop, this)).start(true);
+	_loopTimer.initializeMs(loopInterval, [=](){ this->_loop();}).start(true);
 	_loop();
 }
 
@@ -160,7 +161,8 @@ void ApplicationClass::_STAConnect(String ssid, uint8_t ssid_len, uint8_t bssid[
 	debugf("DELEGATE CONNECT - SSID: %s, CHANNEL: %d\n", ssid.c_str(), channel);
 
 	wifi_station_dhcpc_set_maxtry(128);
-	_reconnectTimer.initializeMs(35000, TimerDelegate(&ApplicationClass::_STAReconnect,this)).start();
+//	_reconnectTimer.initializeMs(35000, TimerDelegateStdFunction(&ApplicationClass::_STAReconnect,this)).start();
+	_reconnectTimer.initializeMs(35000, [=](){this->_STAReconnect();}).start();
 	// Add commands to be executed after successfully connecting to AP
 }
 
@@ -175,12 +177,12 @@ void ApplicationClass::startWebServer()
 	if (_webServerStarted) return;
 
 	webServer.listen(80);
-	webServer.addPath("/",HttpPathDelegate(&ApplicationClass::_httpOnIndex,this));
-	webServer.addPath("/config",HttpPathDelegate(&ApplicationClass::_httpOnConfiguration,this));
-	webServer.addPath("/config.json",HttpPathDelegate(&ApplicationClass::_httpOnConfigurationJson,this));
+	webServer.paths.set("/",HttpPathDelegate(&ApplicationClass::_httpOnIndex,this));
+	webServer.paths.set("/config",HttpPathDelegate(&ApplicationClass::_httpOnConfiguration,this));
+	webServer.paths.set("/config.json",HttpPathDelegate(&ApplicationClass::_httpOnConfigurationJson,this));
 //	webServer.addPath("/state.json",HttpPathDelegate(&ApplicationClass::_httpOnStateJson,this));
-	webServer.addPath("/update",HttpPathDelegate(&ApplicationClass::_httpOnUpdate,this));
-	webServer.setDefaultHandler(HttpPathDelegate(&ApplicationClass::_httpOnFile,this));
+	webServer.paths.set("/update",HttpPathDelegate(&ApplicationClass::_httpOnUpdate,this));
+	webServer.paths.setDefault(HttpPathDelegate(&ApplicationClass::_httpOnFile,this));
 	webServer.setBodyParser("application/json", bodyToStringParser);
 	_webServerStarted = true;
 
@@ -192,12 +194,12 @@ void ApplicationClass::startWebServer()
 
 void ApplicationClass::_httpOnFile(HttpRequest &request, HttpResponse &response)
 {
-	String file = request.getPath();
+	String file = request.uri.Path;
 	if (file[0] == '/')
 		file = file.substring(1);
 
 	if (file[0] == '.')
-		response.forbidden();
+		response.code = HTTP_STATUS_FORBIDDEN;
 	else
 	{
 		response.setCache(86400, true); // It's important to use cache for better performance.
@@ -313,7 +315,8 @@ void ApplicationClass::_httpOnConfigurationJson(HttpRequest &request, HttpRespon
 	json["loopInterval"] = loopInterval;
 	json["updateURL"] = updateURL;
 
-	response.sendJsonObject(stream);
+	//response.sendJsonObject(stream);
+	response.sendDataStream(stream, MIME_JSON);
 }
 
 void ApplicationClass::loadConfig()
@@ -468,22 +471,22 @@ void ApplicationClass::_httpOnUpdate(HttpRequest &request, HttpResponse &respons
 		} // Request method is POST
 }
 //WebSocket handling
-void ApplicationClass::wsConnected(WebSocketConnection& socket)
+void ApplicationClass::wsConnected(WebsocketConnection& socket)
 {
 	Serial.printf("WS CONN!\n");
 }
 
-void ApplicationClass::wsDisconnected(WebSocketConnection& socket)
+void ApplicationClass::wsDisconnected(WebsocketConnection& socket)
 {
 	Serial.printf("WS DISCONN!\n");
 }
 
-void ApplicationClass::wsMessageReceived(WebSocketConnection& socket, const String& message)
+void ApplicationClass::wsMessageReceived(WebsocketConnection& socket, const String& message)
 {
 	Serial.printf("WS msg recv: %s\n", message.c_str());
 }
 
-void ApplicationClass::wsBinaryReceived(WebSocketConnection& socket, uint8_t* data, size_t size)
+void ApplicationClass::wsBinaryReceived(WebsocketConnection& socket, uint8_t* data, size_t size)
 {
 	Serial.printf("WS bin data recv, size: %d\r\n", size);
 	Serial.printf("Opcode: %d\n", data[0]);
@@ -509,7 +512,7 @@ void ApplicationClass::wsBinaryReceived(WebSocketConnection& socket, uint8_t* da
 	}
 }
 
-void ApplicationClass::wsBinSetter(WebSocketConnection& socket, uint8_t* data, size_t size)
+void ApplicationClass::wsBinSetter(WebsocketConnection& socket, uint8_t* data, size_t size)
 {
 	switch (data[wsBinConst::wsSubCmd])
 	{
@@ -529,7 +532,7 @@ void ApplicationClass::wsBinSetter(WebSocketConnection& socket, uint8_t* data, s
 	}
 }
 
-void ApplicationClass::wsBinGetter(WebSocketConnection& socket, uint8_t* data, size_t size)
+void ApplicationClass::wsBinGetter(WebsocketConnection& socket, uint8_t* data, size_t size)
 {
 	uint8_t* buffer;
 	switch (data[wsBinConst::wsSubCmd])
@@ -552,12 +555,12 @@ void ApplicationClass::wsBinGetter(WebSocketConnection& socket, uint8_t* data, s
 	}
 }
 
-void ApplicationClass::wsAddBinSetter(uint8_t sysId, WebSocketBinaryDelegate wsBinSetterDelegate)
+void ApplicationClass::wsAddBinSetter(uint8_t sysId, WebsocketBinaryDelegate wsBinSetterDelegate)
 {
 	_wsBinSetters[sysId] = wsBinSetterDelegate;
 }
 
-void ApplicationClass::wsAddBinGetter(uint8_t sysId, WebSocketBinaryDelegate wsBinGetterDelegate)
+void ApplicationClass::wsAddBinGetter(uint8_t sysId, WebsocketBinaryDelegate wsBinGetterDelegate)
 {
 	_wsBinGetters[sysId] = wsBinGetterDelegate;
 }

@@ -19,8 +19,8 @@ void AppClass::init()
 	ntpClient = new NtpClient("pool.ntp.org", 300);
 
 	BinStatesHttpClass* binStatesHttp = new BinStatesHttpClass();
-	wsAddBinGetter(binStatesHttp->sysId, WebSocketBinaryDelegate(&BinStatesHttpClass::wsBinGetter,binStatesHttp));
-	wsAddBinSetter(binStatesHttp->sysId, WebSocketBinaryDelegate(&BinStatesHttpClass::wsBinSetter,binStatesHttp));
+	wsAddBinGetter(binStatesHttp->sysId, WebsocketBinaryDelegate(&BinStatesHttpClass::wsBinGetter,binStatesHttp));
+	wsAddBinSetter(binStatesHttp->sysId, WebsocketBinaryDelegate(&BinStatesHttpClass::wsBinSetter,binStatesHttp));
 
 	Wire.pins(5,4);
 	lcd.begin(16, 2);   // initialize the lcd for 16 chars 2 lines, turn on backlight
@@ -162,16 +162,16 @@ void AppClass::init()
 			_thermostat->loadScheduleBinCfg();
 		}
 	}
-	webServer.addPath("/temperature.json",HttpPathDelegate(&TempSensors::onHttpGet,tempSensor));
-	webServer.addPath("/temperatureHome.json",HttpPathDelegate(&TempSensorsHttp::onHttpGet,(TempSensors*)tempSensorsHttp));
-	webServer.addPath("/thermostat.fan",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[0]));
-	webServer.addPath("/thermostat.pump",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[1]));
-	webServer.addPath("/thermostat.pump_cooler",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[2]));
-	webServer.addPath("/fan",HttpPathDelegate(&FanClass::onHttpConfig,fan));
-	webServer.addPath("/monitor",monitor);
-	webServer.addPath("/state.json", onStateJson);
-	webServer.addPath("/schedule.json", onScheduleJson);
-	webServer.addPath("/thermostats.json", onThermostatsJson);
+	webServer.paths.set("/temperature.json",HttpPathDelegate(&TempSensors::onHttpGet,tempSensor));
+	webServer.paths.set("/temperatureHome.json",HttpPathDelegate(&TempSensorsHttp::onHttpGet,(TempSensors*)tempSensorsHttp));
+	webServer.paths.set("/thermostat.fan",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[0]));
+	webServer.paths.set("/thermostat.pump",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[1]));
+	webServer.paths.set("/thermostat.pump_cooler",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[2]));
+	webServer.paths.set("/fan",HttpPathDelegate(&FanClass::onHttpConfig,fan));
+	webServer.paths.set("/monitor",monitor);
+	webServer.paths.set("/state.json", onStateJson);
+	webServer.paths.set("/schedule.json", onScheduleJson);
+	webServer.paths.set("/thermostats.json", onThermostatsJson);
 //	Serial.printf("AppClass init done!\n");
 }
 
@@ -244,8 +244,10 @@ void monitor(HttpRequest &request, HttpResponse &response)
 	json["mode"] = fan->getMode();
 
 
-	response.setHeader("Access-Control-Allow-Origin", "*");
-	response.sendJsonObject(stream);
+	//response.setHeader("Access-Control-Allow-Origin", "*");
+	//response.sendJsonObject(stream);
+	response.setAllowCrossDomainOrigin("*");
+	response.sendDataStream(stream, MIME_JSON);	
 }
 
 
@@ -263,17 +265,13 @@ void onScheduleJson(HttpRequest &request, HttpResponse &response)
 
 void onThermostatsJson(HttpRequest &request, HttpResponse &response)
 {
-	DynamicJsonBuffer jsonBuffer;
-	JsonObject& root = jsonBuffer.createObject();
+	JsonObjectStream* stream = new JsonObjectStream();
+	JsonObject& root = stream->getRoot();
 	for (uint t=0; t < maxWeekThermostats; t++)
 	{
 		root[(String)t] = weekThermostats[t]->getName();
 
 	}
-	char buf[scheduleFileBufSize];
-	root.printTo(buf, sizeof(buf));
-
-	response.setHeader("Access-Control-Allow-Origin", "*");
-	response.setContentType(MIME_JSON);
-	response.sendString(buf);
+	response.setAllowCrossDomainOrigin("*");
+	response.sendDataStream(stream, MIME_JSON);
 }

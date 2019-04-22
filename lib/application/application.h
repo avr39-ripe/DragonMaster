@@ -48,8 +48,8 @@ public:
 	void startWebServer(); // Start Application WebServer
 	rBootHttpUpdate* otaUpdater = 0;
 	static const uint8_t sysId = 1;
-	void wsAddBinSetter(uint8_t sysId, WebSocketBinaryDelegate wsBinSetterDelegate);
-	void wsAddBinGetter(uint8_t sysId, WebSocketBinaryDelegate wsBinGetterDelegate);
+	void wsAddBinSetter(uint8_t sysId, WebsocketBinaryDelegate wsBinSetterDelegate);
+	void wsAddBinGetter(uint8_t sysId, WebsocketBinaryDelegate wsBinGetterDelegate);
 	virtual void userSTAGotIP(IPAddress ip, IPAddress mask, IPAddress gateway) {}; // Runs when Station got ip from access-point
 	void OtaUpdate_CallBack(rBootHttpUpdate& client, bool result);
 	void OtaUpdate();
@@ -68,19 +68,19 @@ protected:
 	void _httpOnConfigurationJson(HttpRequest &request, HttpResponse &response);
 	void _httpOnUpdate(HttpRequest &request, HttpResponse &response);
 	void _handleWifiConfig(JsonObject& root);
-	void wsConnected(WebSocketConnection& socket);
-	void wsDisconnected(WebSocketConnection& socket);
-	void wsMessageReceived(WebSocketConnection& socket, const String& message);
-	void wsBinaryReceived(WebSocketConnection& socket, uint8_t* data, size_t size);
-	virtual void wsBinSetter(WebSocketConnection& socket, uint8_t* data, size_t size);
-	virtual void wsBinGetter(WebSocketConnection& socket, uint8_t* data, size_t size);
+	void wsConnected(WebsocketConnection& socket);
+	void wsDisconnected(WebsocketConnection& socket);
+	void wsMessageReceived(WebsocketConnection& socket, const String& message);
+	void wsBinaryReceived(WebsocketConnection& socket, uint8_t* data, size_t size);
+	virtual void wsBinSetter(WebsocketConnection& socket, uint8_t* data, size_t size);
+	virtual void wsBinGetter(WebsocketConnection& socket, uint8_t* data, size_t size);
 	uint32_t _counter = 0; // Kind of heartbeat counter
 	Timer _loopTimer; // Timer for serving loop
 	Timer _reconnectTimer; // Timer for STA reconnect routine
 	uint8_t _webServerStarted = false;
 
-	HashMap<uint8_t,WebSocketBinaryDelegate> _wsBinSetters;
-	HashMap<uint8_t,WebSocketBinaryDelegate> _wsBinGetters;
+	HashMap<uint8_t,WebsocketBinaryDelegate> _wsBinSetters;
+	HashMap<uint8_t,WebsocketBinaryDelegate> _wsBinGetters;
 	// Configuration parameters goes next
 	uint32_t loopInterval = 1000; // loop interval in ms
 	String updateURL = "http://192.168.31.181/"; // Firmware update URL

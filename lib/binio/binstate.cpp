@@ -107,7 +107,7 @@ BinStateHttpClass::BinStateHttpClass(HttpServer& webServer, BinStateClass* outSt
 	_outState->onChange(std::bind(&BinStateHttpClass::wsSendStateAll, this, std::placeholders::_1));
 };
 
-void BinStateHttpClass::wsBinGetter(WebSocketConnection& socket, uint8_t* data, size_t size)
+void BinStateHttpClass::wsBinGetter(WebsocketConnection& socket, uint8_t* data, size_t size)
 {
 	switch (data[wsBinConst::wsSubCmd])
 	{
@@ -142,7 +142,7 @@ void BinStateHttpClass::_fillStateBuffer(uint8_t* buffer)
 	os_memcpy((&buffer[wsBinConst::wsPayLoadStart]), &_uid, sizeof(_uid));
 	os_memcpy((&buffer[wsBinConst::wsPayLoadStart + 1]), &tmpState, sizeof(tmpState));
 }
-void BinStateHttpClass::wsSendName(WebSocketConnection& socket)
+void BinStateHttpClass::wsSendName(WebsocketConnection& socket)
 {
 	uint16_t bufferLength = wsBinConst::wsPayLoadStart + 1 + _name.length();
 	uint8_t* buffer = new uint8_t[bufferLength];
@@ -152,7 +152,7 @@ void BinStateHttpClass::wsSendName(WebSocketConnection& socket)
 	delete buffer;
 }
 
-void BinStateHttpClass::wsSendState(WebSocketConnection& socket)
+void BinStateHttpClass::wsSendState(WebsocketConnection& socket)
 {
 	uint8_t* buffer = new uint8_t[wsBinConst::wsPayLoadStart + 1 + 1];
 
@@ -174,7 +174,7 @@ void BinStateHttpClass::wsSendStateAll(uint8_t state)
 //	{
 //		clients[i].sendBinary(buffer, wsBinConst::wsPayLoadStart + 1 + 1);
 //	}
-	WebSocketConnection::broadcast((const char*)buffer, wsBinConst::wsPayLoadStart + 1 + 1, WS_BINARY_FRAME);
+	WebsocketConnection::broadcast((const char*)buffer, wsBinConst::wsPayLoadStart + 1 + 1, WS_FRAME_BINARY);
 
 	delete buffer;
 }
@@ -195,7 +195,7 @@ void BinStateHttpClass::setState(uint8_t state)
 //	}
 };
 
-void BinStatesHttpClass::wsBinGetter(WebSocketConnection& socket, uint8_t* data, size_t size)
+void BinStatesHttpClass::wsBinGetter(WebsocketConnection& socket, uint8_t* data, size_t size)
 {
 	uint8_t* buffer = nullptr;
 	switch (data[wsBinConst::wsSubCmd])
@@ -236,7 +236,7 @@ void BinStatesHttpClass::wsBinGetter(WebSocketConnection& socket, uint8_t* data,
 	}
 }
 
-void BinStatesHttpClass::wsBinSetter(WebSocketConnection& socket, uint8_t* data, size_t size)
+void BinStatesHttpClass::wsBinSetter(WebsocketConnection& socket, uint8_t* data, size_t size)
 {
 	uint8_t* buffer = nullptr;
 //	Serial.printf("BinStatesHttp -> wsBinSetter -> wsGetSetArg = %d\n", data[wsBinConst::wsGetSetArg]);
@@ -264,7 +264,7 @@ void BinStateSharedDeferredClass::set(uint8_t state)
 	if ( _consumers == 0 && ( ((state && _trueDelay > 0) || (!state && _falseDelay > 0)) && !_nodelay) )
 	{
 		_setDeferredState(state);
-		_delayTimer.initializeMs( (state ? _trueDelay : _falseDelay) * 60000, TimerDelegate(&BinStateSharedDeferredClass::_deferredSet, this)).start(false);
+		_delayTimer.initializeMs( (state ? _trueDelay : _falseDelay) * 60000, [=](){this->_deferredSet();}).start(false);
 		Serial.printf("Arm deferred %s\n", state ? "True" : "False");
 	}
 

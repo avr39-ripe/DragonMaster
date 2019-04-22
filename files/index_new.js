@@ -31,13 +31,13 @@ function onDocumentRedy() {
 	wsBinProcessors[AppStatusClass.sysId] = appStatus.wsBinProcess.bind(appStatus);
 	wsBinProcessors[BinStatesClass.sysId] = binStates.wsBinProcess.bind(binStates);
 	
-	var tempsensors = new TempsensorsClass('/temperature.json', 0);
-	tempsensors.enable(true);
-	setInterval(function () { tempsensors.wsGetAllTemperatures(); }, 5000);
-	
-	var tempsensorsHome = new TempsensorsClass('/temperatureHome.json', 1);
-	tempsensorsHome.enable(true);
-	setInterval(function () { tempsensorsHome.wsGetAllTemperatures(); }, 5000);
+//	var tempsensors = new TempsensorsClass('/temperature.json', 0);
+//	tempsensors.enable(true);
+//	setInterval(function () { tempsensors.wsGetAllTemperatures(); }, 5000);
+//	
+//	var tempsensorsHome = new TempsensorsClass('/temperatureHome.json', 1);
+//	tempsensorsHome.enable(true);
+//	setInterval(function () { tempsensorsHome.wsGetAllTemperatures(); }, 5000);
 	
 	initWS();
 }

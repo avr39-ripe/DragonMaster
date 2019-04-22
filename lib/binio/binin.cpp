@@ -67,7 +67,7 @@ uint8_t BinInMCP23S17Class::_readUnit()
 
 void BinInPollerClass::start()
 {
-	_refreshTimer.initializeMs(_refresh, TimerDelegate(&BinInPollerClass::_pollState, this)).start(true);
+	_refreshTimer.initializeMs(_refresh, [=](){this->_pollState();}).start(true);
 }
 
 void BinInPollerClass::stop()
