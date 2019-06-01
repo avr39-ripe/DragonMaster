@@ -72,3 +72,9 @@ MODULES = app lib/application lib/tempsensor lib/binio lib/thermostat lib/fan li
 EXTRA_INCLUDES = lib/application lib/tempsensor lib/binio lib/thermostat lib/fan lib/wsbinconst
 
 ENABLE_CUSTOM_LWIP=1
+
+WEBPACK_OUT = files/index.*.js*
+webpack: 
+	$(vecho) "Bundling js with Webpack"
+	$(Q) rm -rf $(WEBPACK_OUT)
+	$(Q) webpack
