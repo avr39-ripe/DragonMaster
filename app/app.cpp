@@ -102,7 +102,7 @@ void AppClass::init()
 
 // http tempsensors + Week Thermostat
 	tempSensorsHttp = new TempSensorsHttp(4000);
-	tempSensorsHttp->addSensor("http://192.168.31.217/temperature.json?sensor=0"); // House tempsensor
+	tempSensorsHttp->addSensor("http://10.2.113.122/temperature.json?sensor=0"); // House tempsensor
 
 	weekThermostats[0] = new WeekThermostatClass(*tempSensorsHttp,0,"House", 4000);
 
@@ -230,7 +230,7 @@ void AppClass::_loop()
 
 void AppClass::userSTAGotIP(IPAddress ip, IPAddress mask, IPAddress gateway)
 {
-//	tempSensorsHttp->start();
+	tempSensorsHttp->start();
 	for (auto _thermostat: weekThermostats)
 		_thermostat->start();
 }
