@@ -89,7 +89,7 @@ void AppClass::init()
 //	webServer.paths.set("/thermostat.fan",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[0]));
 //	webServer.paths.set("/thermostat.pump",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[1]));
 //	webServer.paths.set("/thermostat.pump_cooler",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[2]));
-//	Serial.printf("AppClass init done!\n");
+	Serial.printf(_F("AppClass init done!\n"));
 }
 
 void AppClass::start()
@@ -113,10 +113,10 @@ void AppClass::_loop()
 
 //	lcd.clear();
 	ApplicationClass::_loop();
-//	Serial.printf("AppClass loop\n");
+	Serial.printf(_F("AppClass loop\n"));
 //	Serial.printf("GPIO 15: %d GPIO 16: %d\n", input[0]->getState(), input[1]->getState());
 //	Serial.printf("%s - Fan: %d Pump: %d\n", nowTime.toShortTimeString(true).c_str(), thermostats[0]->state.get(), thermostats[1]->state.get());
-	Serial.printf("Free Heap: %d\r\n", system_get_free_heap_size());
+	Serial.printf(_F("Free Heap: %d\r\n"), system_get_free_heap_size());
 /*	lcd.setCursor(0,0);
 	switch (fan->getMode())
 	{
@@ -148,7 +148,7 @@ void AppClass::_loop()
 
 void AppClass::userSTAGotIP(IpAddress ip, IpAddress mask, IpAddress gateway)
 {
-	Serial.printf("AppClass STA GOT IP\n");
+	Serial.printf(_F("AppClass STA GOT IP\n"));
 	tempSensorsHttp->start();
 //	for (auto _thermostat: weekThermostats)
 //		_thermostat->start();
