@@ -7,121 +7,65 @@
 #include <app.h>
 #include <dragonmaster.h>
 
-//AppClass
-void monitor(HttpRequest &request, HttpResponse &response); // Monitor via json some important params
-void onStateJson(HttpRequest &request, HttpResponse &response);
-void onScheduleJson(HttpRequest &request, HttpResponse &response);
-void onThermostatsJson(HttpRequest &request, HttpResponse &response);
-
 void AppClass::init()
 {
 	ApplicationClass::init();
-	ntpClient = new NtpClient("pool.ntp.org", 300);
+	NtpClient* ntpClient = new NtpClient("pool.ntp.org", 300);
 
 	BinStatesHttpClass* binStatesHttp = new BinStatesHttpClass();
 	wsAddBinGetter(binStatesHttp->sysId, WebsocketBinaryDelegate(&BinStatesHttpClass::wsBinGetter,binStatesHttp));
 	wsAddBinSetter(binStatesHttp->sysId, WebsocketBinaryDelegate(&BinStatesHttpClass::wsBinSetter,binStatesHttp));
 
-	Wire.pins(5,4);
-	lcd.begin(16, 2);   // initialize the lcd for 16 chars 2 lines, turn on backlight
-	lcd.backlight();
+	auto zone1Out = new BinOutGPIOClass(12,0);
+	auto zone2Out = new BinOutGPIOClass(13,0);
+	auto zone3Out = new BinOutGPIOClass(14,0);
+	auto caldronOut = new BinOutGPIOClass(15,0);
 
-	tempSensor = new TempSensorsOW(ds, 4000);
-#ifdef MCP23S17 //use MCP23S17
-	mcp001 = new MCP(0x001, mcp23s17_cs);
-#endif
+	zone1Out->state.set(false);
+	zone2Out->state.set(false);
+	zone3Out->state.set(false);
+	caldronOut->state.set(false);
 
-#ifndef MCP23S17 //use GPIO
-	input[0] = new BinInGPIOClass(15,1); // Start button
-	input[1] = new BinInGPIOClass(16,0); // Stop button
-#else
-	input[0] = new BinInMCP23S17Class(*mcp001,1,0); // Start button
-	input[1] = new BinInMCP23S17Class(*mcp001,2,0); // Stop button
-#endif
-	binInPoller.add(input[0]);
-	binInPoller.add(input[1]);
+	BinStateHttpClass* zone1State = new BinStateHttpClass(webServer, &zone1Out->state, "Зона 1", 0);
+	binStatesHttp->add(zone1State);
 
-#ifndef MCP23S17 //use GPIO
-	output[0] = new BinOutGPIOClass(12,1); // Fan
-	output[1] = new BinOutGPIOClass(13,1); // Pumup
-	output[2] = new BinOutGPIOClass(3,1); // Gas Caldron
-//	output[0] = new BinOutGPIOClass(12,0); // Fan
-//	output[1] = new BinOutGPIOClass(14,0); // Pumup
-//	output[2] = new BinOutGPIOClass(13,0); // Gas Caldron
-#else
-	output[0] = new BinOutMCP23S17Class(*mcp001,1,0); // Fan
-	output[1] = new BinOutMCP23S17Class(*mcp001,2,0); // Pumup
-	output[2] = new BinOutMCP23S17Class(*mcp001,3,0); // Gas Caldron
-#endif
-	output[0]->state.set(false);
-	output[1]->state.set(false);
-	output[2]->state.set(false);
+	BinStateHttpClass* zone2State = new BinStateHttpClass(webServer, &zone2Out->state, "Зона 2", 1);
+	binStatesHttp->add(zone2State);
 
-	BinStateHttpClass* fanState = new BinStateHttpClass(webServer, &output[0]->state, "Вентилятор", 0);
-	binStatesHttp->add(fanState);
+	BinStateHttpClass* zone3State = new BinStateHttpClass(webServer, &zone3Out->state, "Зона 3", 2);
+	binStatesHttp->add(zone3State);
 
-	BinStateHttpClass* pumpState = new BinStateHttpClass(webServer, &output[1]->state, "Насос", 1);
-	binStatesHttp->add(pumpState);
+	BinStateHttpClass* caldronState = new BinStateHttpClass(webServer, &caldronOut->state, "Котел", 3);
+	binStatesHttp->add(caldronState);
 
+	// http tempsensors + Week Thermostat
+	tempSensorsHttp = new TempSensorsHttp(4000);
+	tempSensorsHttp->addSensor("http://10.2.113.125/temperature.json?sensor=0");
 
-//	input[0]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[0]));
-//	input[1]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[1]));
+	auto thermostatZone1 = new ThermostatClass(*tempSensorsHttp, 0, ThermostatMode::HEATING, true, false, "Zone1"); // Pump thermostat
+	thermostatZone1->state.onChange([=](uint8_t state){zone1Out->state.set(state);});
+	thermostatZone1->_loadBinConfig();
+	thermostatZone1->enable(true);
 
-	thermostats[0] = new ThermostatClass(*tempSensor, ThermostatMode::HEATING, false, false, "Fan"); // Fan thermostat
+	auto thermostatZone2 = new ThermostatClass(*tempSensorsHttp, 0, ThermostatMode::HEATING, true, false, "Zone2"); // Pump thermostat
+	thermostatZone2->state.onChange([=](uint8_t state){zone2Out->state.set(state);});
+	thermostatZone2->_loadBinConfig();
+	thermostatZone2->disable(true);
 
-//	thermostats[0]->onStateChange(onStateChangeDelegate(&BinOutGPIOClass::setState, output[2]));
+	auto thermostatZone3 = new ThermostatClass(*tempSensorsHttp, 0, ThermostatMode::HEATING, true, false, "Zone3"); // Pump thermostat
+	thermostatZone3->state.onChange([=](uint8_t state){zone3Out->state.set(state);});
+	thermostatZone2->_loadBinConfig();
+	thermostatZone2->disable(true);
 
-	thermostats[1] = new ThermostatClass(*tempSensor, ThermostatMode::COOLING, true, false, "Pump"); // Pump thermostat
-	//thermostats[1]->state.onChange(std::bind(static_cast<void (BinStateClass::*) (uint8_t)>(&BinStateClass::set), &output[1]->state, std::placeholders::_1));
-	thermostats[1]->state.onChange([=](uint8_t state){output[1]->state.set(state);});
-
-	thermostats[2] = new ThermostatClass(*tempSensor, ThermostatMode::COOLING, true, false, "Pump_cooler"); // Pump cooler thermostat
-	//thermostats[2]->state.onChange(std::bind(static_cast<void (BinStateClass::*) (uint8_t)>(&BinStateClass::set), &output[1]->state, std::placeholders::_1));
-	thermostats[2]->state.onChange([=](uint8_t state){output[1]->state.set(state);});
-
-	fan = new FanClass(*tempSensor, *thermostats[0], *output[0]); // Fan controller
-	//input[0]->state.onChange(std::bind(&FanClass::_modeStart, fan, std::placeholders::_1));
-	input[0]->state.onChange([=](uint8_t state){fan->_modeStart(state);});
-	//input[1]->state.onChange(std::bind(&FanClass::_modeStop, fan, std::placeholders::_1));
-	input[1]->state.onChange([=](uint8_t state){fan->_modeStop(state);});
+	auto caldron = new BinStateSharedDeferredClass();
+	caldron->setTrueDelay(0);
+	caldron->setFalseDelay(0);
+	caldron->onChange([=](uint8_t state){caldronOut->state.set(state);});
 
 	BinHttpButtonClass* webStart = new BinHttpButtonClass(webServer, *binStatesHttp, 0, "Старт");
-	//webStart->state.onChange(std::bind(&FanClass::_modeStart, fan, std::placeholders::_1));
-	webStart->state.onChange([=](uint8_t state){fan->_modeStart(state);});
+//	webStart->state.onChange([=](uint8_t state){fan->_modeStart(state);});
 	BinHttpButtonClass* webStop = new BinHttpButtonClass(webServer, *binStatesHttp, 1, "Стоп");
-	//webStop->state.onChange(std::bind(&FanClass::_modeStop, fan, std::placeholders::_1));
-	webStop->state.onChange([=](uint8_t state){fan->_modeStop(state);});
-
-	ds.begin();
-	tempSensor->addSensor();
-
-	thermostats[0]->_loadBinConfig();
-	thermostats[1]->_loadBinConfig();
-	thermostats[2]->_loadBinConfig();
-	fan->_loadBinConfig();
-
-// http tempsensors + Week Thermostat
-	tempSensorsHttp = new TempSensorsHttp(4000);
-	tempSensorsHttp->addSensor("http://10.2.113.122/temperature.json?sensor=0"); // House tempsensor
-
-	weekThermostats[0] = new WeekThermostatClass(*tempSensorsHttp,0,"House", 4000);
-
-	BinStateHttpClass* weekThermostatState = new BinStateHttpClass(webServer, &weekThermostats[0]->state, "Термостат Дом", 2);
-	binStatesHttp->add(weekThermostatState);
-//	weekThermostats[0]->state.onChange(onStateChangeDelegate(&FanClass::setThermostatControlState, fan));
-//	weekThermostats[0]->state.onChange(onStateChangeDelegate(&FanClass::periodicDisable, fan));
-//	weekThermostats[0]->state.onChange(onStateChangeDelegate(&ThermostatClass::enable, thermostats[1]));
-//	weekThermostats[0]->state.onChange(onStateChangeDelegate(&ThermostatClass::disable, thermostats[2]));
-	fan->setThermostatControlState(true);
-	fan->periodicDisable(true);
-
-	thermostats[1]->disable(true);
-	thermostats[2]->enable(true);
-
-	//fan->active.onChange(std::bind(&ThermostatClass::enable, thermostats[1], std::placeholders::_1));
-	fan->active.onChange([=](uint8_t state){thermostats[1]->enable(state);});
-	//fan->active.onChange(std::bind(&ThermostatClass::disable, thermostats[2], std::placeholders::_1));
-	fan->active.onChange([=](uint8_t state){thermostats[2]->disable(state);});
+//	webStop->state.onChange([=](uint8_t state){fan->_modeStop(state);});
 
 	//GasHeating
 	BinStateClass* gasEnable = new BinStateClass();
@@ -133,74 +77,47 @@ void AppClass::init()
 
 	BinStateAndClass* gasCaldron = new BinStateAndClass();
 	gasCaldron->addState(gasEnable);
-	gasCaldron->addState(&weekThermostats[0]->state);
-	//gasCaldron->onChange(std::bind(static_cast<void (BinStateClass::*) (uint8_t)>(&BinStateClass::set), &output[2]->state, std::placeholders::_1));
-	gasCaldron->onChange([=](uint8_t state){output[2]->state.set(state);});
+//	gasCaldron->addState(&weekThermostats[0]->state);
+//	gasCaldron->onChange([=](uint8_t state){output[2]->state.set(state);});
 
 	BinStateHttpClass* gasCaldronState = new BinStateHttpClass(webServer, gasCaldron, "Газовый котел", 3);
 	binStatesHttp->add(gasCaldronState);
 	//GasHeating
 
-	for (auto _thermostat: weekThermostats)
-	{
-		_thermostat->loadStateCfg();
-		for(uint8_t i = 0; i< 7; i++)
-		{
-			_thermostat->_schedule[i][0].start = 0;
-			_thermostat->_schedule[i][0].targetTemp = 800;
-			_thermostat->_schedule[i][1].start = 360;
-			_thermostat->_schedule[i][1].targetTemp = 1800;
-			_thermostat->_schedule[i][2].start = 540;
-			_thermostat->_schedule[i][2].targetTemp = 1200;
-			_thermostat->_schedule[i][3].start = 720;
-			_thermostat->_schedule[i][3].targetTemp = 1500;
-			_thermostat->_schedule[i][4].start = 1020;
-			_thermostat->_schedule[i][4].targetTemp = 1800;
-			_thermostat->_schedule[i][5].start = 1320;
-			_thermostat->_schedule[i][5].targetTemp = 800;
-
-			_thermostat->loadScheduleBinCfg();
-		}
-	}
-	webServer.paths.set("/temperature.json",HttpPathDelegate(&TempSensors::onHttpGet,tempSensor));
+//	webServer.paths.set("/temperature.json",HttpPathDelegate(&TempSensors::onHttpGet,tempSensor));
 	webServer.paths.set("/temperatureHome.json",HttpPathDelegate(&TempSensorsHttp::onHttpGet,(TempSensors*)tempSensorsHttp));
-	webServer.paths.set("/thermostat.fan",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[0]));
-	webServer.paths.set("/thermostat.pump",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[1]));
-	webServer.paths.set("/thermostat.pump_cooler",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[2]));
-	webServer.paths.set("/fan",HttpPathDelegate(&FanClass::onHttpConfig,fan));
-	webServer.paths.set("/monitor",monitor);
-	webServer.paths.set("/state.json", onStateJson);
-	webServer.paths.set("/schedule.json", onScheduleJson);
-	webServer.paths.set("/thermostats.json", onThermostatsJson);
+//	webServer.paths.set("/thermostat.fan",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[0]));
+//	webServer.paths.set("/thermostat.pump",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[1]));
+//	webServer.paths.set("/thermostat.pump_cooler",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[2]));
 //	Serial.printf("AppClass init done!\n");
 }
 
 void AppClass::start()
 {
 	ApplicationClass::start();
-	tempSensor->start();
-	thermostats[1]->start();
-	binInPoller.start();
+//	tempSensor->start();
+//	thermostats[1]->start();
+//	binInPoller.start();
 #ifdef MCP23S17 //use MCP23S17
 	mcp001->begin();
 	mcp001->pinMode(0xFF00); // Set PORTA to OUTPUT 0x00, PORTB to INPUT 0xFF
 	mcp001->pullupMode(0xFF00); // turn on internal pull-up for PORTB 0xFF
 	mcp001->digitalWrite(0x00FF); //Set all PORTA to 0xFF for simple relay which is active LOW
 #endif
-//	Serial.printf("AppClass start done!\n");
+//
 }
 
 void AppClass::_loop()
 {
 	DateTime nowTime = SystemClock.now();
 
-	lcd.clear();
+//	lcd.clear();
 	ApplicationClass::_loop();
 //	Serial.printf("AppClass loop\n");
 //	Serial.printf("GPIO 15: %d GPIO 16: %d\n", input[0]->getState(), input[1]->getState());
-	Serial.printf("%s - Fan: %d Pump: %d\n", nowTime.toShortTimeString(true).c_str(), thermostats[0]->state.get(), thermostats[1]->state.get());
+//	Serial.printf("%s - Fan: %d Pump: %d\n", nowTime.toShortTimeString(true).c_str(), thermostats[0]->state.get(), thermostats[1]->state.get());
 	Serial.printf("Free Heap: %d\r\n", system_get_free_heap_size());
-	lcd.setCursor(0,0);
+/*	lcd.setCursor(0,0);
 	switch (fan->getMode())
 	{
 	case FanMode::IDLE:
@@ -226,52 +143,13 @@ void AppClass::_loop()
 	lcd.setCursor(7,1);
 //	lcd.print(_counter);
 	lcd.print(nowTime.toShortTimeString(true).c_str());
+	*/
 }
 
-void AppClass::userSTAGotIP(IPAddress ip, IPAddress mask, IPAddress gateway)
+void AppClass::userSTAGotIP(IpAddress ip, IpAddress mask, IpAddress gateway)
 {
+	Serial.printf("AppClass STA GOT IP\n");
 	tempSensorsHttp->start();
-	for (auto _thermostat: weekThermostats)
-		_thermostat->start();
-}
-void monitor(HttpRequest &request, HttpResponse &response)
-{
-	JsonObjectStream* stream = new JsonObjectStream();
-	JsonObject& json = stream->getRoot();
-
-	json["fan"] = output[0]->state.get();
-	json["pump"] = output[1]->state.get();
-	json["mode"] = fan->getMode();
-
-
-	//response.setHeader("Access-Control-Allow-Origin", "*");
-	//response.sendJsonObject(stream);
-	response.setAllowCrossDomainOrigin("*");
-	response.sendDataStream(stream, MIME_JSON);	
-}
-
-
-void onStateJson(HttpRequest &request, HttpResponse &response)
-{
-	uint8_t currThermostat = request.getQueryParameter("thermostat").toInt();
-	weekThermostats[currThermostat]->onStateCfg(request,response);
-}
-
-void onScheduleJson(HttpRequest &request, HttpResponse &response)
-{
-	uint8_t currThermostat = request.getQueryParameter("thermostat").toInt();
-	weekThermostats[currThermostat]->onScheduleCfg(request,response);
-}
-
-void onThermostatsJson(HttpRequest &request, HttpResponse &response)
-{
-	JsonObjectStream* stream = new JsonObjectStream();
-	JsonObject& root = stream->getRoot();
-	for (uint t=0; t < maxWeekThermostats; t++)
-	{
-		root[(String)t] = weekThermostats[t]->getName();
-
-	}
-	response.setAllowCrossDomainOrigin("*");
-	response.sendDataStream(stream, MIME_JSON);
+//	for (auto _thermostat: weekThermostats)
+//		_thermostat->start();
 }

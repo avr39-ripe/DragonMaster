@@ -5,8 +5,7 @@
  *      Author: shurik
  */
 
-#ifndef INCLUDE_APP_H_
-#define INCLUDE_APP_H_
+#pragma once
 #include <application.h>
 
 class AppClass : public ApplicationClass
@@ -14,11 +13,7 @@ class AppClass : public ApplicationClass
 public:
 	virtual void init(); // Application initialization
 	virtual void start(); // Application main-loop start/restart
-	virtual void userSTAGotIP(IPAddress ip, IPAddress mask, IPAddress gateway); // Runs when Station got ip from access-point
+	virtual void userSTAGotIP(IpAddress ip, IpAddress mask, IpAddress gateway); // Runs when Station got ip from access-point
 protected:
 	virtual void _loop(); // Application main loop function goes here
 };
-
-
-
-#endif /* INCLUDE_APP_H_ */
