@@ -5,9 +5,8 @@
  *      Author: shurik
  */
 
-#ifndef LIB_BINIO_BINOUT_H_
-#define LIB_BINIO_BINOUT_H_
-#include <SmingCore/SmingCore.h>
+#pragma once
+#include <SmingCore.h>
 #include <binstate.h>
 #include <Libraries/MCP23S17/MCP23S17.h>
 
@@ -43,5 +42,3 @@ protected:
 	virtual void _setUnitState(uint8_t state);
 	MCP *_mcp;
 };
-
-#endif /* LIB_BINIO_BINOUT_H_ */

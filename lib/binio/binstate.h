@@ -5,9 +5,8 @@
  *      Author: shurik
  */
 
-#ifndef LIB_BINIO_BINSTATE_H_
-#define LIB_BINIO_BINSTATE_H_
-#include <SmingCore/SmingCore.h>
+#pragma once
+#include <SmingCore.h>
 #include <wsbinconst.h>
 #include <vector>
 
@@ -131,4 +130,3 @@ public:
 private:
 	std::vector<BinStateClass*> _states; // = Vector<BinStateClass*>(1,1);
 };
-#endif /* LIB_BINIO_BINSTATE_H_ */
