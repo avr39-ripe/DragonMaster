@@ -38,7 +38,7 @@ void ApplicationClass::init()
 
 //	ntpClient = new NtpClient("pool.ntp.org", 300); //uncomment to enablentp update of system time
 	SystemClock.setTimeZone(timeZone); //set time zone from config
-	Serial.printf("Time zone: %d\n", timeZone);
+	Serial.printf(_F("Time zone: %d\n"), timeZone);
 
 	// Attach Wifi events handlers
 	WifiEvents.onStationDisconnect(StationDisconnectDelegate(&ApplicationClass::_STADisconnect, this));
@@ -97,7 +97,7 @@ void ApplicationClass::_initialWifiConfig()
 		WifiAccessPoint.enable(true, true);
 	}
 	else
-		Serial.printf("AccessPoint already configured.\n");
+		Serial.printf(_F("AccessPoint already configured.\n"));
 
 // One-time set initial SSID and PASSWORD for Station mode and save it into configuration area
 // This part of code will run ONCE after application flash into the ESP if there is no
@@ -111,7 +111,7 @@ void ApplicationClass::_initialWifiConfig()
 		WifiAccessPoint.enable(false, true);
 	}
 	else
-		Serial.printf("Station already configured.\n");
+		Serial.printf(_F("Station already configured.\n"));
 }
 
 void ApplicationClass::_STADisconnect(const String& ssid, MacAddress bssid, WifiDisconnectReason reason)
@@ -125,7 +125,7 @@ void ApplicationClass::_STADisconnect(const String& ssid, MacAddress bssid, Wifi
 	_reconnectTimer.stop();
 	if (!WifiAccessPoint.isEnabled())
 	{
-		Serial.println("Starting OWN AP");
+		Serial.println(_F("Starting OWN AP"));
 		WifiStation.disconnect();
 		WifiAccessPoint.enable(true);
 		WifiStation.connect();
@@ -327,10 +327,10 @@ void ApplicationClass::loadConfig()
 {
 	uint16_t strSize;
 
-	Serial.printf("Try to load ApplicationClass bin cfg..\n");
+	Serial.printf(_F("Try to load ApplicationClass bin cfg..\n"));
 	if (fileExist(_fileName))
 	{
-		Serial.printf("Will load ApplicationClass bin cfg..\n");
+		Serial.printf(_F("Will load ApplicationClass bin cfg..\n"));
 		file_t file = fileOpen(_fileName, eFO_ReadOnly);
 		fileSeek(file, 0, eSO_FileStart);
 		fileRead(file, &strSize, sizeof(strSize));
@@ -353,7 +353,7 @@ void ApplicationClass::saveConfig()
 {
 	uint16_t strSize = updateURL.length();
 
-	Serial.printf("Try to save ApplicationClass bin cfg..\n");
+	Serial.printf(_F("Try to save ApplicationClass bin cfg..\n"));
 	file_t file = fileOpen(_fileName, eFO_CreateNewAlways | eFO_WriteOnly);
 	fileWrite(file, &strSize, sizeof(strSize));
 	fileWrite(file, updateURL.c_str(), strSize);
@@ -367,7 +367,7 @@ void ApplicationClass::saveConfig()
 
 void ApplicationClass::OtaUpdate_CallBack(RbootHttpUpdater& client, bool result)
 {
-	Serial.println("In callback...");
+	Serial.println(_F("In callback..."));
 	if(result == true) {
 		// success
 		uint8 slot;
@@ -377,12 +377,12 @@ void ApplicationClass::OtaUpdate_CallBack(RbootHttpUpdater& client, bool result)
 		else
 			slot = 0;
 		// set to boot new rom and then reboot
-		Serial.printf("Firmware updated, rebooting to rom %d...\r\n", slot);
+		Serial.printf(_F("Firmware updated, rebooting to rom %d...\r\n"), slot);
 		rboot_set_current_rom(slot);
 		System.restart();
 	} else {
 		// fail
-		Serial.println("Firmware update failed!");
+		Serial.println(_F("Firmware update failed!"));
 	}
 }
 
@@ -392,7 +392,7 @@ void ApplicationClass::OtaUpdate()
 	uint8 slot;
 	rboot_config bootconf;
 
-	Serial.println("Updating...");
+	Serial.println(_F("Updating..."));
 
 	// need a clean object, otherwise if run before and failed will not run again
 	if(otaUpdater)
@@ -445,9 +445,9 @@ void ApplicationClass::Switch()
 		after = 1;
 	else
 		after = 0;
-	Serial.printf("Swapping from rom %d to rom %d.\r\n", before, after);
+	Serial.printf(_F("Swapping from rom %d to rom %d.\r\n"), before, after);
 	rboot_set_current_rom(after);
-	Serial.println("Restarting...\r\n");
+	Serial.println(_F("Restarting...\r\n"));
 	System.restart();
 }
 
@@ -489,40 +489,40 @@ void ApplicationClass::_httpOnUpdate(HttpRequest &request, HttpResponse &respons
 //WebSocket handling
 void ApplicationClass::wsConnected(WebsocketConnection& socket)
 {
-	Serial.printf("WS CONN!\n");
+	Serial.printf(_F("WS CONN!\n"));
 }
 
 void ApplicationClass::wsDisconnected(WebsocketConnection& socket)
 {
-	Serial.printf("WS DISCONN!\n");
+	Serial.printf(_F("WS DISCONN!\n"));
 }
 
 void ApplicationClass::wsMessageReceived(WebsocketConnection& socket, const String& message)
 {
-	Serial.printf("WS msg recv: %s\n", message.c_str());
+	Serial.printf(_F("WS msg recv: %s\n"), message.c_str());
 }
 
 void ApplicationClass::wsBinaryReceived(WebsocketConnection& socket, uint8_t* data, size_t size)
 {
-	Serial.printf("WS bin data recv, size: %d\r\n", size);
-	Serial.printf("Opcode: %d\n", data[0]);
+	Serial.printf(_F("WS bin data recv, size: %d\r\n"), size);
+	Serial.printf(_F("Opcode: %d\n"), data[0]);
 
 	if ( data[wsBinConst::wsCmd] == wsBinConst::setCmd)
 	{
-		Serial.printf("wsSetCmd\n");
+		Serial.printf(_F("wsSetCmd\n"));
 		if (_wsBinSetters.contains(data[wsBinConst::wsSysId]))
 		{
-			Serial.printf("wsSysId = %d setter called!\n", data[wsBinConst::wsSysId]);
+			Serial.printf(_F("wsSysId = %d setter called!\n"), data[wsBinConst::wsSysId]);
 			_wsBinSetters[data[wsBinConst::wsSysId]](socket, data, size);
 		}
 	}
 
 	if ( data[wsBinConst::wsCmd] == wsBinConst::getCmd)
 	{
-		Serial.printf("wsGetCmd\n");
+		Serial.printf(_F("wsGetCmd\n"));
 		if (_wsBinGetters.contains(data[wsBinConst::wsSysId]))
 		{
-			Serial.printf("wsSysId = %d getter called!\n", data[wsBinConst::wsSysId]);
+			Serial.printf(_F("wsSysId = %d getter called!\n"), data[wsBinConst::wsSysId]);
 			_wsBinGetters[data[wsBinConst::wsSysId]](socket, data, size);
 		}
 	}
