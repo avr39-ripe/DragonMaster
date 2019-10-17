@@ -114,23 +114,27 @@ void ApplicationClass::_initialWifiConfig()
 		Serial.printf("Station already configured.\n");
 }
 
-void ApplicationClass::_STADisconnect(String ssid, uint8_t ssid_len, uint8_t bssid[6], uint8_t reason)
+void ApplicationClass::_STADisconnect(const String& ssid, MacAddress bssid, WifiDisconnectReason reason)
 {
-	debugf("DISCONNECT - SSID: %s, REASON: %d\n", ssid.c_str(), reason);
-
+	// The different reason codes can be found in user_interface.h. in your SDK.
+	Serial.print(_F("Disconnected from \""));
+	Serial.print(ssid);
+	Serial.print(_F("\", reason: "));
+	Serial.println(WifiEvents.getDisconnectReasonDesc(reason));
+	
 	_reconnectTimer.stop();
 	if (!WifiAccessPoint.isEnabled())
 	{
-		debugf("Starting OWN AP");
+		Serial.println("Starting OWN AP");
 		WifiStation.disconnect();
 		WifiAccessPoint.enable(true);
 		WifiStation.connect();
 	}
 }
 
-void ApplicationClass::_STAAuthModeChange(uint8_t oldMode, uint8_t newMode)
+void ApplicationClass::_STAAuthModeChange(WifiAuthMode oldMode, WifiAuthMode newMode)
 {
-	debugf("AUTH MODE CHANGE - OLD MODE: %d, NEW MODE: %d\n", oldMode, newMode);
+	//debugf("AUTH MODE CHANGE - OLD MODE: %d, NEW MODE: %d\n", oldMode, newMode);
 
 	if (!WifiAccessPoint.isEnabled())
 	{
@@ -141,7 +145,7 @@ void ApplicationClass::_STAAuthModeChange(uint8_t oldMode, uint8_t newMode)
 	}
 }
 
-void ApplicationClass::_STAGotIP(IPAddress ip, IPAddress mask, IPAddress gateway)
+void ApplicationClass::_STAGotIP(IpAddress ip, IpAddress mask, IpAddress gateway)
 {
 	debugf("GOTIP - IP: %s, MASK: %s, GW: %s\n", ip.toString().c_str(),
 																mask.toString().c_str(),
@@ -156,7 +160,7 @@ void ApplicationClass::_STAGotIP(IPAddress ip, IPAddress mask, IPAddress gateway
 	userSTAGotIP(ip, mask, gateway);
 }
 
-void ApplicationClass::_STAConnect(String ssid, uint8_t ssid_len, uint8_t bssid[6], uint8_t channel)
+void ApplicationClass::_STAConnect(const String& ssid, MacAddress bssid, uint8_t channel)
 {
 	debugf("DELEGATE CONNECT - SSID: %s, CHANNEL: %d\n", ssid.c_str(), channel);
 
@@ -361,14 +365,17 @@ void ApplicationClass::saveConfig()
 	fileClose(file);
 }
 
-void ApplicationClass::OtaUpdate_CallBack(rBootHttpUpdate& client, bool result) {
-
+void ApplicationClass::OtaUpdate_CallBack(RbootHttpUpdater& client, bool result)
+{
 	Serial.println("In callback...");
 	if(result == true) {
 		// success
 		uint8 slot;
 		slot = rboot_get_current_rom();
-		if (slot == 0) slot = 1; else slot = 0;
+		if(slot == 0)
+			slot = 1;
+		else
+			slot = 0;
 		// set to boot new rom and then reboot
 		Serial.printf("Firmware updated, rebooting to rom %d...\r\n", slot);
 		rboot_set_current_rom(slot);
@@ -379,7 +386,8 @@ void ApplicationClass::OtaUpdate_CallBack(rBootHttpUpdate& client, bool result) 
 	}
 }
 
-void ApplicationClass::OtaUpdate() {
+void ApplicationClass::OtaUpdate()
+{
 
 	uint8 slot;
 	rboot_config bootconf;
@@ -387,20 +395,24 @@ void ApplicationClass::OtaUpdate() {
 	Serial.println("Updating...");
 
 	// need a clean object, otherwise if run before and failed will not run again
-	if (otaUpdater) delete otaUpdater;
-	otaUpdater = new rBootHttpUpdate();
+	if(otaUpdater)
+		delete otaUpdater;
+	otaUpdater = new RbootHttpUpdater();
 
 	// select rom slot to flash
 	bootconf = rboot_get_config();
 	slot = bootconf.current_rom;
-	if (slot == 0) slot = 1; else slot = 0;
+	if(slot == 0)
+		slot = 1;
+	else
+		slot = 0;
 
 #ifndef RBOOT_TWO_ROMS
 	// flash rom to position indicated in the rBoot config rom table
 	otaUpdater->addItem(bootconf.roms[slot], updateURL + "rom0.bin");
 #else
 	// flash appropriate rom
-	if (slot == 0) {
+	if(slot == 0) {
 		otaUpdater->addItem(bootconf.roms[slot], ROM_0_URL);
 	} else {
 		otaUpdater->addItem(bootconf.roms[slot], ROM_1_URL);
@@ -409,7 +421,7 @@ void ApplicationClass::OtaUpdate() {
 
 #ifndef DISABLE_SPIFFS
 	// use user supplied values (defaults for 4mb flash in makefile)
-	if (slot == 0) {
+	if(slot == 0) {
 		otaUpdater->addItem(RBOOT_SPIFFS_0, updateURL + "spiff_rom.bin");
 	} else {
 		otaUpdater->addItem(RBOOT_SPIFFS_1, updateURL + "spiff_rom.bin");
@@ -425,10 +437,14 @@ void ApplicationClass::OtaUpdate() {
 	otaUpdater->start();
 }
 
-void ApplicationClass::Switch() {
+void ApplicationClass::Switch()
+{
 	uint8 before, after;
 	before = rboot_get_current_rom();
-	if (before == 0) after = 1; else after = 0;
+	if(before == 0)
+		after = 1;
+	else
+		after = 0;
 	Serial.printf("Swapping from rom %d to rom %d.\r\n", before, after);
 	rboot_set_current_rom(after);
 	Serial.println("Restarting...\r\n");

@@ -1,7 +1,8 @@
-#ifndef INCLUDE_APPLICATION_H_
-#define INCLUDE_APPLICATION_H_
-#include <SmingCore/SmingCore.h>
-#include <SmingCore/Network/Http/Websocket/WebsocketResource.h>
+#pragma once
+#include <SmingCore.h>
+#include <esp_spi_flash.h>
+#include <Network/Http/Websocket/WebsocketResource.h>
+#include <JsonObjectStream.h>
 #include <wsbinconst.h>
 
 // If you want, you can define settings globally in Operation System ENV
@@ -46,21 +47,21 @@ public:
 //	ApplicationConfig Config; // Instance of Configuration for application
 	HttpServer webServer; // instance of web server for application
 	void startWebServer(); // Start Application WebServer
-	rBootHttpUpdate* otaUpdater = 0;
+	RbootHttpUpdater* otaUpdater = 0;
 	static const uint8_t sysId = 1;
 	void wsAddBinSetter(uint8_t sysId, WebsocketBinaryDelegate wsBinSetterDelegate);
 	void wsAddBinGetter(uint8_t sysId, WebsocketBinaryDelegate wsBinGetterDelegate);
-	virtual void userSTAGotIP(IPAddress ip, IPAddress mask, IPAddress gateway) {}; // Runs when Station got ip from access-point
-	void OtaUpdate_CallBack(rBootHttpUpdate& client, bool result);
+	virtual void userSTAGotIP(IpAddress ip, IpAddress mask, IpAddress gateway) {}; // Runs when Station got ip from access-point
+	void OtaUpdate_CallBack(RbootHttpUpdater& client, bool result);
 	void OtaUpdate();
 	void Switch();
 protected:
 	virtual void _loop(); // Application main loop function goes here
 	void _initialWifiConfig(); // Doing initial configuration of both Station and AccessPoint
-	void _STADisconnect(String ssid, uint8_t ssid_len, uint8_t bssid[6], uint8_t reason); // Runs when Station disconnects
-	void _STAConnect(String ssid, uint8_t ssid_len, uint8_t bssid[6], uint8_t channel); // Runs when Station connects
-	void _STAAuthModeChange(uint8_t oldMode, uint8_t newMode); // Runs when Station auth mode changes
-	void _STAGotIP(IPAddress ip, IPAddress mask, IPAddress gateway); // Runs when Station got ip from access-point
+	void _STADisconnect(const String& ssid, MacAddress bssid, WifiDisconnectReason reason); // Runs when Station disconnects
+	void _STAConnect(const String& ssid, MacAddress bssid, uint8_t channel); // Runs when Station connects
+	void _STAAuthModeChange(WifiAuthMode oldMode, WifiAuthMode newMode); // Runs when Station auth mode changes
+	void _STAGotIP(IpAddress ip, IpAddress netmask, IpAddress gateway); // Runs when Station got ip from access-point
 	void _STAReconnect();
 	void _httpOnFile(HttpRequest &request, HttpResponse &response);
 	void _httpOnIndex(HttpRequest &request, HttpResponse &response);
@@ -93,4 +94,3 @@ protected:
 	virtual void _loadAppConfig(file_t file) {}; //override this in child class to load additional config values
 	virtual void _saveAppConfig(file_t file) {}; //override this in child class to save additional config values
 };
-#endif /* INCLUDE_HEATCONTROL_H_ */
