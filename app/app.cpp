@@ -26,17 +26,15 @@ void AppClass::init()
 	zone3Out->state.set(false);
 	caldronOut->state.set(false);
 
-	BinStateHttpClass* zone1State = new BinStateHttpClass(webServer, &zone1Out->state, "Зона 1", 0);
+	BinStateHttpClass* zone1State = new BinStateHttpClass(webServer, &zone1Out->state, /*"Зона 1",*/ 0);
 	binStatesHttp->add(zone1State);
 
-	BinStateHttpClass* zone2State = new BinStateHttpClass(webServer, &zone2Out->state, "Зона 2", 1);
+	BinStateHttpClass* zone2State = new BinStateHttpClass(webServer, &zone2Out->state, /*"Зона 2",*/ 1);
 	binStatesHttp->add(zone2State);
 
-	BinStateHttpClass* zone3State = new BinStateHttpClass(webServer, &zone3Out->state, "Зона 3", 2);
+	BinStateHttpClass* zone3State = new BinStateHttpClass(webServer, &zone3Out->state, /*"Зона 3",*/ 2);
 	binStatesHttp->add(zone3State);
 
-	BinStateHttpClass* caldronState = new BinStateHttpClass(webServer, &caldronOut->state, "Котел", 3);
-	binStatesHttp->add(caldronState);
 
 	// http tempsensors + Week Thermostat
 	tempSensorsHttp = new TempSensorsHttp(4000);
@@ -62,16 +60,16 @@ void AppClass::init()
 	caldron->setFalseDelay(0);
 	caldron->onChange([=](uint8_t state){caldronOut->state.set(state);});
 
-	BinHttpButtonClass* webStart = new BinHttpButtonClass(webServer, *binStatesHttp, 0, "Старт");
+	BinHttpButtonClass* webStart = new BinHttpButtonClass(webServer, *binStatesHttp, 0/*, "Старт"*/);
 //	webStart->state.onChange([=](uint8_t state){fan->_modeStart(state);});
-	BinHttpButtonClass* webStop = new BinHttpButtonClass(webServer, *binStatesHttp, 1, "Стоп");
+	BinHttpButtonClass* webStop = new BinHttpButtonClass(webServer, *binStatesHttp, 1/*, "Стоп"*/);
 //	webStop->state.onChange([=](uint8_t state){fan->_modeStop(state);});
 
 	//GasHeating
 	BinStateClass* gasEnable = new BinStateClass();
 	gasEnable->persistent(0);
 
-	BinHttpButtonClass* webGasEnable = new BinHttpButtonClass(webServer, *binStatesHttp, 2, "Газовое отопление", gasEnable);
+	BinHttpButtonClass* webGasEnable = new BinHttpButtonClass(webServer, *binStatesHttp, 2, /*"Газовое отопление",*/ gasEnable);
 	//webGasEnable->state.onChange(std::bind(&BinStateClass::toggle, gasEnable, std::placeholders::_1));
 	webGasEnable->state.onChange([=](uint8_t state){gasEnable->toggle(state); Serial.printf("LAMBDA!\n");});
 
@@ -80,7 +78,7 @@ void AppClass::init()
 //	gasCaldron->addState(&weekThermostats[0]->state);
 //	gasCaldron->onChange([=](uint8_t state){output[2]->state.set(state);});
 
-	BinStateHttpClass* gasCaldronState = new BinStateHttpClass(webServer, gasCaldron, "Газовый котел", 3);
+	BinStateHttpClass* gasCaldronState = new BinStateHttpClass(webServer, gasCaldron, /*"Газовый котел",*/ 3);
 	binStatesHttp->add(gasCaldronState);
 	//GasHeating
 
@@ -113,10 +111,10 @@ void AppClass::_loop()
 
 //	lcd.clear();
 	ApplicationClass::_loop();
-	Serial.printf(_F("AppClass loop\n"));
+//	Serial.printf(_F("AppClass loop\n"));
 //	Serial.printf("GPIO 15: %d GPIO 16: %d\n", input[0]->getState(), input[1]->getState());
 //	Serial.printf("%s - Fan: %d Pump: %d\n", nowTime.toShortTimeString(true).c_str(), thermostats[0]->state.get(), thermostats[1]->state.get());
-	Serial.printf(_F("Free Heap: %d\r\n"), system_get_free_heap_size());
+	Serial.printf("Free Heap: %d WS count: %d Counter: %d\n", system_get_free_heap_size(), WebsocketConnection::getActiveWebsockets().count(), _counter);
 /*	lcd.setCursor(0,0);
 	switch (fan->getMode())
 	{
