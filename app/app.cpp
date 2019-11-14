@@ -18,14 +18,14 @@ void AppClass::init()
 
 	BinOutClass* outputs[8]
 				{
-					new BinOutGPIOClass(2,0),
-					new BinOutGPIOClass(0,0),
-					new BinOutGPIOClass(4,0),
-					new BinOutGPIOClass(5,0),
-					new BinOutGPIOClass(13,0),
-					new BinOutGPIOClass(12,0),
-					new BinOutGPIOClass(14,0),
-					new BinOutGPIOClass(16,0),
+					new BinOutGPIOClass(2,1),
+					new BinOutGPIOClass(0,1),
+					new BinOutGPIOClass(4,1),
+					new BinOutGPIOClass(5,1),
+					new BinOutGPIOClass(13,1),
+					new BinOutGPIOClass(12,1),
+					new BinOutGPIOClass(14,1),
+					new BinOutGPIOClass(16,1),
 				};
 	int i = 0;
 	for (auto output :outputs)
