@@ -868,11 +868,10 @@ function onDocumentRedy() {
 	
 	ajaxGetAllState();
 	
+	initWS();
+	updateclock();
 	setInterval(ajaxGetState, 5000);
 	setInterval(updateclock, 5000);
-	
-	initWS();
-
 }
 
 document.addEventListener('DOMContentLoaded', onDocumentRedy);
