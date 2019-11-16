@@ -4,3 +4,5 @@ out/
 .project
 files/index.*.js*
 files/index.html*
+files/thermostat.html*
+files/thermostat.*.js*

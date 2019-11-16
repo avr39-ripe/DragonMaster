@@ -15,7 +15,8 @@ module.exports = {
 		]
 	},
 	entry : {
-		index : './files/index.js'
+		index : './files/index.js',
+		thermostat : './files/thermostat.js'
 	},
 	output : {
 		path : path.join(__dirname, 'files'),
@@ -71,10 +72,20 @@ module.exports = {
 	plugins : [
 	new BabiliPlugin(),
 	new HtmlWebpackPlugin({
+		inject: false,
+		chunks: ['index'],
 //template : path.resolve('./', './files/index-template.html'),
 		template : './files/index-template.html',
 //		filename : path.resolve('./', './files/index_new.html'),
 		inject : 'head'
+	}),
+	new HtmlWebpackPlugin({
+		inject: false,
+		chunks: ['thermostat'],
+		template : './files/thermostat-template.html',
+//		filename: './files/thermostat.html',
+		filename : path.resolve('./', './files/thermostat.html'),
+		inject : 'body'
 	}),
 	new CompressionPlugin({
 		deleteOriginalAssets : true

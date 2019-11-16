@@ -65,7 +65,7 @@ COMPONENT_INCDIRS = include lib/application lib/tempsensor lib/binio lib/thermos
 
 ENABLE_CMD_EXECUTOR = 0
 
-WEBPACK_OUT = files/index.*.js*
+WEBPACK_OUT = files/index.*.js* files/thermostat.*.js*
 
 .PHONY: webpacker
 webpacker: 
