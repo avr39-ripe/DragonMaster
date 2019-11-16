@@ -595,7 +595,7 @@ function server_get2(param) {
 
 function onThermostatStateButton() {
 	thermostat.active ^= 1;
-	thermostatStateButton = document.getElementById('thermostatState');
+	var thermostatStateButton = document.getElementById('thermostatState');
     if (thermostat.active == 1) {
     	thermostatStateButton.innerHTML = "Вкл";
     	thermostatStateButton.style.backgroundColor = "#ff9600";
