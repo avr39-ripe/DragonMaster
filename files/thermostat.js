@@ -3,7 +3,7 @@ import AppStatusClass from 'appStatus';
 import wsBin from 'wsBin';
 import { initWS, websocket, wsEnablers, wsBinProcessors } from 'websocket';
 
-var appStatus = new AppStatusClass();
+var appStatus = new AppStatusClass(false);
 
 const maxProg = 6;
 const antiFrozen = 5; // targetTemp in antifrozen mode
