@@ -10,14 +10,14 @@ var now = new Date();
 var timenow = now.getHours() + (now.getMinutes() / 60);
 var thermostats = {};
 var days = {
-    0: 'sun',
-    1: 'mon',
-    2: 'tue',
-    3: 'wed',
-    4: 'thu',
-    5: 'fri',
-    6: 'sat',
-    7: 'sun'
+    0: 'ВС',
+    1: 'ПН',
+    2: 'ВТ',
+    3: 'СР',
+    4: 'ЧТ',
+    5: 'ПТ',
+    6: 'СБ',
+    7: 'ВС'
 };
 //var today = days[now.getDay()];
 var today = now.getDay();
@@ -35,7 +35,7 @@ var doingsave = false;
 
 var currThermostat = 0;
 var thermostat = {
-	name: "Zone Name",
+	name: "Название зоны",
 	active: 0,
 	state: 1,
 	temperature: "22.00",
@@ -156,10 +156,10 @@ function update() {
 	}
 	
 	if (thermostat.active) {
-		$("#thermostatState").html("ON");
+		$("#thermostatState").html("Вкл");
 		$("#thermostatState").css("background-color", "#ff9600");
 	} else {
-		$("#thermostatState").html("OFF");
+		$("#thermostatState").html("Выкл");
 		$("#thermostatState").css("background-color", "#555");
 		setpoint = antiFrozen;
 		$("#zone-setpoint").html(setpoint.toFixed(1) + unit);
@@ -482,7 +482,7 @@ function save(param, payload) {
 			tryCount : 0,
 			retryLimit : 3,			success: function (data) {
 			statusMsg = false;
-			if(!connected) setStatus("Connected",2,0); 
+			if(!connected) setStatus("Соединено",2,0); 
 			connected=true;
 			doingsave=false;
 		},
@@ -496,7 +496,7 @@ function save(param, payload) {
             }            
             return;
         }
-		if(connected) setStatus("No connection to server!",0,1);
+		if(connected) setStatus("Нет связи с сервером!",0,1);
 		connected=false;
 		doingsave=false;
 		}
@@ -515,7 +515,7 @@ function server_get() {
 			retryLimit : 3,				success: function (data) {
 				if (data.length !== 0) {
 					statusMsg = false;
-					if(!connected) setStatus("Connected",2,0); 
+					if(!connected) setStatus("Соединено",2,0); 
 					connected=true;
 					if(!doingsave) {
 						output = data;
@@ -535,7 +535,7 @@ function server_get() {
             }            
             return;
         }
-		if(connected) setStatus("No connection to server!",0,1);
+		if(connected) setStatus("Нет связи с сервером!",0,1);
 		connected=false;
 		}
 		});
@@ -556,7 +556,7 @@ function server_get2(param) {
 			success: function (data) {
 				if (data.length !== 0) output = data;
 					statusMsg = false;
-					if(!connected) setStatus("Connected",2,0); 
+					if(!connected) setStatus("Соединено",2,0); 
 					connected=true;
 			},
 		error : function(xhr, textStatus, errorThrown ) {
@@ -569,7 +569,7 @@ function server_get2(param) {
             }            
             return;
         }
-		if(connected) setStatus("No connection to server!",0,1);
+		if(connected) setStatus("Нет связи с сервером!",0,1);
 		connected=false;
 		}
 		});
@@ -585,11 +585,11 @@ function onThermostatStateButton() {
 	thermostat.active ^= 1;
 	thermostatStateButton = document.getElementById('thermostatState');
     if (thermostat.active == 1) {
-    	thermostatStateButton.innerHTML = "ON";
+    	thermostatStateButton.innerHTML = "Вкл";
     	thermostatStateButton.style.backgroundColor = "#ff9600";
     }
     if (thermostat.active === 0) {
-    	thermostatStateButton.innerHTML = "OFF";
+    	thermostatStateButton.innerHTML = "Выкл";
     	thermostatStateButton.style.backgroundColor = "#555";
     }
 
@@ -685,7 +685,7 @@ function ajaxGetSchedule() {
 		}
 	  	else {
 		    // обработать ошибку
-	  		setStatus("No connection!",1,1);
+	  		setStatus("Нет связи с сервером!",1,1);
 		    return;
 	    }
 	};
@@ -713,7 +713,7 @@ function ajaxGetState() {
 		}
 	  	else {
 		    // обработать ошибку
-	  		setStatus("No connection!",1,1);
+	  		setStatus("Нет связи с сервером!",1,1);
 		    return;
 	    }
 	};
@@ -740,7 +740,7 @@ function ajaxGetAllState() {
 		}
 	  	else {
 		    // обработать ошибку
-	  		setStatus("No connection!",1,1);
+	  		setStatus("Нет связи с сервером!",1,1);
 		    return;
 	    }
 	};
@@ -766,7 +766,7 @@ function ajaxGetThermostats() {
 		}
 	  	else {
 		    // обработать ошибку
-	  		setStatus("No connection!",1,1);
+	  		setStatus("Нет связи с сервером!",1,1);
 		    return;
 	    }
 	};
