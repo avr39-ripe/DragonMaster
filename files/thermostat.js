@@ -1,3 +1,10 @@
+'use strict';
+import AppStatusClass from 'appStatus';
+import wsBin from 'wsBin';
+import { initWS, websocket, wsEnablers, wsBinProcessors } from 'websocket';
+
+var appStatus = new AppStatusClass();
+
 const maxProg = 6;
 const antiFrozen = 5; // targetTemp in antifrozen mode
 //setPoint inc / dec granularity
@@ -47,7 +54,7 @@ var thermostat = {
 var schedule = {};
 
 var day1 = [{
-    s: 000,
+    s: 0,
     tt: 800
 }, {
     s: 600,
@@ -86,7 +93,12 @@ var slider_height = $(".slider").height();
 var changed = 0;
 
 function updateclock() {
+//	var d = new Date();
+//	d.setTime(appStatus._timestamp * 1000);
+//	console.log.bind(console)(d.toLocaleString());
+	
     now = new Date();
+    now.setTime(appStatus._timestamp * 1000);
     timenow = now.getHours() + (now.getMinutes() / 60);
 //    today = days[now.getDay()];
     today = now.getDay();
@@ -348,9 +360,9 @@ function color_map(temperature) {
     var f = (temperature - minc) / (maxc - minc);
     var a = (1 - f);
     var Y = Math.floor(255 * a);
-    r = 255;
-    g = Y;
-    b = 0;
+    var r = 255;
+    var g = Y;
+    var b = 0;
 
     return "rgb(" + r + "," + g + "," + b + ")";
 }
@@ -815,8 +827,29 @@ function ajaxSaveDaySchedule(day) {
 		}
 }
 
+
+function sendTime(event) {
+	event.preventDefault();
+	var ab = new ArrayBuffer(8);
+	var bin = new DataView(ab);
+	var d = new Date();
+	
+	bin.setUint8(wsBin.Const.wsCmd, wsBin.Const.setCmd);
+	bin.setUint8(wsBin.Const.wsSysId, 1); //AppClass.sysId = 1
+	bin.setUint8(wsBin.Const.wsSubCmd, wsBin.Const.scAppSetTime);
+	
+	bin.setUint32(wsBin.Const.wsPayLoadStart,Math.round(d.getTime() / 1000),true);
+	bin.setUint8(wsBin.Const.wsPayLoadStart + 4, Math.abs(d.getTimezoneOffset()/60));	
+	console.log.bind(console)(bin.getUint8(1),bin.getUint8(2),bin.getUint8(3),bin.getUint8(4));
+	websocket.send(bin.buffer);
+}
+
 //Here we put some initial code which starts after DOM loaded
 function onDocumentRedy() {
+	
+	wsEnablers.push(appStatus.enable.bind(appStatus));
+	wsBinProcessors[AppStatusClass.sysId] = appStatus.wsBinProcess.bind(appStatus);
+	
 	//Attach eventListeners
 	document.getElementById('thermostats').addEventListener('change', onThermostats);
 	document.getElementById('thermostatState').addEventListener('click', onThermostatStateButton);
@@ -825,6 +858,7 @@ function onDocumentRedy() {
 	document.getElementById('manual_thermostat').addEventListener('click', onManualThermostat);
 	document.getElementById('scheduled_thermostat').addEventListener('click', onScheduledThermostat);
 	
+	document.getElementById('syncDateTime').addEventListener('click', sendTime);
 	//Init
 	//schedule = server_get2("thermostat_schedule"); //all data * 100 to avoid floating point on the ESP8266 side
 	ajaxGetThermostats();
@@ -835,7 +869,9 @@ function onDocumentRedy() {
 	ajaxGetAllState();
 	
 	setInterval(ajaxGetState, 5000);
-	setInterval(updateclock, 1000);
+	setInterval(updateclock, 5000);
+	
+	initWS();
 
 }
 
