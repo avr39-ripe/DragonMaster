@@ -59,7 +59,7 @@ void AppClass::init()
 	weekThermostats[1] = new WeekThermostatClass(*tempSensorsHttp,1,"Кухня", 16000);
 	weekThermostats[2] = new WeekThermostatClass(*tempSensorsHttp,2,"Спальня", 16000);
 	weekThermostats[3] = new WeekThermostatClass(*tempSensorsHttp,3,"Детская 1", 16000);
-	weekThermostats[4] = new WeekThermostatClass(*tempSensorsHttp,3,"Детская 2", 16000); //TODO: CHANGE TO REAL SENSOR NUMBER!!!
+	weekThermostats[4] = new WeekThermostatClass(*tempSensorsHttp,4,"Детская 2", 16000);
 
 	auto caldron = new BinStateSharedDeferredClass(); // Caldron as shared by thermostats entity with deferred on/of based on delays
 	caldron->setTrueDelay(caldronOnDelay);
