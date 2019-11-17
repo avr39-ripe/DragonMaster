@@ -14,6 +14,7 @@ public:
 	virtual void init(); // Application initialization
 	virtual void start(); // Application main-loop start/restart
 	virtual void userSTAGotIP(IpAddress ip, IpAddress mask, IpAddress gateway); // Runs when Station got ip from access-point
+	void _httpOnIndex(HttpRequest &request, HttpResponse &response);
 protected:
 	virtual void _loop(); // Application main loop function goes here
 };

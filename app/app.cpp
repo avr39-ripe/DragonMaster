@@ -100,11 +100,13 @@ void AppClass::init()
 			weekThermostat->loadScheduleBinCfg();
 		}
 	}
-
+	webServer.paths.remove("/");
+	webServer.paths.set("/",HttpPathDelegate(&AppClass::_httpOnIndex,this));
 	webServer.paths.set("/temperature.json",HttpPathDelegate(&TempSensorsHttp::onHttpGet,(TempSensors*)tempSensorsHttp));
 	webServer.paths.set("/state.json", onStateJson);
 	webServer.paths.set("/schedule.json", onScheduleJson);
 	webServer.paths.set("/thermostats.json", onThermostatsJson);
+
 
 	Serial.printf(_F("AppClass init done!\n"));
 }
@@ -128,6 +130,12 @@ void AppClass::userSTAGotIP(IpAddress ip, IpAddress mask, IpAddress gateway)
 	{
 		weekThermostat->start();
 	}
+}
+
+void AppClass::_httpOnIndex(HttpRequest &request, HttpResponse &response)
+{
+	response.setCache(86400, true); // It's important to use cache for better performance.
+	response.sendFile("thermostat.html");
 }
 
 void onStateJson(HttpRequest &request, HttpResponse &response)
