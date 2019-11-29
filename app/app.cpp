@@ -21,13 +21,14 @@ void AppClass::init()
 	wsAddBinGetter(binStatesHttp->sysId, WebsocketBinaryDelegate(&BinStatesHttpClass::wsBinGetter,binStatesHttp));
 	wsAddBinSetter(binStatesHttp->sysId, WebsocketBinaryDelegate(&BinStatesHttpClass::wsBinSetter,binStatesHttp));
 
-	Wire.pins(5,4);
+	Wire.pins(4,5);
 	lcd.begin(16, 2);   // initialize the lcd for 16 chars 2 lines, turn on backlight
 	lcd.backlight();
 
 	const uint8_t onewire_pin{2};
-	OneWire ds(onewire_pin);
 	tempSensor = new TempSensorsOW(ds, 4000);
+	ds.begin();
+	tempSensor->addSensor();
 
 	BinInClass* inputs[2];
 	inputs[0] = new BinInGPIOClass(15,1); // Start button
@@ -61,12 +62,10 @@ void AppClass::init()
 	inputs[1]->state.onChange([](uint8_t state){fan->_modeStop(state);});
 
 	BinHttpButtonClass* webStart = new BinHttpButtonClass(webServer, *binStatesHttp, 0); // Старт
-	webStart->state.onChange([=](uint8_t state){fan->_modeStart(state);});
+	webStart->state.onChange([](uint8_t state){fan->_modeStart(state);});
 	BinHttpButtonClass* webStop = new BinHttpButtonClass(webServer, *binStatesHttp, 1); // Стоп
-	webStop->state.onChange([=](uint8_t state){fan->_modeStop(state);});
+	webStop->state.onChange([](uint8_t state){fan->_modeStop(state);});
 
-	ds.begin();
-	tempSensor->addSensor();
 
 	thermostats[0]->_loadBinConfig();
 	thermostats[1]->_loadBinConfig();
@@ -131,7 +130,7 @@ void AppClass::init()
 
 	webServer.paths.remove("/");
 	webServer.paths.set("/",HttpPathDelegate(&AppClass::_httpOnIndex,this));
-	webServer.paths.set("/temperature.json",HttpPathDelegate(&TempSensorsHttp::onHttpGet,(TempSensors*)tempSensorsHttp));
+	webServer.paths.set("/temperature.json",HttpPathDelegate(&TempSensors::onHttpGet,tempSensor));
 	webServer.paths.set("/temperatureHome.json",HttpPathDelegate(&TempSensorsHttp::onHttpGet,(TempSensors*)tempSensorsHttp));
 	webServer.paths.set("/thermostat.fan",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[0]));
 	webServer.paths.set("/thermostat.pump",HttpPathDelegate(&ThermostatClass::onHttpConfig,thermostats[1]));

@@ -26,3 +26,5 @@ extern ThermostatClass* thermostats[3];
 extern TempSensors* tempSensor;
 extern LiquidCrystal_I2C lcd;
 extern FanClass* fan;
+const uint8_t onewire_pin{2};
+extern OneWire ds;

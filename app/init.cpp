@@ -8,6 +8,7 @@ BinInPollerClass* binInPoller;
 ThermostatClass* thermostats[3];
 TempSensors* tempSensor;
 FanClass* fan;
+OneWire ds(onewire_pin);
 
 const uint8_t i2cLCDAddr{0x27};
 //const uint8_t i2cLCDAddr{0x3f}; // another version lcd
