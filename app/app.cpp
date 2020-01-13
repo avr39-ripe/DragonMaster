@@ -48,15 +48,15 @@ void AppClass::init()
 
 	// http tempsensors + Week Thermostat
 	tempSensorsHttp = new TempSensorsHttp(16000);
-	tempSensorsHttp->addSensor("http://10.2.113.120/temperature.json?sensor=0");
-	tempSensorsHttp->addSensor("http://10.2.113.118/temperature.json?sensor=0");
-	tempSensorsHttp->addSensor("http://10.2.113.123/temperature.json?sensor=0");
-	tempSensorsHttp->addSensor("http://10.2.113.125/temperature.json?sensor=0");
-	tempSensorsHttp->addSensor("http://10.2.113.117/temperature.json?sensor=0");
+	tempSensorsHttp->addSensor("http://192.168.0.160/temperature.json?sensor=0");
+	tempSensorsHttp->addSensor("http://192.168.0.161/temperature.json?sensor=0");
+	tempSensorsHttp->addSensor("http://192.168.0.162/temperature.json?sensor=0");
+	tempSensorsHttp->addSensor("http://192.168.0.163/temperature.json?sensor=0");
+	tempSensorsHttp->addSensor("http://192.168.0.164/temperature.json?sensor=0");
 
 
 	weekThermostats[0] = new WeekThermostatClass(*tempSensorsHttp,0,"Холл", 16000);
-	weekThermostats[1] = new WeekThermostatClass(*tempSensorsHttp,1,"Кухня", 16000);
+	weekThermostats[1] = new WeekThermostatClass(*tempSensorsHttp,1,"Ванная", 16000);
 	weekThermostats[2] = new WeekThermostatClass(*tempSensorsHttp,2,"Спальня", 16000);
 	weekThermostats[3] = new WeekThermostatClass(*tempSensorsHttp,3,"Детская 1", 16000);
 	weekThermostats[4] = new WeekThermostatClass(*tempSensorsHttp,4,"Детская 2", 16000);
