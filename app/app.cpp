@@ -85,17 +85,17 @@ void AppClass::init()
 		for(uint8_t i = 0; i< 7; i++)
 		{
 			weekThermostat->_schedule[i][0].start = 0;
-			weekThermostat->_schedule[i][0].targetTemp = 800;
+			weekThermostat->_schedule[i][0].targetTemp = 1800;
 			weekThermostat->_schedule[i][1].start = 360;
-			weekThermostat->_schedule[i][1].targetTemp = 1800;
+			weekThermostat->_schedule[i][1].targetTemp = 2100;
 			weekThermostat->_schedule[i][2].start = 540;
-			weekThermostat->_schedule[i][2].targetTemp = 1200;
+			weekThermostat->_schedule[i][2].targetTemp = 2100;
 			weekThermostat->_schedule[i][3].start = 720;
-			weekThermostat->_schedule[i][3].targetTemp = 1500;
+			weekThermostat->_schedule[i][3].targetTemp = 2100;
 			weekThermostat->_schedule[i][4].start = 1020;
-			weekThermostat->_schedule[i][4].targetTemp = 1800;
+			weekThermostat->_schedule[i][4].targetTemp = 2100;
 			weekThermostat->_schedule[i][5].start = 1320;
-			weekThermostat->_schedule[i][5].targetTemp = 800;
+			weekThermostat->_schedule[i][5].targetTemp = 1800;
 
 			weekThermostat->loadScheduleBinCfg();
 		}
