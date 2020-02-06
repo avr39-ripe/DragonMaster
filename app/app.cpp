@@ -114,6 +114,10 @@ void AppClass::init()
 void AppClass::start()
 {
 	ApplicationClass::start();
+	for (const auto& weekThermostat: weekThermostats)
+	{
+		weekThermostat->start();
+	}
 }
 
 void AppClass::_loop()
@@ -126,10 +130,6 @@ void AppClass::userSTAGotIP(IpAddress ip, IpAddress mask, IpAddress gateway)
 {
 	Serial.printf(_F("AppClass STA GOT IP\n"));
 	tempSensorsHttp->start();
-	for (const auto& weekThermostat: weekThermostats)
-	{
-		weekThermostat->start();
-	}
 }
 
 void AppClass::_httpOnIndex(HttpRequest &request, HttpResponse &response)
