@@ -16,8 +16,8 @@
 #include <thermostat.h>
 #include <weekthermostat.h>
 
-const uint8_t zonesCount = 5; // Zones quantity
-const uint8_t caldronOnDelay = 1; //Caldron ON delay in minutes
+const uint8_t zonesCount{2}; // Zones quantity
+const uint8_t caldronOnDelay{0}; //Caldron ON delay in minutes
 extern BinOutClass* outputs[8];
 extern TempSensorsHttp* tempSensorsHttp;
 extern WeekThermostatClass* weekThermostats[zonesCount];

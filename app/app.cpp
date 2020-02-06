@@ -21,14 +21,14 @@ void AppClass::init()
 	wsAddBinGetter(binStatesHttp->sysId, WebsocketBinaryDelegate(&BinStatesHttpClass::wsBinGetter,binStatesHttp));
 	wsAddBinSetter(binStatesHttp->sysId, WebsocketBinaryDelegate(&BinStatesHttpClass::wsBinSetter,binStatesHttp));
 
-	outputs[0] = new BinOutGPIOClass(2,1); // Холл
-	outputs[1] = new BinOutGPIOClass(0,1); // Кухня
-	outputs[2] = new BinOutGPIOClass(4,1); // Спальня
-	outputs[3] = new BinOutGPIOClass(5,1); // Детская 1
-	outputs[4] = new BinOutGPIOClass(13,1); // Детская 2
-	outputs[5] = new BinOutGPIOClass(12,1); // Котел
-	outputs[6] = new BinOutGPIOClass(14,1);
-	outputs[7] = new BinOutGPIOClass(16,1);
+	outputs[0] = new BinOutGPIOClass(2,0); // Зона 1
+	outputs[1] = new BinOutGPIOClass(0,0); // Зона 2
+	outputs[2] = new BinOutGPIOClass(4,0); // Резерв 1
+	outputs[3] = new BinOutGPIOClass(5,0); // Резерв 2
+	outputs[4] = new BinOutGPIOClass(16,0); // Резерв 3
+	outputs[5] = new BinOutGPIOClass(14,0); // Резерв 4
+	outputs[6] = new BinOutGPIOClass(12,0); // Резерв 5
+	outputs[7] = new BinOutGPIOClass(13,0); //Котел
 
 	int i = 0;
 	for (auto output :outputs)
@@ -40,31 +40,28 @@ void AppClass::init()
 	}
 
 
-	//1 ec:fa:bc:35:ab:ae
-	//2 ec:fa:bc:35:a3:1e
-	//3 ec:fa:bc:35:ac:73
-	//4 ec:fa:bc:35:a6:f9
-	//5 5c:cf:7f:76:60:6e
+//	1 ec:fa:bc:35:b3:19
+//	2 ec:fa:bc:35:b3:56
+//	3 ec:fa:bc:35:ab:ad
+//	4 ec:fa:bc:35:aa:91
+//
+//	main dev 1 ec:fa:bc:35:b3:2a
+//	main dev 2 ec:fa:bc:35:b1:66
 
 	// http tempsensors + Week Thermostat
 	tempSensorsHttp = new TempSensorsHttp(16000);
-	tempSensorsHttp->addSensor("http://192.168.0.160/temperature.json?sensor=0");
-	tempSensorsHttp->addSensor("http://192.168.0.161/temperature.json?sensor=0");
-	tempSensorsHttp->addSensor("http://192.168.0.162/temperature.json?sensor=0");
-	tempSensorsHttp->addSensor("http://192.168.0.163/temperature.json?sensor=0");
-	tempSensorsHttp->addSensor("http://192.168.0.164/temperature.json?sensor=0");
+	tempSensorsHttp->addSensor("http://10.2.113.120/temperature.json?sensor=0");
+	tempSensorsHttp->addSensor("http://10.2.113.125/temperature.json?sensor=0");
 
 
-	weekThermostats[0] = new WeekThermostatClass(*tempSensorsHttp,0,"Холл", 16000);
-	weekThermostats[1] = new WeekThermostatClass(*tempSensorsHttp,1,"Ванная", 16000);
-	weekThermostats[2] = new WeekThermostatClass(*tempSensorsHttp,2,"Спальня", 16000);
-	weekThermostats[3] = new WeekThermostatClass(*tempSensorsHttp,3,"Детская 1", 16000);
-	weekThermostats[4] = new WeekThermostatClass(*tempSensorsHttp,4,"Детская 2", 16000);
+	weekThermostats[0] = new WeekThermostatClass(*tempSensorsHttp,0,"Зона 1", 16000);
+	weekThermostats[1] = new WeekThermostatClass(*tempSensorsHttp,1,"Зона 2", 16000);
+
 
 	auto caldron = new BinStateSharedDeferredClass(); // Caldron as shared by thermostats entity with deferred on/of based on delays
 	caldron->setTrueDelay(caldronOnDelay);
 	caldron->setFalseDelay(0);
-	caldron->onChange([](uint8_t state){outputs[5]->state.set(state);}); // Set caldron output state (output[5]) with on/off delay tolerance
+	caldron->onChange([](uint8_t state){outputs[7]->state.set(state);}); // Set caldron output state (output[5]) with on/off delay tolerance
 
 	auto caldronSet = [caldron](uint8_t state){caldron->set(state);};
 
