@@ -50,8 +50,8 @@ void AppClass::init()
 
 	// http tempsensors + Week Thermostat
 	tempSensorsHttp = new TempSensorsHttp(16000);
-	tempSensorsHttp->addSensor("http://10.2.113.120/temperature.json?sensor=0");
-	tempSensorsHttp->addSensor("http://10.2.113.125/temperature.json?sensor=0");
+	tempSensorsHttp->addSensor("http://192.168.1.162/temperature.json?sensor=0");
+	tempSensorsHttp->addSensor("http://192.168.1.163/temperature.json?sensor=0");
 
 
 	weekThermostats[0] = new WeekThermostatClass(*tempSensorsHttp,0,"Зона 1", 16000);
