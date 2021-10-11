@@ -7,6 +7,14 @@
 #include <app.h>
 #include <dragonmaster.h>
 
+namespace std
+{
+       void __throw_length_error(char const*)
+       {
+               while (true) {}
+       }
+}
+
 // Forward declaration of weekThermostat ugly web responders
 void onStateJson(HttpRequest &request, HttpResponse &response);
 void onScheduleJson(HttpRequest &request, HttpResponse &response);
@@ -126,10 +134,10 @@ void AppClass::userSTAGotIP(IpAddress ip, IpAddress mask, IpAddress gateway)
 {
 	Serial.printf(_F("AppClass STA GOT IP\n"));
 	tempSensorsHttp->start();
-	for (const auto& weekThermostat: weekThermostats)
-	{
-		weekThermostat->start();
-	}
+//	for (const auto& weekThermostat: weekThermostats)
+//	{
+//		weekThermostat->start();
+//	}
 }
 
 void AppClass::_httpOnIndex(HttpRequest &request, HttpResponse &response)
@@ -153,7 +161,7 @@ void onScheduleJson(HttpRequest &request, HttpResponse &response)
 void onThermostatsJson(HttpRequest &request, HttpResponse &response)
 {
 	JsonObjectStream* stream = new JsonObjectStream();
-	JsonObject& root = stream->getRoot();
+	JsonObject root = stream->getRoot();
 	for (uint t=0; t < zonesCount; t++)
 	{
 		root[(String)t] = weekThermostats[t]->getName();
