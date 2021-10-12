@@ -55,7 +55,7 @@ void AppClass::init()
 	//5 5c:cf:7f:76:60:6e
 
 	// http tempsensors + Week Thermostat
-	tempSensorsHttp = new TempSensorsHttp(16000);
+	tempSensorsHttp = new TempSensorsHttp(64000);
 	tempSensorsHttp->addSensor("http://192.168.0.160/temperature.json?sensor=0");
 	tempSensorsHttp->addSensor("http://192.168.0.161/temperature.json?sensor=0");
 	tempSensorsHttp->addSensor("http://192.168.0.162/temperature.json?sensor=0");
