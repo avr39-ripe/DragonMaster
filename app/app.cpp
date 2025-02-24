@@ -7,6 +7,8 @@
 #include <app.h>
 #include <dragonmaster.h>
 
+void std::__throw_length_error(char const*) { while (true) {} }
+
 // Forward declaration of weekThermostat ugly web responders
 void onStateJson(HttpRequest &request, HttpResponse &response);
 void onScheduleJson(HttpRequest &request, HttpResponse &response);
