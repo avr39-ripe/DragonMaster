@@ -1,14 +1,9 @@
 ARDUINO_LIBRARIES := OneWire LiquidCrystal ArduinoJson5
 
-## use rboot build mode
-RBOOT_ENABLED := 1
+HWCONFIG := ota
 
-## Use standard hardware config with two ROM slots and two SPIFFS partitions
-HWCONFIG := basic_rboot
-
-RBOOT_RTC_ENABLED = 1
-
-SPIFF_SIZE      ?= 524288
+CONFIG_VARS := RBOOT_TWO_ROMS 
+RBOOT_TWO_ROMS := 1
 
 COMPONENT_SRCDIRS = app lib/application lib/tempsensor lib/binio lib/thermostat lib/fan
 COMPONENT_INCDIRS = include lib/application lib/tempsensor lib/binio lib/thermostat lib/fan lib/wsbinconst
