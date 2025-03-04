@@ -7,5 +7,3 @@ files/index.html*
 files/thermostat.html*
 files/thermostat.*.js*
 node_modules/
-package.json
-package-lock.json

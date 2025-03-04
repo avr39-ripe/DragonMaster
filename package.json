@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "compression-webpack-plugin": "^11.1.0",
+    "html-webpack-plugin": "^5.6.3",
+    "install": "^0.13.0",
+    "npm": "^11.1.0",
+    "reconnecting-websocket": "^4.4.0"
+  }
+}
