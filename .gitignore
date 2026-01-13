@@ -7,3 +7,5 @@ files/index.html*
 files/thermostat.html*
 files/thermostat.*.js*
 node_modules/
+.vscode/
+sming.code-workspace
