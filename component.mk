@@ -1,4 +1,4 @@
-ARDUINO_LIBRARIES := OneWire LiquidCrystal ArduinoJson5
+ARDUINO_LIBRARIES := OneWire ArduinoJson5
 
 HWCONFIG := ota
 
