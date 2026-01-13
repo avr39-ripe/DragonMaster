@@ -4,9 +4,8 @@
 BinOutClass* outputs[3];
 TempSensorsHttp* tempSensorsHttp;
 WeekThermostatClass* weekThermostats[zonesCount];
-BinInPollerClass* binInPoller;
-TempSensors* tempSensor;
-OneWire ds(onewire_pin);
+// TempSensors* tempSensor;
+// OneWire ds(onewire_pin);
 
 AppClass App;
 

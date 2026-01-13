@@ -17,10 +17,10 @@
 
 const uint8_t zonesCount{2}; // Zones quantity
 const uint8_t caldronOnDelay{5}; //Caldron ON delay in minutes
+const uint8_t caldronOffDelay{0}; //Caldron OFF delay in minutes
 extern BinOutClass* outputs[3];
-extern BinInPollerClass* binInPoller;
 extern TempSensorsHttp* tempSensorsHttp;
 extern WeekThermostatClass* weekThermostats[zonesCount];
-extern TempSensors* tempSensor;
-const uint8_t onewire_pin{2};
-extern OneWire ds;
+// extern TempSensors* tempSensor;
+// const uint8_t onewire_pin{2};
+// extern OneWire ds;
