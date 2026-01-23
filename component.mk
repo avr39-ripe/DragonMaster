@@ -1,4 +1,4 @@
-ARDUINO_LIBRARIES := ArduinoJson5
+ARDUINO_LIBRARIES := OtaNetwork ArduinoJson5
 
 HWCONFIG := ota
 
