@@ -62,6 +62,7 @@ void AppClass::init()
 
 	//GasHeating
 	BinStateClass* gasEnable = new BinStateClass();
+	gasEnable->setTrue();
 	gasEnable->persistent(0);
 
 	BinHttpButtonClass* webGasEnable = new BinHttpButtonClass(webServer, *binStatesHttp, 2, gasEnable); // Газовое отопление
@@ -87,26 +88,45 @@ void AppClass::init()
 	BinStateHttpClass* gasCaldronState = new BinStateHttpClass(webServer, caldronGate, 4); // Газовый котел
 	binStatesHttp->add(gasCaldronState);
 
+	uint8_t zoneIdx = 0;
+
 	for (const auto& weekThermostat: weekThermostats)
 	{
 		weekThermostat->loadStateCfg();
-		for(uint8_t i = 0; i< 7; i++)
+		for(uint8_t dayIdx = 1; dayIdx < 6; ++dayIdx) // workdays
 		{
-			weekThermostat->_schedule[i][0].start = 0;
-			weekThermostat->_schedule[i][0].targetTemp = 1700;
-			weekThermostat->_schedule[i][1].start = 360;
-			weekThermostat->_schedule[i][1].targetTemp = 1900;
-			weekThermostat->_schedule[i][2].start = 540;
-			weekThermostat->_schedule[i][2].targetTemp = 1900;
-			weekThermostat->_schedule[i][3].start = 720;
-			weekThermostat->_schedule[i][3].targetTemp = 1900;
-			weekThermostat->_schedule[i][4].start = 1020;
-			weekThermostat->_schedule[i][4].targetTemp = 1900;
-			weekThermostat->_schedule[i][5].start = 1320;
-			weekThermostat->_schedule[i][5].targetTemp = 1800;
-
-			weekThermostat->loadScheduleBinCfg();
+			weekThermostat->_schedule[dayIdx][0].start = 0;
+			weekThermostat->_schedule[dayIdx][0].targetTemp = zoneIdx == 0 ? 1700 : 1500;
+			weekThermostat->_schedule[dayIdx][1].start = 360;
+			weekThermostat->_schedule[dayIdx][1].targetTemp = 1900;
+			weekThermostat->_schedule[dayIdx][2].start = 540;
+			weekThermostat->_schedule[dayIdx][2].targetTemp = zoneIdx == 0 ? 1600 : 1900;
+			weekThermostat->_schedule[dayIdx][3].start = 720;
+			weekThermostat->_schedule[dayIdx][3].targetTemp = zoneIdx == 0 ? 1600 : 1900;
+			weekThermostat->_schedule[dayIdx][4].start = 1050;
+			weekThermostat->_schedule[dayIdx][4].targetTemp = 1900;
+			weekThermostat->_schedule[dayIdx][5].start = 1320;
+			weekThermostat->_schedule[dayIdx][5].targetTemp = 1800;	
 		}
+		
+		for(uint8_t dayIdx: {0, 6}) // weekends
+		{
+			weekThermostat->_schedule[dayIdx][0].start = 0;
+			weekThermostat->_schedule[dayIdx][0].targetTemp = zoneIdx == 0 ? 1700 : 1500;
+			weekThermostat->_schedule[dayIdx][1].start = 360;
+			weekThermostat->_schedule[dayIdx][1].targetTemp = 1900;
+			weekThermostat->_schedule[dayIdx][2].start = 540;
+			weekThermostat->_schedule[dayIdx][2].targetTemp = 1900;
+			weekThermostat->_schedule[dayIdx][3].start = 720;
+			weekThermostat->_schedule[dayIdx][3].targetTemp = 1900;
+			weekThermostat->_schedule[dayIdx][4].start = 1050;
+			weekThermostat->_schedule[dayIdx][4].targetTemp = 1900;
+			weekThermostat->_schedule[dayIdx][5].start = 1320;
+			weekThermostat->_schedule[dayIdx][5].targetTemp = 1800;	
+		}
+
+		weekThermostat->loadScheduleBinCfg();
+		++zoneIdx;
 	}
 
 	webServer.paths.remove("/");
